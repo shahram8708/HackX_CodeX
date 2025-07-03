@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to HealneX</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .highlight {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .button {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .features {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Welcome to HealneX!</h1>
+            <p>Your healthcare journey starts here</p>
+        </div>
+
+        <div class="content">
+            <h3>Hello {{ user.name }},</h3>
+
+            <p>Welcome to HealneX! We're excited to have you join our community of patients and healthcare providers.
+            </p>
+
+            {% if user.role == 'patient' %}
+            <div class="highlight">
+                <h4>📋 Your Patient Details:</h4>
+                <p><strong>Unique Patient ID:</strong> {{ user.unique_patient_id }}</p>
+                <p><strong>Referral Code:</strong> {{ user.referral_code }}</p>
+                <p style="font-size: 12px; color: #666;">Keep your Patient ID safe - you'll need it for appointments and
+                    accessing your medical records.</p>
+            </div>
+
+            <div class="features">
+                <h4>🌟 What you can do now:</h4>
+                <div class="feature-item">📅 <strong>Book Appointments:</strong> Schedule consultations with qualified
+                    doctors</div>
+                <div class="feature-item">💬 <strong>Chat with Doctors:</strong> Secure messaging with your healthcare
+                    providers</div>
+                <div class="feature-item">📄 <strong>Access Medical Records:</strong> View and download your
+                    prescriptions and reports</div>
+                <div class="feature-item">🔗 <strong>Refer Friends:</strong> Share your referral code and earn points
+                </div>
+                <div class="feature-item">💳 <strong>Secure Payments:</strong> Safe and encrypted payment processing
+                </div>
+            </div>
+
+            {% elif user.role == 'doctor' %}
+            <div class="highlight">
+                <h4>👨‍⚕️ Your Doctor Profile:</h4>
+                <p><strong>Specialization:</strong> {{ user.specialization }}</p>
+                <p><strong>License Number:</strong> {{ user.license_number }}</p>
+                <p><strong>Consultation Fee:</strong> ₹{{ user.consultation_fee }}</p>
+            </div>
+
+            <div class="features">
+                <h4>🌟 What you can do now:</h4>
+                <div class="feature-item">📅 <strong>Manage Appointments:</strong> View and manage your patient
+                    appointments</div>
+                <div class="feature-item">💬 <strong>Chat with Patients:</strong> Secure communication with your
+                    patients</div>
+                <div class="feature-item">📤 <strong>Upload Reports:</strong> Share prescriptions and medical reports
+                </div>
+                <div class="feature-item">🔗 <strong>Refer Patients:</strong> Refer patients to other specialists</div>
+                <div class="feature-item">💰 <strong>Track Earnings:</strong> Monitor your consultation income</div>
+            </div>
+            {% endif %}
+
+            <div style="text-align: center;">
+                <a href="{{ url_for('auth.login', _external=True) }}" class="button">
+                    🚀 Get Started Now
+                </a>
+            </div>
+
+            <p>If you have any questions or need help getting started, our support team is here to help.</p>
+
+            <p>Best regards,<br>
+                The HealneX Team</p>
+        </div>
+
+        <div class="footer">
+            <p>Need help? Contact us at multimosaic.help@gmail.com</p>
+            <p>© 2025 HealneX. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+{% extends "base/layout.html" %}
+
+{% block title %}System Settings - HealneX Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-12">
+            <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                <div class="d-flex align-items-center mb-2 mb-md-0">
+                    <i class="bi bi-gear text-primary me-2" style="font-size: 2rem;"></i>
+                    <div>
+                        <h2 class="mb-0">System Settings</h2>
+                        <p class="text-muted small mb-0">Manage platform configuration and global settings</p>
+                    </div>
+                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent p-0 m-0">
+                        <li class="breadcrumb-item">
+                            <a href="{{ url_for('admin.admin_dashboard') }}" class="text-decoration-none text-primary">
+                                <i class="bi bi-house-door-fill me-1"></i>Admin
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active text-muted" aria-current="page">System Settings</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-sliders me-2"></i> Platform Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.system_settings') }}">
+                        {{ form.csrf_token }}
+
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="site_name" class="form-label">Platform Name</label>
+                                <input type="text" id="site_name" name="site_name" class="form-control"
+                                    value="{{ settings.site_name or 'HealneX' }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="admin_email" class="form-label">Admin Email</label>
+                                <input type="email" id="admin_email" name="admin_email" class="form-control"
+                                    value="{{ settings.admin_email or '' }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="max_file_size" class="form-label">Max Upload Size (MB)</label>
+                                <input type="number" id="max_file_size" name="max_file_size" class="form-control"
+                                    value="{{ settings.max_file_size or 16 }}" min="1" max="100">
+                                <small class="form-text text-muted">Limit for uploaded files (e.g., reports,
+                                    prescriptions)</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="session_timeout" class="form-label">Session Timeout (minutes)</label>
+                                <input type="number" id="session_timeout" name="session_timeout" class="form-control"
+                                    value="{{ settings.session_timeout or 60 }}" min="15" max="480">
+                                <small class="form-text text-muted">Auto logout duration for inactive users</small>
+                            </div>
+                        </div>
+
+
+                        <div class="mb-4">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="maintenance_mode"
+                                    name="maintenance_mode" {% if settings.maintenance_mode %}checked{% endif %}>
+                                <label class="form-check-label" for="maintenance_mode">Enable Maintenance Mode</label>
+                                <small class="text-muted d-block">Only admins will have access when enabled</small>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="new_registrations"
+                                    name="new_registrations" {% if settings.new_registrations %}checked{% endif %}>
+                                <label class="form-check-label" for="new_registrations">Allow New Registrations</label>
+                            </div>
+                        </div>
+
+                        <hr>
+
+
+                        <h6 class="text-primary fw-bold mb-3"><i class="bi bi-envelope me-2"></i>Email Settings</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="smtp_server" class="form-label">SMTP Server</label>
+                                <input type="text" id="smtp_server" name="smtp_server" class="form-control"
+                                    value="{{ settings.smtp_server or 'localhost' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtp_port" class="form-label">SMTP Port</label>
+                                <input type="number" id="smtp_port" name="smtp_port" class="form-control"
+                                    value="{{ settings.smtp_port or 587 }}">
+                            </div>
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+                            <input class="form-check-input" type="checkbox" id="email_notifications"
+                                name="email_notifications" {% if settings.email_notifications %}checked{% endif %}>
+                            <label class="form-check-label" for="email_notifications">Enable Email Notifications</label>
+                        </div>
+
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="button" class="btn btn-secondary" onclick="history.back()">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i> Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 text-secondary"><i class="bi bi-info-circle me-2"></i>System Info</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <small class="text-muted">Platform Version</small>
+                            <div class="fw-bold">HealneX v1.0.0</div>
+                        </li>
+                        <li class="mb-3">
+                            <small class="text-muted">Database Size</small>
+                            <div class="fw-bold">{{ db_size or 'N/A' }}</div>
+                        </li>
+                        <li class="mb-3">
+                            <small class="text-muted">Total Users</small>
+                            <div class="fw-bold">{{ total_users or 0 }}</div>
+                        </li>
+                        <li>
+                            <small class="text-muted">Total Appointments</small>
+                            <div class="fw-bold">{{ total_appointments or 0 }}</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

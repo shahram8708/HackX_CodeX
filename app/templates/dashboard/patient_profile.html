@@ -1,0 +1,223 @@
+{% extends "base/layout.html" %}
+
+{% block title %}{{ patient.name }} - Patient Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div
+                        class="avatar-xl bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                        <i class="bi bi-person fs-1 text-white"></i>
+                    </div>
+                    <h4>{{ patient.name }}</h4>
+                    <p class="text-muted">{{ patient.unique_patient_id }}</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('dashboard.add_treatment', patient_id=patient.unique_patient_id) }}"
+                            class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add Treatment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-person-lines-fill"></i> Patient Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Email:</strong> {{ patient.email }}</p>
+                            <p><strong>Phone:</strong> {{ patient.phone or 'N/A' }}</p>
+                            <p><strong>Age:</strong> {{ patient.age or 'N/A' }}</p>
+                            <p><strong>Gender:</strong> {{ patient.gender or 'N/A' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Allergies:</strong> {{ patient.allergies or 'None reported' }}</p>
+                            <p><strong>Conditions:</strong> {{ patient.conditions or 'None reported' }}</p>
+                            <p><strong>Emergency Contact:</strong> {{ patient.emergency_contact or 'N/A' }}</p>
+                            <p><strong>Joined:</strong> {{ patient.created_at.strftime('%B %d, %Y') if
+                                patient.created_at else 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-calendar-event"></i> Appointment History</h5>
+                </div>
+                <div class="card-body">
+                    {% if appointments %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ appointment.appointment_date.strftime('%b %d, %Y') if
+                                        appointment.appointment_date else 'N/A' }}</td>
+                                    <td>{{ appointment.appointment_type.replace('_', ' ').title() }}</td>
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ 'success' if appointment.status == 'completed' else 'primary' if appointment.status == 'confirmed' else 'warning' }}">
+                                            {{ appointment.status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>{{ appointment.notes or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-calendar-x fs-1"></i>
+                        <p>No appointments found</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-file-medical"></i> Medical Records</h5>
+                </div>
+                <div class="card-body">
+                    {% if medical_files %}
+                    <div class="row">
+                        {% for file in medical_files %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border">
+                                <div class="card-body">
+                                    <h6 class="fw-bold">{{ file.report_type.replace('_', ' ').title() if
+                                        file.report_type else 'Medical Report' }}</h6>
+                                    <p class="text-muted small">{{ file.description or 'No description provided.' }}</p>
+                                    <p class="text-muted small mb-1">
+                                        <i class="bi bi-person-badge"></i>
+                                        Uploaded by: Dr. {{ file.doctor.name if file.doctor else 'Unknown' }}
+                                    </p>
+                                    <p class="text-muted small mb-2">
+                                        <i class="bi bi-calendar"></i>
+                                        {{ file.upload_date.strftime('%b %d, %Y') if file.upload_date else 'N/A' }}
+                                    </p>
+                                    <a href="{{ url_for('uploads.download_file', file_id=file.id) }}"
+                                        class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-download"></i> Download
+                                    </a>
+                                    {% if file.ai_analysis %}
+                                    <a class="btn btn-sm btn-outline-warning ms-2" data-bs-toggle="modal"
+                                        data-bs-target="#aiSummaryModal-{{ file.id }}">
+                                        <i class="bi bi-lightbulb"></i> View AI Analysis
+                                    </a>
+                                    {% endif %}
+
+
+                                    <div class="modal fade" id="aiSummaryModal-{{ file.id }}" tabindex="-1"
+                                        aria-labelledby="aiSummaryLabel-{{ file.id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                            <div class="modal-content border-info">
+                                                <div class="modal-header bg-info text-white">
+                                                    <h5 class="modal-title" id="aiSummaryLabel-{{ file.id }}"><i
+                                                            class="bi bi-stars me-2"></i>AI Summary</h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div id="markdown-{{ file.id }}"></div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            const raw = {{ file.ai_analysis | tojson | safe
+                                        }};
+                                        const html = marked.parse(raw);
+                                        document.getElementById("markdown-{{ file.id }}").innerHTML = html;
+});
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-file-x fs-1"></i>
+                        <p>No medical records found</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-clipboard-pulse"></i> Treatment Records</h5>
+                </div>
+                <div class="card-body">
+                    {% if treatments %}
+                    <div class="row">
+                        {% for treatment in treatments %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border">
+                                <div class="card-body">
+                                    <h6>{{ treatment.notes or 'Treatment Note' }}</h6>
+                                    <p class="text-muted small">
+                                        <strong>Type:</strong> {{ (treatment.treatment_type or 'Unknown').replace('_', '
+                                        ')|title }}
+                                    </p>
+                                    {% if treatment.diagnosis %}
+                                    <p class="text-muted small">
+                                        <strong>Diagnosis:</strong> {{ treatment.diagnosis }}
+                                    </p>
+                                    {% endif %}
+                                    <p class="text-muted small">
+                                        <i class="bi bi-calendar"></i> {{ treatment.updated_at.strftime('%b %d, %Y') if
+                                        treatment.updated_at else 'N/A' }}
+                                    </p>
+                                    <p class="text-muted small">
+                                        <strong>Doctor:</strong> Dr. {{ treatment.doctor.name }}
+                                    </p>
+                                    {% if treatment.attached_file %}
+                                    <a href="{{ url_for('static', filename='uploads/treatments/' ~ treatment.attached_file) }}"
+                                        class="btn btn-sm btn-outline-success" download>
+                                        <i class="bi bi-download"></i> Download Attachment
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-clipboard-x fs-1"></i>
+                        <p>No treatment records found</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

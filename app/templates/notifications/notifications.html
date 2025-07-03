@@ -1,0 +1,343 @@
+{% extends "base/layout.html" %}
+{% block title %}Notifications - HealneX{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="bi bi-bell text-warning me-2"></i>
+                        Notifications
+                    </h2>
+                    <p class="text-muted mb-0">Stay updated with your latest alerts and messages</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary" onclick="markAllAsRead()">
+                        <i class="bi bi-check2-all me-2"></i>Mark All Read
+                    </button>
+                    <script>
+                        function markAllAsRead() {
+                            if (!confirm("Mark all notifications as read?")) return;
+
+                            fetch('/notifications/mark_all_read', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCSRFToken()
+                                }
+                            })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+
+                                        document.querySelectorAll('.notification-item').forEach(el => {
+                                            el.classList.remove('unread');
+                                        });
+                                        alert(`${data.count} notifications marked as read.`);
+                                    } else {
+                                        alert('Failed to mark notifications as read.');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('Error:', err);
+                                    alert('An error occurred while marking notifications.');
+                                });
+                        }
+
+                        function clearAll() {
+                            if (!confirm("Are you sure you want to delete all read notifications?")) return;
+
+                            fetch('/notifications/clear_all', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCSRFToken()
+                                }
+                            })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+
+                                        document.querySelectorAll('.notification-item:not(.unread)').forEach(el => el.remove());
+                                        alert(`${data.deleted_count} read notifications cleared.`);
+                                    } else {
+                                        alert('Failed to clear notifications.');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('Error:', err);
+                                    alert('Something went wrong while clearing notifications.');
+                                });
+                        }
+
+                    </script>
+
+                    <button type="button" class="btn btn-outline-secondary" onclick="clearAll()">
+                        <i class="bi bi-trash me-2"></i>Clear All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-1">{{ total_notifications }}</h3>
+                    <p class="small mb-0 opacity-75">Total</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm bg-warning text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-1">{{ unread_notifications }}</h3>
+                    <p class="small mb-0 opacity-75">Unread</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm bg-info text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-1">{{ appointment_notifications }}</h3>
+                    <p class="small mb-0 opacity-75">Appointments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm bg-success text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-1">{{ message_notifications }}</h3>
+                    <p class="small mb-0 opacity-75">Messages</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-pills nav-fill" id="notification-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link {% if current_filter == 'all' %}active{% endif %}"
+                        href="{{ url_for('notifications.notifications', filter='all') }}">
+                        All <span class="badge bg-light text-dark ms-2">{{ total_notifications }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if current_filter == 'unread' %}active{% endif %}"
+                        href="{{ url_for('notifications.notifications', filter='unread') }}">
+                        Unread <span class="badge bg-light text-dark ms-2">{{ unread_notifications }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if current_filter == 'appointment' %}active{% endif %}"
+                        href="{{ url_for('notifications.notifications', filter='appointment') }}">
+                        Appointments <span class="badge bg-light text-dark ms-2">{{ appointment_notifications }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if current_filter == 'message' %}active{% endif %}"
+                        href="{{ url_for('notifications.notifications', filter='message') }}">
+                        Messages <span class="badge bg-light text-dark ms-2">{{ message_notifications }}</span>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="tab-content" id="notificationTabContent">
+        <div class="tab-pane fade show active" id="all" role="tabpanel">
+            {% if notifications %}
+            {% for notification in notifications %}
+            <div class="card border-0 shadow-sm mb-3 notification-item {{ 'unread' if not notification.is_read else '' }}"
+                data-notification-id="{{ notification.id }}">
+                <div class="card-body">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <div class="notification-icon bg-{{ 'primary' if notification.type == 'appointment' else 'success' if notification.type == 'message' else 'warning' if notification.type == 'payment' else 'info' }} text-white rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px;">
+                                {% if notification.type == 'appointment' %}
+                                <i class="bi bi-calendar-event"></i>
+                                {% elif notification.type == 'message' %}
+                                <i class="bi bi-chat-dots"></i>
+                                {% elif notification.type == 'payment' %}
+                                <i class="bi bi-credit-card"></i>
+                                {% elif notification.type == 'system' %}
+                                <i class="bi bi-gear"></i>
+                                {% else %}
+                                <i class="bi bi-bell"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0">{{ notification.title }}</h6>
+                                <div class="d-flex align-items-center">
+                                    {% if not notification.is_read %}
+                                    <span class="badge bg-warning me-2">New</span>
+                                    {% endif %}
+                                    <small class="text-muted">{{ notification.created_at.strftime('%b %d, %I:%M %p')
+                                        }}</small>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">{{ notification.message }}</p>
+                            {% if notification.action_url %}
+                            <a href="{{ notification.action_url }}" class="btn btn-sm btn-outline-primary">
+                                {{ notification.action_text or 'View Details' }}
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="ms-3">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item"
+                                            href="{{ url_for('notifications.view_notification', notification_id=notification.id) }}">
+                                            <i class="bi bi-eye me-2"></i>View Notification
+                                        </a>
+                                    </li>
+
+                                    {% if not notification.is_read %}
+                                    <li>
+                                        <a class="dropdown-item" href="#" onclick="markAsRead({{ notification.id }})">
+                                            <i class="bi bi-check me-2"></i>Mark as Read
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="#"
+                                            onclick="deleteNotification({{ notification.id }})">
+                                            <i class="bi bi-trash me-2"></i>Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-bell-slash text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mb-3">No notifications</h4>
+                <p class="text-muted">You're all caught up!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+    {% if notifications and notifications.pages > 1 %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Notifications pagination">
+                <ul class="pagination justify-content-center">
+                    {% if notifications.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('notifications.notifications', page=notifications.prev_num) }}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in notifications.iter_pages() %}
+                    {% if page_num %}
+                    {% if page_num != notifications.page %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('notifications.notifications', page=page_num) }}">{{
+                            page_num }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_num }}</span>
+                    </li>
+                    {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if notifications.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('notifications.notifications', page=notifications.next_num) }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script>
+    function deleteNotification(notificationId) {
+        if (!confirm("Are you sure you want to delete this notification?")) return;
+
+        fetch(`/notifications/delete/${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+
+                    const item = document.querySelector(`[data-notification-id="${notificationId}"]`);
+                    if (item) item.remove();
+                } else {
+                    alert(data.error || 'Failed to delete notification');
+                }
+            })
+            .catch(err => {
+                console.error('Error deleting notification:', err);
+                alert('Something went wrong.');
+            });
+    }
+
+    function getCSRFToken() {
+        const match = document.cookie.match(/csrf_token=([^;]+)/);
+        return match ? match[1] : '';
+    }
+
+    function markAsRead(notificationId) {
+        fetch(`/notifications/mark_read/${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const card = document.querySelector(`[data-notification-id='${notificationId}']`);
+                    if (card) {
+                        card.classList.remove('unread');
+                        card.querySelector('.badge.bg-warning')?.remove();
+                    }
+                } else {
+                    alert(data.error || 'Failed to mark as read');
+                }
+            })
+            .catch(err => {
+                console.error('Request failed:', err);
+            });
+    }
+
+</script>
+
+{% endblock %}

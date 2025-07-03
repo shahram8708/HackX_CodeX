@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt - HealneX</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #198754;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .receipt-details {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #198754;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 15px 0;
+            border-top: 2px solid #198754;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .button {
+            display: inline-block;
+            background: #0d6efd;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💳 Payment Receipt</h1>
+            <p>Thank you for your payment!</p>
+        </div>
+
+        <div class="content">
+            <h3>Hello {{ payment.user.name }},</h3>
+
+            <p>Your payment has been successfully processed. Here are the details of your transaction:</p>
+
+            <div class="receipt-details">
+                <h4>🧾 Receipt Details:</h4>
+
+                <div class="detail-row">
+                    <strong>Receipt Number:</strong>
+                    <span>#HC-{{ payment.id }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <strong>Date:</strong>
+                    <span>{{ payment.payment_date.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <strong>Payment Type:</strong>
+                    <span>{{ payment.payment_type.title() }}</span>
+                </div>
+
+                {% if payment.payment_type == 'consultation' and payment.appointment %}
+                <div class="detail-row">
+                    <strong>Doctor:</strong>
+                    <span>Dr. {{ payment.appointment.doctor.name }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <strong>Appointment Date:</strong>
+                    <span>{{ payment.appointment.appointment_date.strftime('%B %d, %Y') }}</span>
+                </div>
+                {% endif %}
+
+                {% if payment.payment_type == 'subscription' %}
+                <div class="detail-row">
+                    <strong>Plan:</strong>
+                    <span>{{ payment.plan_name.title() }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <strong>Duration:</strong>
+                    <span>{{ payment.plan_duration.title() }}</span>
+                </div>
+                {% endif %}
+
+                <div class="detail-row">
+                    <strong>Payment Method:</strong>
+                    <span>{{ payment.payment_method.title() if payment.payment_method else 'Card' }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <strong>Transaction ID:</strong>
+                    <span>{{ payment.transaction_id or payment.stripe_payment_intent_id }}</span>
+                </div>
+
+                <div class="total-row">
+                    <strong>Total Amount:</strong>
+                    <span>₹{{ "%.2f"|format(payment.amount) }} {{ payment.currency }}</span>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="{{ url_for('payments.view_receipt', payment_id=payment.id, _external=True) }}" class="button">
+                    📄 Download Full Receipt
+                </a>
+            </div>
+
+            <p>This receipt serves as proof of payment. Please keep it for your records.</p>
+
+            <p>If you have any questions about this payment, please contact our support team.</p>
+
+            <p>Best regards,<br>
+                The HealneX Team</p>
+        </div>
+
+        <div class="footer">
+            <p>Questions? Contact us at multimosaic.help@gmail.com</p>
+            <p>© 2025 HealneX. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,298 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Upload Medical Report - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        {% if current_user.role == 'doctor' %}
+                        <a href="{{ url_for('dashboard.doctor_dashboard') }}">Dashboard</a>
+                        {% else %}
+                        <a href="{{ url_for('dashboard.patient_dashboard') }}">Dashboard</a>
+                        {% endif %}
+                    </li>
+                    <li class="breadcrumb-item active">Upload Report</li>
+                </ol>
+            </nav>
+            <h2 class="mb-1">
+                <i class="bi bi-cloud-upload text-success me-2"></i>
+                Upload Medical Report
+            </h2>
+            <p class="text-muted">Upload prescriptions, test results, or medical documents</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    {% if patient_info %}
+
+                    <div class="alert alert-info border-0 mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-badge me-3" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-1">Uploading for: {{ patient_info.name }}</h6>
+                                <p class="mb-0 small">Patient ID: {{ patient_info.unique_patient_id }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" enctype="multipart/form-data" id="upload-form">
+                        {{ form.hidden_tag() }}
+
+                        {% if not patient_info and current_user.role == 'doctor' %}
+
+                        <div class="mb-4">
+                            {{ form.patient_id.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.patient_id(class="form-control", placeholder="Enter Patient ID (e.g.,
+                                HC-5F4A1B9D)") }}
+                                <button type="button" class="btn btn-outline-secondary" onclick="searchPatient()">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </div>
+                            <div id="patient-info" class="mt-2"></div>
+                        </div>
+                        {% endif %}
+
+
+                        <div class="mb-4">
+                            {{ form.report_type.label(class="form-label") }}
+                            {{ form.report_type(class="form-select") }}
+                        </div>
+
+
+                        <div class="mb-4">
+                            {{ form.file.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.file(class="form-control", accept=".pdf,.jpg,.jpeg,.png", id="file-input") }}
+                                <span class="input-group-text">
+                                    <i class="bi bi-paperclip"></i>
+                                </span>
+                            </div>
+                            <div class="form-text">
+                                Supported formats: PDF, JPG, PNG (Max size: 5MB)
+                            </div>
+
+
+                            <div id="file-preview" class="mt-3" style="display: none;">
+                                <div class="card border">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-file-earmark text-primary me-3"
+                                                style="font-size: 2rem;"></i>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1" id="file-name"></h6>
+                                                <p class="text-muted small mb-0" id="file-size"></p>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                onclick="removeFile()">
+                                                <i class="bi bi-x"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="mb-4">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows="4", placeholder="Brief description of the
+                            report or test results") }}
+                        </div>
+
+
+                        <div class="mb-4">
+                            {{ form.upload_date.label(class="form-label") }}
+                            {{ form.upload_date(class="form-control") }}
+                        </div>
+
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% if current_user.role == 'doctor' %}{{ url_for('dashboard.doctor_dashboard') }}{% else %}{{ url_for('uploads.view_reports') }}{% endif %}"
+                                class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success" id="submit-btn">
+                                <i class="bi bi-cloud-upload me-2"></i>
+                                <span id="submit-text">Upload Report</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="card border-0 bg-light mt-4">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">
+                        <i class="bi bi-info-circle me-2"></i>Upload Guidelines
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="small text-muted mb-0">
+                                <li>Ensure files are clear and readable</li>
+                                <li>Use descriptive filenames</li>
+                                <li>Maximum file size: 5MB</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="small text-muted mb-0">
+                                <li>Supported formats: PDF, JPG, PNG</li>
+                                <li>Remove any personal information of other patients</li>
+                                <li>Verify patient information before uploading</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="uploadModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Uploading Report...</h5>
+                <p class="text-muted mb-0">Please wait while we process your file</p>
+                <div class="progress mt-3">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                        style="width: 0%" id="upload-progress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.getElementById('file-input').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('File size must be less than 5MB', 'error');
+                e.target.value = '';
+                return;
+            }
+
+
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                showToast('Please upload PDF, JPG, or PNG files only', 'error');
+                e.target.value = '';
+                return;
+            }
+
+
+            showFilePreview(file);
+        } else {
+            hideFilePreview();
+        }
+    });
+
+    function showFilePreview(file) {
+        document.getElementById('file-name').textContent = file.name;
+        document.getElementById('file-size').textContent = formatFileSize(file.size);
+        document.getElementById('file-preview').style.display = 'block';
+    }
+
+    function hideFilePreview() {
+        document.getElementById('file-preview').style.display = 'none';
+    }
+
+    function removeFile() {
+        document.getElementById('file-input').value = '';
+        hideFilePreview();
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+
+    function searchPatient() {
+        const patientId = document.querySelector('input[name="patient_id"]').value;
+        if (!patientId) {
+            showToast('Please enter a Patient ID', 'error');
+            return;
+        }
+
+        fetch(`/uploads/api/search-patient/${patientId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('patient-info').innerHTML = `
+                    <div class="alert alert-success border-0 mb-0">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Patient found: <strong>${data.patient.name}</strong>
+                    </div>
+                `;
+                } else {
+                    document.getElementById('patient-info').innerHTML = `
+                    <div class="alert alert-danger border-0 mb-0">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        Patient not found
+                    </div>
+                `;
+                }
+            })
+            .catch(error => {
+                showToast('Error searching patient', 'error');
+            });
+    }
+
+
+    document.getElementById('upload-form').addEventListener('submit', function (e) {
+        const fileInput = document.getElementById('file-input');
+        if (!fileInput.files[0]) {
+            e.preventDefault();
+            showToast('Please select a file to upload', 'error');
+            return;
+        }
+
+
+        const uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
+        uploadModal.show();
+
+
+        let progress = 0;
+        const progressBar = document.getElementById('upload-progress');
+        const interval = setInterval(() => {
+            progress += Math.random() * 30;
+            if (progress > 100) progress = 100;
+            progressBar.style.width = progress + '%';
+
+            if (progress >= 100) {
+                clearInterval(interval);
+            }
+        }, 500);
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const today = new Date().toISOString().split('T')[0];
+        const uploadDateInput = document.querySelector('input[name="upload_date"]');
+        if (uploadDateInput && !uploadDateInput.value) {
+            uploadDateInput.value = today;
+        }
+    });
+</script>
+{% endblock %}

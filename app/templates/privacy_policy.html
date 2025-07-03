@@ -1,0 +1,58 @@
+{% extends "base/layout.html" %}
+{% block title %}Privacy Policy – HealneX{% endblock %}
+
+{% block content %}
+<header class="bg-light py-4 border-bottom">
+  <div class="container d-flex flex-column flex-lg-row align-items-lg-center justify-content-between">
+    <h1 class="h3 mb-2 mb-lg-0 fw-semibold"><i class="bi bi-shield-lock me-2"></i>Privacy Policy</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Privacy Policy</li>
+      </ol>
+    </nav>
+  </div>
+</header>
+
+<section class="py-5">
+  <div class="container" style="max-width: 900px;">
+    <h5 class="fw-bold mb-3">Last Updated: July 3, 2025</h5>
+
+    <h5 class="mt-4">1. Data Collection</h5>
+    <p>
+      This section describes the categories of personal information we collect,
+      including information you provide during registration, medical data you
+      upload, and technical information gathered automatically when you use our
+      services.
+    </p>
+
+    <h5 class="mt-4">2. How We Use Information</h5>
+    <p>
+      We use your information to deliver and improve HealneX services,
+      process payments, communicate important updates, and comply with legal
+      obligations.
+    </p>
+
+    <h5 class="mt-4">3. Security</h5>
+    <p>
+      HealneX employs industry-standard encryption, role-based access
+      controls, and regular security audits to protect your data. However, no
+      internet transmission is ever completely secure.
+    </p>
+
+    <h5 class="mt-4">4. User Rights</h5>
+    <ul>
+      <li>Request access to or correction of your personal data.</li>
+      <li>Delete your account and associated records.</li>
+      <li>Object to certain processing activities.</li>
+    </ul>
+
+    <h5 class="mt-4">5. Contact</h5>
+    <p>
+      Have questions? Please email&nbsp;
+      <a href="mailto:multimosaic.help@gmail.com" class="link-primary">multimosaic.help@gmail.com</a>
+      or write to HealneX Privacy Office, 123 Care Way, Tech City , CA 94000.
+    </p>
+  </div>
+</section>
+{% endblock %}

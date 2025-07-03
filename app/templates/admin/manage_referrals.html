@@ -1,0 +1,261 @@
+{% extends "base/layout.html" %}
+{% block title %}Manage Referrals - HealneX Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-primary text-white py-3">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                        <div class="mb-2 mb-md-0">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="bi bi-arrow-left-right me-2"></i>Referral Management
+                            </h5>
+                            <small class="text-white-50">Track and manage user referrals</small>
+                        </div>
+                        <div>
+                            <div class="btn-group" role="group" aria-label="Referral Type Toggle">
+                                <input type="radio" class="btn-check" name="referralType" id="patientReferrals"
+                                    value="patient" checked>
+                                <label class="btn btn-outline-light px-3" for="patientReferrals">
+                                    <i class="bi bi-person-lines-fill me-1"></i> Patient Referrals
+                                </label>
+                                <input type="radio" class="btn-check" name="referralType" id="doctorReferrals"
+                                    value="doctor">
+                                <label class="btn btn-outline-light px-3" for="doctorReferrals">
+                                    <i class="bi bi-person-badge me-1"></i> Doctor Referrals
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row mb-4 g-3">
+                        <div class="col-12 col-md-4">
+                            <div class="card shadow-sm border-0 bg-primary text-white h-100 hover-lift">
+                                <div class="card-body text-center">
+                                    <div class="mb-2">
+                                        <i class="bi bi-people-fill fs-2"></i>
+                                    </div>
+                                    <h3 class="fw-bold mb-1">{{ total_patient_referrals }}</h3>
+                                    <p class="mb-0 small opacity-75">Patient Referrals</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <div class="card shadow-sm border-0 bg-info text-white h-100 hover-lift">
+                                <div class="card-body text-center">
+                                    <div class="mb-2">
+                                        <i class="bi bi-check-circle-fill fs-2"></i>
+                                    </div>
+                                    <h3 class="fw-bold mb-1">{{ successful_referrals }}</h3>
+                                    <p class="mb-0 small opacity-75">Successful</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <div class="card shadow-sm border-0 bg-warning text-white h-100 hover-lift">
+                                <div class="card-body text-center">
+                                    <div class="mb-2">
+                                        <i class="bi bi-hourglass-split fs-2"></i>
+                                    </div>
+                                    <h3 class="fw-bold mb-1">{{ pending_referrals }}</h3>
+                                    <p class="mb-0 small opacity-75">Pending</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="patientReferralsTab" class="referral-tab">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                            <h5 class="mb-0">
+                                <i class="bi bi-people me-2 text-primary"></i> Patient Referral Program
+                            </h5>
+                            <div class="input-group" style="max-width: 300px;">
+                                <input type="text" class="form-control" id="searchPatientReferrals"
+                                    placeholder="Search referrals...">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Referrer</th>
+                                        <th>Referred User</th>
+                                        <th>Referral Code</th>
+                                        <th>Date</th>
+                                        <th>Points</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if patient_referrals %}
+                                    {% for referral in patient_referrals %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url_for('admin.edit_user', user_id=referral.referrer.id) }}"
+                                                class="text-decoration-none fw-semibold">
+                                                {{ referral.referrer.name }}
+                                            </a>
+                                            <br><small class="text-muted">{{ referral.referrer.email }}</small>
+                                        </td>
+                                        <td>
+                                            {% if referral.referred_user %}
+                                            <a href="{{ url_for('admin.edit_user', user_id=referral.referred_user.id) }}"
+                                                class="text-decoration-none fw-semibold">
+                                                {{ referral.referred_user.name }}
+                                            </a>
+                                            <br><small class="text-muted">{{ referral.referred_user.email }}</small>
+                                            {% else %}
+                                            <span class="text-muted fst-italic">Pending signup</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <code class="text-dark">{{ referral.referrer.referral_code }}</code>
+                                        </td>
+                                        <td>
+                                            {{ referral.date_referred.strftime('%b %d, %Y') }}
+                                            <br><small class="text-muted">{{ referral.date_referred.strftime('%I:%M %p')
+                                                }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success bg-opacity-75">{{ referral.points_awarded }}
+                                                pts</span>
+                                        </td>
+                                        <td>
+                                            {% if referral.referred_user %}
+                                            <span class="badge bg-success">Completed</span>
+                                            {% else %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
+                                                data-bs-target="#viewReferralModal{{ referral.id }}"
+                                                title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <i class="bi bi-people text-muted fs-1"></i>
+                                            <p class="text-muted mt-2 mb-0">No patient referrals found</p>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% for referral in patient_referrals %}
+<div class="modal fade" id="viewReferralModal{{ referral.id }}" tabindex="-1"
+    aria-labelledby="referralModalLabel{{ referral.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="referralModalLabel{{ referral.id }}">
+                    <i class="bi bi-person-lines-fill me-2"></i>Referral Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4 px-4">
+
+                <div class="mb-3">
+                    <h6 class="text-uppercase text-muted small">Referrer</h6>
+                    <p class="mb-1 fw-semibold">{{ referral.referrer.name }}</p>
+                    <p class="mb-0 text-muted">{{ referral.referrer.email }}</p>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="text-uppercase text-muted small">Referral Info</h6>
+                    <p class="mb-1"><strong>Referral Code:</strong> <code>{{ referral.referrer.referral_code }}</code>
+                    </p>
+                    <p class="mb-1"><strong>Date:</strong> {{ referral.date_referred.strftime('%b %d, %Y %I:%M %p') }}
+                    </p>
+                    <p class="mb-0"><strong>Points Awarded:</strong> <span class="badge bg-success bg-opacity-75">{{
+                            referral.points_awarded }} pts</span></p>
+                </div>
+
+                <div class="mb-2">
+                    <h6 class="text-uppercase text-muted small">Status</h6>
+                    {% if referral.referred_user %}
+                    <p class="mb-1"><strong>Referred User:</strong> {{ referral.referred_user.name }}</p>
+                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Completed</span>
+                    {% else %}
+                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i> Pending</span>
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="modal-footer border-top-0 px-4 pb-4">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-1"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const referralTypeRadios = document.querySelectorAll('input[name="referralType"]');
+        const patientTab = document.getElementById('patientReferralsTab');
+
+        referralTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.value === 'patient') {
+                    patientTab.style.display = 'block';
+                } else {
+                    patientTab.style.display = 'none';
+                }
+            });
+        });
+
+
+        const searchPatient = document.getElementById('searchPatientReferrals');
+
+        function setupSearch(searchInput, tableSelector) {
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    const searchTerm = this.value.toLowerCase();
+                    const rows = document.querySelectorAll(`${tableSelector} tbody tr`);
+
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchTerm) ? '' : 'none';
+                    });
+                });
+            }
+        }
+
+        setupSearch(searchPatient, '#patientReferralsTab .table');
+    });
+</script>
+{% endblock %}

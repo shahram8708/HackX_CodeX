@@ -1,0 +1,17 @@
+fitz
+Flask
+Flask_Login
+flask_mail
+Flask_Migrate
+flask_sqlalchemy
+flask_wtf
+MarkupSafe
+Pillow
+python-dotenv
+Requests
+SQLAlchemy
+stripe
+Werkzeug
+WTForms
+gunicorn
+psycopg2-binary

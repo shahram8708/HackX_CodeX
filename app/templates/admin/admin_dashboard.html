@@ -1,0 +1,467 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Admin Dashboard - HealneX{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div
+                class="card shadow-sm border-0 bg-gradient bg-dark text-white rounded-4 animate__animated animate__fadeIn">
+                <div class="card-body py-4 px-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h2 class="card-title mb-2 d-flex align-items-center gap-2">
+                                <i class="bi bi-shield-lock-fill fs-3 text-warning"></i>
+                                <span class="fw-bold">Admin Dashboard</span>
+                            </h2>
+                            <p class="card-text opacity-75 mb-0">
+                                Welcome back, <strong>{{ current_user.name }}</strong>! Manage your HealneX platform
+                                with ease.
+                            </p>
+                        </div>
+                        <div
+                            class="col-lg-4 text-lg-end mt-3 mt-lg-0 d-flex justify-content-lg-end justify-content-start gap-2 align-items-center">
+                            <button class="btn btn-outline-light btn-sm rounded-pill shadow-sm"
+                                onclick="location.reload()">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                            </button>
+
+                            <div class="dropdown">
+                                <button class="btn btn-warning btn-sm rounded-pill shadow-sm dropdown-toggle"
+                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear-fill me-1"></i> Actions
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('admin.system_settings') }}">
+                                            <i class="bi bi-sliders2-vertical me-2"></i> System Settings
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('admin.api_stats') }}">
+                                            <i class="bi bi-download me-2"></i> Backup Data
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm bg-gradient bg-primary text-white h-100 hover-shadow transition">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="card-title small text-uppercase opacity-75 mb-1">Total Users</h6>
+                        <h2 class="fw-bold mb-0">{{ total_users }}</h2>
+                        <small class="opacity-75">+{{ new_users_this_month }} this month</small>
+                    </div>
+                    <div
+                        class="rounded-circle bg-white bg-opacity-25 p-3 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-people-fill fs-3" aria-label="Users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm bg-gradient bg-success text-white h-100 hover-shadow transition">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="card-title small text-uppercase opacity-75 mb-1">Total Revenue</h6>
+                        <h2 class="fw-bold mb-0">₹{{ stats.total_revenue }}</h2>
+                        <small class="opacity-75">₹{{ stats.this_month_revenue }} this month</small>
+                    </div>
+                    <div
+                        class="rounded-circle bg-white bg-opacity-25 p-3 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-currency-rupee fs-3" aria-label="Revenue"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm bg-gradient bg-info text-white h-100 hover-shadow transition">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="card-title small text-uppercase opacity-75 mb-1">Appointments</h6>
+                        <h2 class="fw-bold mb-0">{{ stats.total_appointments }}</h2>
+                        <small class="opacity-75">{{ stats.today_appointments }} today</small>
+                    </div>
+                    <div
+                        class="rounded-circle bg-white bg-opacity-25 p-3 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-calendar-event-fill fs-3" aria-label="Appointments"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm bg-gradient bg-warning text-white h-100 hover-shadow transition">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="card-title small text-uppercase opacity-75 mb-1">Active Subscriptions</h6>
+                        <h2 class="fw-bold mb-0">{{ active_subscriptions }}</h2>
+                        <small class="opacity-75">{{ subscription_conversion_rate|default(0) }}% conversion</small>
+                    </div>
+                    <div
+                        class="rounded-circle bg-white bg-opacity-25 p-3 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-star-fill fs-3" aria-label="Subscriptions"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightning-fill text-warning me-2"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body d-grid gap-2">
+
+                    <a href="{{ url_for('admin.manage_users') }}"
+                        class="btn btn-outline-primary rounded-pill shadow-sm transition">
+                        <i class="bi bi-people-fill me-2"></i> Manage Users
+                    </a>
+
+
+                    <a href="{{ url_for('admin.manage_appointments') }}"
+                        class="btn btn-outline-success rounded-pill shadow-sm transition">
+                        <i class="bi bi-calendar-check-fill me-2"></i> View Appointments
+                    </a>
+
+
+                    <a href="{{ url_for('admin.manage_payments') }}"
+                        class="btn btn-outline-info rounded-pill shadow-sm transition">
+                        <i class="bi bi-credit-card-fill me-2"></i> Payment Records
+                    </a>
+
+
+                    <a href="{{ url_for('admin.send_announcement') }}"
+                        class="btn btn-outline-warning rounded-pill shadow-sm transition">
+                        <i class="bi bi-megaphone-fill me-2"></i> Send Announcement
+                    </a>
+
+
+                    <a href="{{ url_for('admin.system_reports') }}"
+                        class="btn btn-outline-secondary rounded-pill shadow-sm transition">
+                        <i class="bi bi-graph-up-arrow me-2"></i> Generate Reports
+                    </a>
+
+
+                    <a href="{{ url_for('admin.manage_files') }}"
+                        class="btn btn-outline-dark rounded-pill shadow-sm transition">
+                        <i class="bi bi-file-earmark-medical-fill me-2"></i> Manage Files
+                    </a>
+
+
+                    <a href="{{ url_for('admin.manage_referrals') }}"
+                        class="btn btn-outline-success rounded-pill shadow-sm transition">
+                        <i class="bi bi-share-fill me-2"></i> Referral Records
+                    </a>
+
+
+                    <a href="{{ url_for('admin.system_settings') }}"
+                        class="btn btn-outline-danger rounded-pill shadow-sm transition">
+                        <i class="bi bi-gear-fill me-2"></i> System Settings
+                    </a>
+                </div>
+
+            </div>
+
+
+            <div class="card shadow-sm border-0 mt-4 rounded-3">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-activity text-success me-2"></i> System Health
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% set services = [
+                    ('Server Status', 'Online'),
+                    ('Database', 'Connected'),
+                    ('Email Service', 'Active'),
+                    ('Payment Gateway', 'Online')
+                    ] %}
+                    {% for label, status in services %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>{{ label }}</span>
+                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> {{ status }}</span>
+                    </div>
+                    {% endfor %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Last Backup</span>
+                        <span class="text-muted small">
+                            {{ last_backup_date.strftime('%b %d, %I:%M %p') if last_backup_date else 'Never' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history text-primary me-2"></i> Recent Activity
+                    </h5>
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill transition"
+                        onclick="location.reload()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Details</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activity-table">
+                                {% for activity in recent_activities %}
+                                <tr>
+                                    <td><small>{{ activity.timestamp.strftime('%H:%M') }}</small></td>
+                                    <td>
+                                        <strong>{{ activity.user.name if activity.user else 'System' }}</strong><br>
+                                        <small class="text-muted">{{ activity.user.role if activity.user else
+                                            'Automated' }}</small>
+                                    </td>
+                                    <td>
+                                        {% set type = activity.action_type %}
+                                        {% set badge_class = 'primary' if type == 'login' else 'success' if type ==
+                                        'payment' else 'info' if type == 'appointment' else 'warning' %}
+                                        <span class="badge bg-{{ badge_class }} text-uppercase small">{{ type|title
+                                            }}</span>
+                                    </td>
+                                    <td><span class="text-muted small">{{ activity.description }}</span></td>
+                                    <td><i class="bi bi-check-circle-fill text-success" title="Success"></i></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row g-3">
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-3 hover-shadow transition h-100">
+                <div class="card-header bg-white border-0 d-flex align-items-center">
+                    <i class="bi bi-graph-up text-primary fs-5 me-2"></i>
+                    <h5 class="mb-0">User Growth</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container position-relative" style="height: 300px;">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-3 hover-shadow transition h-100">
+                <div class="card-header bg-white border-0 d-flex align-items-center">
+                    <i class="bi bi-currency-rupee text-success fs-5 me-2"></i>
+                    <h5 class="mb-0">Revenue Trend</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container position-relative" style="height: 300px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-3 hover-shadow transition">
+                <div class="card-header bg-white border-0 d-flex align-items-center">
+                    <i class="bi bi-pie-chart-fill text-info fs-5 me-2"></i>
+                    <h5 class="mb-0">User Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <h4 class="text-primary mb-1">{{ doctors_count }}</h4>
+                            <p class="text-muted small mb-0">Doctors</p>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-success mb-1">{{ patients_count }}</h4>
+                            <p class="text-muted small mb-0">Patients</p>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-warning mb-1">{{ admins_count }}</h4>
+                            <p class="text-muted small mb-0">Admins</p>
+                        </div>
+                    </div>
+                    <div class="progress" style="height: 12px;">
+                        <div class="progress-bar bg-primary"
+                            style="width: {{ (doctors_count / total_users * 100)|round(1) }}%" title="Doctors"></div>
+                        <div class="progress-bar bg-success"
+                            style="width: {{ (patients_count / total_users * 100)|round(1) }}%" title="Patients"></div>
+                        <div class="progress-bar bg-warning"
+                            style="width: {{ (admins_count / total_users * 100)|round(1) }}%" title="Admins"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-3 hover-shadow transition">
+                <div class="card-header bg-white border-0 d-flex align-items-center">
+                    <i class="bi bi-star-fill text-warning fs-5 me-2"></i>
+                    <h5 class="mb-0">Top Performing Doctors</h5>
+                </div>
+                <div class="card-body">
+                    {% if top_doctors %}
+                    {% for doctor in top_doctors[:5] %}
+                    <div class="d-flex align-items-center mb-3 hover-transition">
+                        <div class="me-3">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm"
+                                style="width: 45px; height: 45px; font-size: 1.1rem;">
+                                {{ doctor.name[0].upper() }}
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">Dr. {{ doctor.name }}</h6>
+                            <small class="text-muted">{{ doctor.specialization }}</small>
+                        </div>
+                        <div class="text-end ms-2">
+                            <small class="text-muted">{{ doctor.total_appointments|default(0) }} appts</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-emoji-frown text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted small mb-0">No doctor data available</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    const userGrowthCtx = document.getElementById('userGrowthChart').getContext('2d');
+    new Chart(userGrowthCtx, {
+        type: 'line',
+        data: {
+            labels: {{ user_growth_labels|default([]) | tojson }},
+        datasets: [{
+            label: 'Total Users',
+            data: {{ user_growth_data|default ([]) | tojson }},
+        borderColor: 'rgb(54, 162, 235)',
+        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+        tension: 0.1
+        }]
+    },
+        options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ revenue_labels| tojson }},
+        datasets: [{
+            label: 'Revenue (₹)',
+            data: {{ revenue_data| tojson }},
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+        }]
+    },
+        options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+    function refreshDashboard() {
+        showToast('Refreshing dashboard...', 'info');
+        location.reload();
+    }
+
+    function refreshActivity() {
+        fetch('/admin/api/recent-activity')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateActivityTable(data.activities);
+                    showToast('Activity refreshed', 'success');
+                }
+            })
+            .catch(error => {
+                showToast('Failed to refresh activity', 'error');
+            });
+    }
+
+    function updateActivityTable(activities) {
+        const tbody = document.getElementById('activity-table');
+        tbody.innerHTML = activities.map(activity => `
+        <tr>
+            <td><small>${activity.time}</small></td>
+            <td>
+                <div>
+                    <strong>${activity.user_name}</strong><br>
+                    <small class="text-muted">${activity.role}</small>
+                </div>
+            </td>
+            <td><span class="badge bg-${activity.badge_color}">${activity.action}</span></td>
+            <td><span class="small">${activity.description}</span></td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+        </tr>
+    `).join('');
+    }
+
+
+    setInterval(refreshActivity, 300000);
+</script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base/layout.html" %}
+{% block title %}My Referrals - Patient{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div
+                        class="avatar-xl bg-success rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                        <i class="bi bi-people fs-1 text-white"></i>
+                    </div>
+                    <h4>{{ total_referrals }}</h4>
+                    <p class="text-muted">Total Referrals</p>
+                    <a href="{{ url_for('referrals.share_referral_code') }}" class="btn btn-primary">
+                        <i class="bi bi-share"></i> Share My Code
+                    </a>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6><i class="bi bi-trophy"></i> Rewards</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Points Earned:</strong> {{ total_points }}</p>
+                    <p><strong>Rewards Unlocked:</strong> {{ rewards_count }}</p>
+                    {% set next_reward = 100 - (total_points % 100) %}
+                    <p class="mb-1 text-success">
+                        🎉 You've used {{ next_reward }} points for reward(s).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-list"></i> Referral History</h5>
+                </div>
+                <div class="card-body">
+                    {% if referrals %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Referred User</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for referral in referrals %}
+                                <tr>
+                                    <td>{{ referral.referred_user.name if referral.referred_user else 'Pending' }}</td>
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ 'success' if referral.status == 'completed' else 'warning' }}">
+                                            {{ referral.status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>{{ referral.date_referred.strftime('%b %d, %Y') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-people fs-1"></i>
+                        <p>No referrals yet. Start sharing your code!</p>
+                        <a href="{{ url_for('referrals.share_referral_code') }}" class="btn btn-primary">
+                            <i class="bi bi-share"></i> Share Referral Code
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

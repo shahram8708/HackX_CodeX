@@ -1,0 +1,409 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Subscription Plans - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 fw-bold text-primary mb-3">Choose Your Plan</h1>
+            <p class="lead text-muted">Unlock premium features with our flexible subscription plans</p>
+            <form id="csrf-helper-form" style="display:none;">
+                {{ form.csrf_token }}
+            </form>
+
+
+            <div class="d-flex justify-content-center align-items-center mb-4">
+                <span class="me-3">Monthly</span>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="billing-toggle" onchange="toggleBilling()">
+                    <label class="form-check-label" for="billing-toggle"></label>
+                </div>
+                <span class="ms-3">
+                    Annually
+                    <span class="badge bg-success ms-1">Save 20%</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-heart text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 class="card-title">Basic</h3>
+                    <p class="text-muted">Perfect for getting started</p>
+
+                    <div class="mb-4">
+                        <h2 class="display-4 fw-bold text-primary">
+                            ₹<span class="monthly-price">9</span><span class="annual-price"
+                                style="display: none;">7</span>
+                        </h2>
+                        <span class="text-muted">
+                            per <span class="billing-period">month</span>
+                        </span>
+                    </div>
+
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Up to 3 consultations per month
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Basic health tracking
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Email support
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Appointment scheduling
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Priority support
+                        </li>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Teleconsultations
+                    </ul>
+
+                    <div class="d-grid">
+                        <button class="btn btn-outline-primary btn-lg" onclick="selectPlan('basic', 'monthly')">
+                            Choose Basic
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-primary shadow h-100 position-relative">
+
+                <div class="position-absolute top-0 start-50 translate-middle">
+                    <span class="badge bg-primary px-3 py-2">Most Popular</span>
+                </div>
+
+                <div class="card-body text-center p-4 mt-3">
+                    <div class="mb-3">
+                        <i class="bi bi-star-fill text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 class="card-title">Premium</h3>
+                    <p class="text-muted">Best for regular healthcare needs</p>
+
+                    <div class="mb-4">
+                        <h2 class="display-4 fw-bold text-primary">
+                            ₹<span class="monthly-price">29</span><span class="annual-price"
+                                style="display: none;">23</span>
+                        </h2>
+                        <span class="text-muted">
+                            per <span class="billing-period">month</span>
+                        </span>
+                    </div>
+
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Unlimited consultations
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Advanced health tracking
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Teleconsultations included
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Priority support
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Medical records storage
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Prescription management
+                        </li>
+                    </ul>
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-lg" onclick="selectPlan('premium', 'monthly')">
+                            Choose Premium
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-building text-secondary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 class="card-title">Enterprise</h3>
+                    <p class="text-muted">For families and organizations</p>
+
+                    <div class="mb-4">
+                        <h2 class="display-4 fw-bold text-primary">
+                            ₹<span class="monthly-price">99</span><span class="annual-price"
+                                style="display: none;">79</span>
+                        </h2>
+                        <span class="text-muted">
+                            per <span class="billing-period">month</span>
+                        </span>
+                    </div>
+
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Everything in Premium
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            24/7 dedicated support
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Custom health plans
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Admin dashboard
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            API access
+                        </li>
+                    </ul>
+
+                    <div class="d-grid">
+                        <button class="btn btn-outline-primary btn-lg" onclick="selectPlan('enterprise', 'monthly')">
+                            Choose Enterprise
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if current_subscription %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-info border-0" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-info-circle me-3" style="font-size: 1.5rem;"></i>
+                    <div class="flex-grow-1">
+                        <h6 class="alert-heading mb-1">Current Subscription</h6>
+                        <p class="mb-0">
+                            You are currently subscribed to the
+                            <strong>{{ current_user.subscription_tier|capitalize }}</strong> plan
+                            on a <strong>{{ current_user.subscription_plan|capitalize }}</strong> billing cycle.
+                            {% if current_user.subscription_active %}
+                            <br>Status: <span class="text-success fw-semibold">Active</span>
+                            {% else %}
+                            <br>Status: <span class="text-danger fw-semibold">Inactive</span>
+                            {% endif %}
+                            {% if current_user.subscription_expiry %}
+                            <br>Expires on: <strong>{{ current_user.subscription_expiry.strftime('%B %d, %Y')
+                                }}</strong>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <a href="{{ url_for('payments.subscription_plans') }}" class="btn btn-outline-info">
+                        Manage Subscription
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">Compare Features</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Features</th>
+                            <th class="text-center">Basic</th>
+                            <th class="text-center">Premium</th>
+                            <th class="text-center">Enterprise</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monthly Consultations</td>
+                            <td class="text-center">3</td>
+                            <td class="text-center">Unlimited</td>
+                            <td class="text-center">Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td>Teleconsultations</td>
+                            <td class="text-center">3</td>
+                            <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                            <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Health Tracking</td>
+                            <td class="text-center">Basic</td>
+                            <td class="text-center">Advanced</td>
+                            <td class="text-center">Advanced</td>
+                        </tr>
+                        <tr>
+                            <td>Priority Support</td>
+                            <td class="text-center"><i class="bi bi-check text-danger"></i></td>
+                            <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                            <td class="text-center">24/7</td>
+                        </tr>
+                        <tr>
+                            <td>Medical Records Storage</td>
+                            <td class="text-center">1GB</td>
+                            <td class="text-center">10GB</td>
+                            <td class="text-center">Unlimited</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">Frequently Asked Questions</h3>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse1">
+                            Can I change my plan later?
+                        </button>
+                    </h2>
+                    <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, you can upgrade or downgrade your plan at any time. Changes will be prorated and take
+                            effect immediately.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse2">
+                            What happens if I cancel my subscription?
+                        </button>
+                    </h2>
+                    <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            You can cancel anytime. Your subscription will remain active until the end of your billing
+                            period,
+                            after which you'll be moved to our free tier with basic features.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse3">
+                            Are there any setup fees?
+                        </button>
+                    </h2>
+                    <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            No, there are no setup fees or hidden charges. You only pay the subscription fee for your
+                            chosen plan.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentBilling = 'monthly';
+
+    function toggleBilling() {
+        const toggle = document.getElementById('billing-toggle');
+        const monthlyPrices = document.querySelectorAll('.monthly-price');
+        const annualPrices = document.querySelectorAll('.annual-price');
+        const billingPeriods = document.querySelectorAll('.billing-period');
+
+        if (toggle.checked) {
+            currentBilling = 'annual';
+            monthlyPrices.forEach(price => price.style.display = 'none');
+            annualPrices.forEach(price => price.style.display = 'inline');
+            billingPeriods.forEach(period => period.textContent = 'year');
+        } else {
+            currentBilling = 'monthly';
+            monthlyPrices.forEach(price => price.style.display = 'inline');
+            annualPrices.forEach(price => price.style.display = 'none');
+            billingPeriods.forEach(period => period.textContent = 'month');
+        }
+
+
+        updateButtonHandlers();
+    }
+
+    function updateButtonHandlers() {
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            const onclick = button.getAttribute('onclick');
+            if (onclick && onclick.includes('selectPlan')) {
+                const planType = onclick.match(/selectPlan\('(\w+)'/)[1];
+                button.setAttribute('onclick', `selectPlan('${planType}', '${currentBilling}')`);
+            }
+        });
+    }
+
+    function selectPlan(planName, billing) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/payments/subscribe';
+
+        const planTypeInput = document.createElement('input');
+        planTypeInput.name = 'plan_type';
+        planTypeInput.value = billing;
+        form.appendChild(planTypeInput);
+
+        const planNameInput = document.createElement('input');
+        planNameInput.name = 'plan_name';
+        planNameInput.value = planName;
+        form.appendChild(planNameInput);
+
+        const csrfToken = document.querySelector('input[name="csrf_token"]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken.value;
+            form.appendChild(csrfInput);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        updateButtonHandlers();
+    });
+</script>
+{% endblock %}

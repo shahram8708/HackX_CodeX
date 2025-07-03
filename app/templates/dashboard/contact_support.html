@@ -1,0 +1,63 @@
+{% extends "base/layout.html" %}
+{% block title %}Contact Support{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4><i class="bi bi-envelope"></i> Contact Support</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.category.label(class="form-label") }}
+                            {{ form.category(class="form-select") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.message.label(class="form-label") }}
+                            {{ form.message(class="form-control", rows="5") }}
+                        </div>
+
+                        <div class="text-end">
+                            <button id="submitBtn" type="submit" class="btn btn-primary">
+                                <span id="spinner" class="spinner-border spinner-border-sm me-2 d-none" role="status"
+                                    aria-hidden="true"></span>
+                                <span id="btnText"><i class="bi bi-send"></i> Send Message</span>
+                            </button>
+                        </div>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const form = document.querySelector("form");
+                                const submitBtn = document.getElementById("submitBtn");
+                                const spinner = document.getElementById("spinner");
+                                const btnText = document.getElementById("btnText");
+
+                                form.addEventListener("submit", function () {
+                                    submitBtn.disabled = true;
+                                    spinner.classList.remove("d-none");
+                                    btnText.textContent = "Sending...";
+                                });
+                            });
+                        </script>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

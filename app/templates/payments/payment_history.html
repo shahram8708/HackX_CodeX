@@ -1,0 +1,356 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Payment History - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="bi bi-credit-card text-success me-2"></i>
+                        Payment History
+                    </h2>
+                    <p class="text-muted mb-0">View all your transactions and payments</p>
+                </div>
+                <a href="{{ url_for('payments.subscription_plans') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>New Subscription
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-success mb-2">
+                        <i class="bi bi-currency-rupee" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="mb-1">
+                        {% if current_user.role == 'doctor' %}
+                        ₹{{ total_earned|default(0) }}
+                        {% else %}
+                        ₹{{ total_spent|default(0) }}
+                        {% endif %}
+                    </h4>
+                    <p class="text-muted small mb-0">
+                        {% if current_user.role == 'doctor' %}
+                        Total Earned
+                        {% else %}
+                        Total Spent
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-primary mb-2">
+                        <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="mb-1">{{ consultation_payments|length }}</h4>
+                    <p class="text-muted small mb-0">
+                        {% if current_user.role == 'doctor' %}
+                        Consultations Done
+                        {% else %}
+                        Consultations Paid
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+        {% if current_user.role != 'doctor' %}
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-info mb-2">
+                        <i class="bi bi-star" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="mb-1">{{ subscription_payments|length }}</h4>
+                    <p class="text-muted small mb-0">Subscriptions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-arrow-repeat" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="mb-1">
+                        {{ next_billing_date.strftime('%b %d, %Y') if next_billing_date else 'N/A' }}
+                    </h4>
+                    <p class="text-muted small mb-0">Next Billing</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Payment Type</label>
+                            <select class="form-select" name="payment_type">
+                                <option value="">All Types</option>
+                                <option value="consultation" {% if request.args.get('payment_type')=='consultation'
+                                    %}selected{% endif %}>Consultations</option>
+                                <option value="subscription" {% if request.args.get('payment_type')=='subscription'
+                                    %}selected{% endif %}>Subscriptions</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Date Range</label>
+                            <select class="form-select" name="date_range">
+                                <option value="">All Time</option>
+                                <option value="last_month" {% if request.args.get('date_range')=='last_month'
+                                    %}selected{% endif %}>Last Month</option>
+                                <option value="last_3_months" {% if request.args.get('date_range')=='last_3_months'
+                                    %}selected{% endif %}>Last 3 Months</option>
+                                <option value="last_year" {% if request.args.get('date_range')=='last_year' %}selected{%
+                                    endif %}>Last Year</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% if payments %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Transaction History
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ payment.payment_date.strftime('%b %d, %Y') }}</strong><br>
+                                        <small class="text-muted">{{ payment.payment_date.strftime('%I:%M %p')
+                                            }}</small>
+
+                                    </td>
+                                    <td>
+                                        {% if payment.payment_type == 'consultation' %}
+                                        <div>
+                                            <strong>Consultation with Dr. {{ payment.appointment.doctor.name
+                                                }}</strong><br>
+                                            <small class="text-muted">{{ payment.appointment.doctor.specialization
+                                                }}</small>
+                                        </div>
+                                        {% else %}
+                                        <div>
+                                            <strong>{{ payment.plan_name }} Subscription</strong><br>
+                                            <small class="text-muted">{{ payment.billing_cycle|title }} billing</small>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ 'primary' if payment.payment_type == 'consultation' else 'info' }}">
+                                            {{ payment.payment_type|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">₹{{ payment.amount }}</strong>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ 'success' if payment.status == 'completed' else 'warning' if payment.status == 'pending' else 'danger' }}">
+                                            {{ payment.status|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-primary"
+                                                onclick="viewReceipt({{ payment.id }})" title="View Receipt">
+                                                <i class="bi bi-receipt"></i>
+                                            </button>
+                                            <a href="{{ url_for('payments.view_receipt', payment_id=payment.id) }}"
+                                                class="btn btn-outline-success" title="Download Receipt">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                            {% if payment.payment_type == 'consultation' and payment.status ==
+                                            'completed' %}
+                                            <a href="{{ url_for('appointments.book_appointment', doctor_id=payment.appointment.doctor.id) }}"
+                                                class="btn btn-outline-info" title="Book Again">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% if payments.pages > 1 %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Payment history pagination">
+                <ul class="pagination justify-content-center">
+                    {% if payments.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('payments.payment_history', page=payments.prev_num, **request.args) }}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in payments.iter_pages() %}
+                    {% if page_num %}
+                    {% if page_num != payments.page %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('payments.payment_history', page=page_num, **request.args) }}">{{ page_num
+                            }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_num }}</span>
+                    </li>
+                    {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if payments.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('payments.payment_history', page=payments.next_num, **request.args) }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="bi bi-credit-card text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mb-3">No payment history found</h4>
+                <p class="text-muted mb-4">Your payment transactions will appear here</p>
+                <a href="{{ url_for('appointments.book_appointment') }}" class="btn btn-primary me-2">
+                    <i class="bi bi-calendar-plus me-2"></i>Book Appointment
+                </a>
+                <a href="{{ url_for('payments.subscription_plans') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-star me-2"></i>View Plans
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+<div class="modal fade" id="receiptModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-receipt me-2"></i>Payment Receipt
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="receipt-content">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="printReceipt()">
+                    <i class="bi bi-printer me-2"></i>Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewReceipt(paymentId) {
+        fetch(`/payments/receipt/${paymentId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('receipt-content').innerHTML = data.html;
+                    new bootstrap.Modal(document.getElementById('receiptModal')).show();
+                } else {
+                    showToast('Error loading receipt', 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Failed to load receipt', 'error');
+            });
+    }
+
+    function printReceipt() {
+        const receiptContent = document.getElementById('receipt-content').innerHTML;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+        <html>
+            <head>
+                <title>Payment Receipt</title>
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    .receipt { max-width: 600px; margin: 0 auto; }
+                </style>
+            </head>
+            <body>
+                <div class="receipt">${receiptContent}</div>
+            </body>
+        </html>
+    `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+</script>
+{% endblock %}

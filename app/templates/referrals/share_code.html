@@ -1,0 +1,116 @@
+{% extends "base/layout.html" %}
+{% block title %}Share Referral Code{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4><i class="bi bi-share"></i> Share Your Referral Code</h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <p class="text-muted">Invite friends and family to join HealneX and earn rewards!</p>
+                        <div class="alert alert-info">
+                            <strong>Earn 50 points</strong> for each successful referral!
+                        </div>
+                    </div>
+
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5>Your Referral Code</h5>
+                            <div class="input-group input-group-lg">
+                                <input type="text" class="form-control text-center fs-3 fw-bold" id="referralCode"
+                                    value="{{ current_user.referral_code }}" readonly>
+                                <button class="btn btn-primary" type="button" onclick="copyCode()">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Share via:</h6>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button class="btn btn-success" onclick="shareWhatsApp()">
+                                <i class="bi bi-whatsapp"></i> WhatsApp
+                            </button>
+                            <button class="btn btn-primary" onclick="shareEmail()">
+                                <i class="bi bi-envelope"></i> Email
+                            </button>
+                            <button class="btn btn-info" onclick="shareSMS()">
+                                <i class="bi bi-phone"></i> SMS
+                            </button>
+                            <button class="btn btn-secondary" onclick="shareLink()">
+                                <i class="bi bi-link-45deg"></i> Copy Link
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h6>How it works:</h6>
+                            <div class="row text-start">
+                                <div class="col-md-4">
+                                    <div class="text-center mb-2">
+                                        <i class="bi bi-1-circle fs-2 text-primary"></i>
+                                    </div>
+                                    <p class="small">Share your unique referral code with friends</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center mb-2">
+                                        <i class="bi bi-2-circle fs-2 text-primary"></i>
+                                    </div>
+                                    <p class="small">They register using your code</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center mb-2">
+                                        <i class="bi bi-3-circle fs-2 text-primary"></i>
+                                    </div>
+                                    <p class="small">You both earn points and rewards!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyCode() {
+        const codeInput = document.getElementById('referralCode');
+        codeInput.select();
+        document.execCommand('copy');
+        showToast('Referral code copied to clipboard!', 'success');
+    }
+
+    function shareWhatsApp() {
+        const code = document.getElementById('referralCode').value;
+        const message = `Join HealneX using my referral code: ${code} and get premium healthcare services!`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    function shareEmail() {
+        const code = document.getElementById('referralCode').value;
+        const subject = 'Join HealneX with my referral code';
+        const body = `Hi! I'd like to invite you to join HealneX, a premium healthcare platform. Use my referral code: ${code} when you register to get special benefits. Visit: ${window.location.origin}/auth/register/patient`;
+        window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+    }
+
+    function shareSMS() {
+        const code = document.getElementById('referralCode').value;
+        const message = `Join HealneX using my referral code: ${code}. Register at ${window.location.origin}/auth/register/patient`;
+        window.open(`sms:?body=${encodeURIComponent(message)}`);
+    }
+
+    function shareLink() {
+        const code = document.getElementById('referralCode').value;
+        const link = `${window.location.origin}/auth/register/patient?ref=${code}`;
+        navigator.clipboard.writeText(link).then(() => {
+            showToast('Referral link copied to clipboard!', 'success');
+        });
+    }
+</script>
+{% endblock %}

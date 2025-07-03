@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+
+    <title>{% block title %}HealneX - Digital Healthcare Platform | Online Doctor Consultations & Health Management{%
+        endblock %}</title>
+    <meta name="description"
+        content="{% block meta_description %}HealneX is a comprehensive digital healthcare platform connecting patients and doctors with seamless online consultations, secure health record access, telemedicine services, and advanced health management tools.{% endblock %}">
+    <meta name="keywords"
+        content="healnex, healthcare platform, telehealth, telemedicine, doctor appointment, online consultation, e-health, digital health, patient portal, medical consultation, health records, healthcare technology, virtual doctor visit, medical platform, health management, online doctor, healthcare app, medical app, patient care, digital medicine, remote healthcare">
+    <meta name="author" content="HealneX">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="language" content="en">
+    <meta name="rating" content="general">
+
+
+    <link rel="canonical" href="{{ request.url }}">
+
+
+    <meta property="og:site_name" content="HealneX">
+    <meta property="og:type" content="website">
+    <meta property="og:title"
+        content="{% block og_title %}HealneX - Digital Healthcare Platform | Connect with Doctors Online{% endblock %}">
+    <meta property="og:description"
+        content="{% block og_description %}Experience the future of healthcare with HealneX. Book online consultations, manage health records, and connect with certified healthcare professionals from anywhere.{% endblock %}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/hero-healthcare.png', _external=True) }}">
+    <meta property="og:image:alt"
+        content="HealneX Healthcare Platform - Connecting patients and doctors through digital health technology">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@healnex">
+    <meta name="twitter:creator" content="@healnex">
+    <meta name="twitter:title"
+        content="{% block twitter_title %}HealneX - Revolutionary Digital Healthcare Platform{% endblock %}">
+    <meta name="twitter:description"
+        content="{% block twitter_description %}Transform your healthcare experience with HealneX. Access doctors online, manage medical records, and receive quality care from anywhere.{% endblock %}">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/hero-healthcare.png', _external=True) }}">
+    <meta name="twitter:image:alt"
+        content="HealneX - Digital healthcare platform connecting patients with healthcare providers">
+
+
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ url_for('static', filename='images/logo.png') }}">
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ url_for('static', filename='images/logo.png') }}">
+
+
+    <meta name="msapplication-TileColor" content="#2563eb">
+    <meta name="msapplication-TileImage" content="{{ url_for('static', filename='images/hero-healthcare.png') }}">
+    <meta name="msapplication-config" content="{{ url_for('static', filename='browserconfig.xml') }}">
+
+
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="HealneX">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//healnex.onrender.com">
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MedicalOrganization",
+        "name": "HealneX",
+        "description": "HealneX is a digital healthcare platform connecting patients and doctors with seamless online consultations, health record access, and secure communication tools.",
+        "url": "https://healnex.onrender.com",
+        "logo": "{{ url_for('static', filename='images/logo.png', _external=True) }}",
+        "image": "{{ url_for('static', filename='images/hero-healthcare.png', _external=True) }}",
+        "telephone": "+91 9999999999",
+        "email": "multimosaic.help@gmail.com",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "IN"
+        },
+        "sameAs": [
+            "https://www.linkedin.com/company/multimosaic",
+            "https://x.com/multi_mosaic",
+            "https://www.facebook.com/profile.php?id=61574916413888",
+            "https://www.instagram.com/multi.mosaic/"
+        ],
+        "serviceType": [
+            "Telemedicine",
+            "Online Medical Consultation",
+            "Digital Health Records",
+            "Healthcare Technology Platform",
+            "Virtual Doctor Visits"
+        ],
+        "medicalSpecialty": [
+            "General Medicine",
+            "Cardiology",
+            "Dermatology",
+            "Psychiatry",
+            "Pediatrics",
+            "Internal Medicine"
+        ],
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Healthcare Services",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Online Doctor Consultation",
+                        "description": "Virtual consultations with certified healthcare professionals"
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Digital Health Records",
+                        "description": "Secure storage and management of patient medical records"
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Appointment Booking",
+                        "description": "Easy online appointment scheduling with healthcare providers"
+                    }
+                }
+            ]
+        },
+        "founder": {
+            "@type": "Organization",
+            "name": "HealneX Team"
+        },
+        "foundingDate": "2025",
+        "slogan": "Connecting Health, Empowering Care"
+    }
+    </script>
+
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "HealneX",
+        "description": "Digital healthcare platform for online consultations and health management",
+        "url": "https://healnex.onrender.com",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "IN"
+        },
+        "featureList": [
+            "Online Doctor Consultations",
+            "Health Record Management",
+            "Appointment Booking",
+            "Secure Messaging",
+            "Prescription Management",
+            "Health Analytics"
+        ]
+    }
+    </script>
+
+
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://code.jquery.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+
+    <link rel="prefetch" href="{{ url_for('home') }}">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        as="style">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    a {
+        text-decoration: none;
+    }
+</style>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm py-2">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-semibold gap-2" href="{{ url_for('home') }}"
+                style="text-decoration: none; transition: all 0.3s ease-in-out;">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="HealneX Logo" height="40" width="40"
+                    loading="lazy"
+                    style="filter: brightness(0.5) contrast(1.2); border-radius: 10px; transition: transform 0.3s ease-in-out;">
+                <span class="fs-5 text-white" style="transition: color 0.3s ease;">HealneX</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'patient' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.patient_dashboard') }}">
+                            <i class="bi bi-house-door-fill me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('appointments.book_appointment') }}">
+                            <i class="bi bi-calendar-plus me-1"></i>Book Appointment
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('uploads.view_reports') }}">
+                            <i class="bi bi-file-earmark-medical me-1"></i>Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.treatment_history') }}">
+                            <i class="bi bi-clipboard2-pulse me-1"></i>Treatments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('chat.chat_index') }}">
+                            <i class="bi bi-chat-left-dots me-1"></i>Messages
+                        </a>
+                    </li>
+                    {% elif current_user.role == 'doctor' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.doctor_dashboard') }}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('appointments.my_appointments') }}">
+                            <i class="bi bi-calendar-event me-1"></i>Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('uploads.upload_report') }}">
+                            <i class="bi bi-cloud-upload me-1"></i>Upload
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('uploads.doctor_uploads') }}">
+                            <i class="bi bi-folder2-open me-1"></i>My Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.patient_lookup') }}">
+                            <i class="bi bi-search me-1"></i>Patient Lookup
+                        </a>
+                    </li>
+                    {% elif current_user.role == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">
+                            <i class="bi bi-speedometer me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.manage_users') }}">
+                            <i class="bi bi-people me-1"></i>Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.manage_appointments') }}">
+                            <i class="bi bi-calendar-check me-1"></i>Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.manage_payments') }}">
+                            <i class="bi bi-cash-stack me-1"></i>Payments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.system_reports') }}">
+                            <i class="bi bi-bar-chart me-1"></i>Reports
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+
+
+                <ul class="navbar-nav align-items-center">
+                    {% if current_user.is_authenticated %}
+
+                    <li class="nav-item dropdown me-2">
+                        <a class="nav-link position-relative" href="#" id="notificationDropdown"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-bell-fill"></i>
+                            {% if unread_notification_count > 0 %}
+                            <span
+                                class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">
+                                {{ unread_notification_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 animate__animated animate__fadeIn"
+                            style="width: 320px; max-width: 90vw;">
+
+                            <li class="px-3 pt-2 pb-1 d-flex align-items-center justify-content-between">
+                                <h6 class="dropdown-header p-0 text-primary fw-semibold mb-0">
+                                    <i class="bi bi-bell-fill me-1"></i> Notifications
+                                </h6>
+                                <button class="btn btn-sm btn-link text-decoration-none text-muted"
+                                    id="mark-all-read-btn" title="Mark all as read">
+                                    <i class="bi bi-check2-all"></i>
+                                </button>
+                            </li>
+
+                            <li>
+                                <ul class="list-unstyled mb-0 px-2" id="notification-list"
+                                    style="word-break: break-word; white-space: normal;">
+
+                                    <li class="text-center text-muted small py-3" id="no-notifications">
+                                        <i class="bi bi-bell-slash-fill me-1"></i> No new notifications
+                                    </li>
+
+
+                                </ul>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider my-2">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item text-center fw-semibold text-primary"
+                                    href="{{ url_for('notifications.notifications') }}">
+                                    <i class="bi bi-eye me-1"></i> View All Notifications
+                                </a>
+                            </li>
+                        </ul>
+
+                    </li>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            fetch('/notifications/api/recent?limit=5')
+                                .then(res => res.json())
+                                .then(data => {
+                                    const list = document.getElementById('notification-list');
+                                    list.innerHTML = '';
+
+                                    if (data.length === 0) {
+                                        const li = document.createElement('li');
+                                        li.className = 'dropdown-item text-muted';
+                                        li.textContent = 'No new notifications';
+                                        list.appendChild(li);
+                                        return;
+                                    }
+
+                                    data.forEach(n => {
+                                        const li = document.createElement('li');
+                                        li.className = 'dropdown-item';
+
+                                        li.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="small text-truncate" style="max-width: 250px;">${n.title}</strong>
+                            <div class="small text-muted">${n.created_at}</div>
+                        </div>
+                        ${!n.is_read ? '<span class="badge bg-warning">New</span>' : ''}
+                    </div>
+                    <div class="small text-truncate" style="max-width: 250px;">${n.message}</div>
+                `;
+
+                                        list.appendChild(li);
+                                    });
+                                })
+                                .catch(err => {
+                                    console.error('Failed to load notifications:', err);
+                                });
+                        });
+                    </script>
+
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light" href="#" id="userDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i>{{ current_user.name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.edit_profile') }}">
+                                    <i class="bi bi-person-lines-fill me-2"></i>Profile
+                                </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('notifications.notifications') }}">
+                                    <i class="bi bi-bell me-2"></i>Notifications
+                                </a></li>
+                            {% if current_user.role == 'patient' %}
+                            <li><a class="dropdown-item" href="{{ url_for('payments.subscription_plans') }}">
+                                    <i class="bi bi-credit-card me-2"></i>Subscription
+                                </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('referrals.patient_referrals') }}">
+                                    <i class="bi bi-share me-2"></i>Referrals
+                                </a></li>
+                            {% endif %}
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register_patient') }}">
+                            <i class="bi bi-person-plus-fill me-1"></i>Register
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <nav class="navbar navbar-light bg-white border-top shadow-sm d-lg-none fixed-bottom px-0">
+        <div class="container-fluid px-0">
+            <ul class="nav nav-justified w-100">
+
+                {% if current_user.is_authenticated %}
+                {% if current_user.role == 'patient' %}
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('dashboard.patient_dashboard') }}">
+                        <i class="bi bi-house-door-fill fs-5 d-block"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('appointments.book_appointment') }}">
+                        <i class="bi bi-calendar-plus fs-5 d-block"></i>Book
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('chat.chat_index') }}">
+                        <i class="bi bi-chat-dots fs-5 d-block"></i>Chat
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('uploads.view_reports') }}">
+                        <i class="bi bi-folder2-open fs-5 d-block"></i>Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('dashboard.edit_profile') }}">
+                        <i class="bi bi-person-circle fs-5 d-block"></i>Me
+                    </a>
+                </li>
+
+                {% elif current_user.role == 'doctor' %}
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('dashboard.doctor_dashboard') }}">
+                        <i class="bi bi-speedometer2 fs-5 d-block"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('appointments.my_appointments') }}">
+                        <i class="bi bi-calendar-event fs-5 d-block"></i>Appts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('uploads.upload_report') }}">
+                        <i class="bi bi-cloud-upload fs-5 d-block"></i>Upload
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('dashboard.patient_lookup') }}">
+                        <i class="bi bi-search fs-5 d-block"></i>Patients
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('dashboard.edit_profile') }}">
+                        <i class="bi bi-person-circle fs-5 d-block"></i>Me
+                    </a>
+                </li>
+
+                {% elif current_user.role == 'admin' %}
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('admin.admin_dashboard') }}">
+                        <i class="bi bi-speedometer2 fs-5 d-block"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('admin.manage_users') }}">
+                        <i class="bi bi-people-fill fs-5 d-block"></i>Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('admin.manage_appointments') }}">
+                        <i class="bi bi-calendar-check-fill fs-5 d-block"></i>Appts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('admin.system_reports') }}">
+                        <i class="bi bi-graph-up-arrow fs-5 d-block"></i>Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('dashboard.edit_profile') }}">
+                        <i class="bi bi-person-circle fs-5 d-block"></i>Me
+                    </a>
+                </li>
+                {% endif %}
+                {% else %}
+
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('home') }}">
+                        <i class="bi bi-house-door fs-5 d-block"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('auth.login') }}">
+                        <i class="bi bi-box-arrow-in-right fs-5 d-block"></i>Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center small" href="{{ url_for('auth.register_patient') }}">
+                        <i class="bi bi-person-plus fs-5 d-block"></i>Register
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+
+
+    <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <style>
+        .animate-on-scroll {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        #btn-back-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+    <script>
+
+        window.onscroll = function () {
+            const backToTopBtn = document.getElementById("btn-back-to-top");
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        };
+
+        document.getElementById("btn-back-to-top").addEventListener("click", function () {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        });
+
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong class="me-auto">HealneX</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body"></div>
+        </div>
+    </div>
+
+
+    <footer class="footer-section bg-dark text-white py-5 mt-5 mb-5 mb-md-0 ps-4 ps-md-5">
+        <div class="container">
+            <div class="row gy-4">
+
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3">HealneX</h5>
+                    <p class="text-muted">
+                        Bridging patients and healthcare professionals through secure, smart, and simple technology.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="https://www.facebook.com/profile.php?id=61574916413888" class="text-white fs-5"><i
+                                class="bi bi-facebook"></i></a>
+                        <a href="https://x.com/multi_mosaic" class="text-white fs-5"><i class="bi bi-twitter"></i></a>
+                        <a href="https://www.linkedin.com/company/multimosaic" class="text-white fs-5"><i
+                                class="bi bi-linkedin"></i></a>
+                        <a href="https://www.instagram.com/multi.mosaic/" class="text-white fs-5"><i
+                                class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-2 col-sm-4">
+                    <h6 class="text-uppercase fw-semibold mb-3">Platform</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-muted text-decoration-none">Home</a></li>
+                        <li><a href="/about" class="text-muted text-decoration-none">About</a></li>
+                        <li><a href="/features" class="text-muted text-decoration-none">Features</a></li>
+                        <li><a href="/payments/plans" class="text-muted text-decoration-none">Pricing</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-sm-4">
+                    <h6 class="text-uppercase fw-semibold mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/support/contact" class="text-muted text-decoration-none">Help Center</a></li>
+                        <li><a href="/support/contact" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li><a href="/policy" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li><a href="/terms" class="text-muted text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-sm-4">
+                    <h6 class="text-uppercase fw-semibold mb-3">For Doctors</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('auth.register_doctor') }}" class="text-muted text-decoration-none">Join
+                                Platform</a></li>
+                        <li><a href="{{ url_for('auth.register_doctor') }}"
+                                class="text-muted text-decoration-none">Resources</a></li>
+                        <li><a href="{{ url_for('auth.register_doctor') }}"
+                                class="text-muted text-decoration-none">Training</a></li>
+                        <li><a href="/support/contact" class="text-muted text-decoration-none">Support</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-sm-4">
+                    <h6 class="text-uppercase fw-semibold mb-3">For Patients</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('auth.register_patient') }}"
+                                class="text-muted text-decoration-none">Sign Up</a></li>
+                        <li><a href="/appointments/book" class="text-muted text-decoration-none">Find Doctors</a></li>
+                        <li><a href="/appointments/book" class="text-muted text-decoration-none">Health Tips</a></li>
+                        <li><a href="{{ url_for('auth.register_patient') }}"
+                                class="text-muted text-decoration-none">Insurance</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="border-light mt-4">
+
+            <div class="text-center small text-muted">
+                &copy; {{ current_year or 2025 }} HealneX. All rights reserved. | Connecting Health, Empowering Care.
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+</body>
+
+</html>

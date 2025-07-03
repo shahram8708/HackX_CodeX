@@ -1,0 +1,100 @@
+{% extends "base/layout.html" %}
+
+{% block title %}
+{% if error_code == 404 %}Page Not Found{% elif error_code == 403 %}Access Denied{% elif error_code == 500 %}Server
+Error{% endif %} - HealneX
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center">
+                {% if error_code == 404 %}
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                </div>
+                <h1 class="display-4 text-muted">404</h1>
+                <h2 class="mb-3">Page Not Found</h2>
+                <p class="lead text-muted mb-4">
+                    Sorry, the page you're looking for doesn't exist or has been moved.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-primary me-md-2">
+                        <i class="bi bi-house-door"></i> Go Home
+                    </a>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Go Back
+                    </a>
+                </div>
+                {% elif error_code == 403 %}
+                <div class="mb-4">
+                    <i class="bi bi-shield-exclamation text-danger" style="font-size: 4rem;"></i>
+                </div>
+                <h1 class="display-4 text-muted">403</h1>
+                <h2 class="mb-3">Access Denied</h2>
+                <p class="lead text-muted mb-4">
+                    You don't have permission to access this resource. Please contact your administrator if you believe
+                    this is an error.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'patient' %}
+                    <a href="{{ url_for('dashboard.patient_dashboard') }}" class="btn btn-primary me-md-2">
+                        <i class="bi bi-person"></i> Patient Dashboard
+                    </a>
+                    {% elif current_user.role == 'doctor' %}
+                    <a href="{{ url_for('dashboard.doctor_dashboard') }}" class="btn btn-primary me-md-2">
+                        <i class="bi bi-stethoscope"></i> Doctor Dashboard
+                    </a>
+                    {% elif current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-primary me-md-2">
+                        <i class="bi bi-gear"></i> Admin Dashboard
+                    </a>
+                    {% endif %}
+                    {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary me-md-2">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house-door"></i> Home
+                    </a>
+                </div>
+                {% elif error_code == 500 %}
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-octagon text-danger" style="font-size: 4rem;"></i>
+                </div>
+                <h1 class="display-4 text-muted">500</h1>
+                <h2 class="mb-3">Internal Server Error</h2>
+                <p class="lead text-muted mb-4">
+                    Something went wrong on our end. Our team has been notified and is working to fix the issue.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-primary me-md-2">
+                        <i class="bi bi-house-door"></i> Go Home
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary" onclick="window.location.reload()">
+                        <i class="bi bi-arrow-clockwise"></i> Try Again
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mt-5 text-center">
+                <div class="card border-0 bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title text-muted">Need Help?</h5>
+                        <p class="card-text small text-muted">
+                            If you continue experiencing issues, please contact our support team.
+                        </p>
+                        <a href="mailto:multimosaic.help@gmail.com" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-envelope"></i> Contact Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

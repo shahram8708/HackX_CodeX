@@ -1,0 +1,60 @@
+{% extends "base/layout.html" %}
+{% block title %}Terms of Service – HealneX{% endblock %}
+
+{% block content %}
+<header class="bg-light py-4 border-bottom">
+  <div class="container d-flex flex-column flex-lg-row align-items-lg-center justify-content-between">
+    <h1 class="h3 mb-2 mb-lg-0 fw-semibold"><i class="bi bi-file-earmark-text me-2"></i>Terms of Service</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Terms of Service</li>
+      </ol>
+    </nav>
+  </div>
+</header>
+
+<section class="py-5">
+  <div class="container" style="max-width: 900px;">
+    <h5 class="fw-bold mb-3">Effective Date: July 3, 2025</h5>
+
+    <h5 class="mt-4">1. User Obligations</h5>
+    <p>
+      Users agree to provide accurate information, maintain confidentiality of
+      login credentials, and use HealneX in compliance with all
+      applicable laws and regulations.
+    </p>
+
+    <h5 class="mt-4">2. Account Usage</h5>
+    <p>
+      Accounts are non-transferable. HealneX reserves the right to suspend
+      or terminate accounts engaging in unauthorized or harmful activities.
+    </p>
+
+    <h5 class="mt-4">3. Medical Disclaimer</h5>
+    <p>
+      HealneX facilitates communication between patients and licensed
+      providers but does not itself provide medical advice. Always consult a
+      qualified professional for diagnosis and treatment.
+    </p>
+
+    <h5 class="mt-4">4. Termination</h5>
+    <p>
+      We may terminate or suspend access to HealneX immediately, without
+      prior notice, for behavior that violates these terms or poses a security
+      risk.
+    </p>
+
+    <h5 class="mt-4">5. Governing Law</h5>
+    <p>
+      These Terms shall be governed by and construed in accordance with the laws
+      of the State of California, excluding its conflicts of law principles.
+    </p>
+
+    <p class="mt-5">
+      If you have any questions regarding these Terms, please contact&nbsp;
+      <a href="mailto:multimosaic.help@gmail.com" class="link-primary">multimosaic.help@gmail.com</a>.
+    </p>
+  </div>
+</section>
+{% endblock %}
