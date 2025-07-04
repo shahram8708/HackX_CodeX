@@ -15,4 +15,3 @@ Werkzeug
 WTForms
 gunicorn
 psycopg2-binary
-email_validator
