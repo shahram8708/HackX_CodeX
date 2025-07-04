@@ -265,14 +265,20 @@
                         <div class="list-group-item px-3 py-3">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <h6 class="mb-1 fw-semibold">{{ activity.title }}</h6>
+                                    <h6 class="mb-1 fw-semibold">{{ activity.user.name if activity.user else 'System' }}
+                                        ({{ activity.user.role if activity.user else
+                                        'Automated' }})</h6>
                                     <p class="mb-1 small text-muted">{{ activity.description }}</p>
                                     <small class="text-muted"><i class="bi bi-clock me-1"></i>{{
                                         activity.timestamp.strftime('%b %d, %Y %I:%M %p') }}</small>
                                 </div>
                                 <span class="badge bg-{{ activity.type_color }} text-capitalize ms-2">
-                                    {{ activity.type }}
-                                </span>
+                                    {% set type = activity.action_type %}
+                                    {% set badge_class = 'primary' if type == 'login' else 'success' if type ==
+                                    'payment' else 'info' if type == 'appointment' else 'warning' %}
+                                    <span class="badge bg-{{ badge_class }} text-uppercase small">{{ type|title
+                                        }}
+                                    </span>
                             </div>
                         </div>
                         {% else %}

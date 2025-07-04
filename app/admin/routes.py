@@ -608,6 +608,18 @@ def api_stats():
 
 from sqlalchemy import text
 
+def get_file_storage_usage_percent():
+    try:
+        result = db.session.execute(text("SELECT pg_database_size(current_database());"))
+        total_bytes = result.scalar() or 0 
+
+        used_mb = total_bytes / (1024 * 1024)
+        max_limit_mb = 500 
+        usage_percent = (used_mb / max_limit_mb) * 100
+        return round(usage_percent, 2)
+    except Exception as e:
+        return f"Error: {str(e)}"
+    
 @bp.route('/reports')
 @login_required
 @admin_required
@@ -680,18 +692,53 @@ def system_reports():
     ).order_by(text('appointment_count desc')).limit(10).all()
 
     
-    database_health = 98
-    file_storage_usage = 65
-    email_delivery_rate = 92
-    api_uptime = 99.9
+    database_health = 100
+    file_storage_usage = get_file_storage_usage_percent()
+    email_delivery_rate = 100
+    api_uptime = 100
 
     
     from collections import namedtuple
-    Activity = namedtuple('Activity', ['title', 'description', 'timestamp', 'type', 'type_color'])
-    recent_activities = [
-        Activity("New User", "Dr. Shah Ram registered.", datetime.now() - timedelta(hours=2), "register", "success"),
-        Activity("Payment Received", "VGEC paid 150 for consultation.", datetime.now() - timedelta(hours=5), "payment", "info")
-    ]
+
+    Activity = namedtuple('Activity', ['timestamp', 'user', 'action_type', 'description'])
+
+    recent_activities = []
+
+    
+    recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
+    for user in recent_users:
+        recent_activities.append(Activity(
+            timestamp=user.created_at,
+            user=user,
+            action_type='register',
+            description=f"{user.name} ({user.role}) registered."
+        ))
+
+    
+    recent_payments = Payment.query.filter_by(status='completed').order_by(Payment.payment_date.desc()).limit(5).all()
+    for payment in recent_payments:
+        recent_activities.append(Activity(
+            timestamp=payment.payment_date,
+            user=payment.user,
+            action_type='payment',
+            description=f"{payment.user.name} paid {payment.amount} for {payment.payment_type}."
+        ))
+
+    
+    recent_appts = Appointment.query.order_by(Appointment.created_at.desc()).limit(5).all()
+    for appt in recent_appts:
+        recent_activities.append(Activity(
+            timestamp=appt.created_at,
+            user=appt.patient,
+            action_type='appointment',
+            description=f"{appt.patient.name} booked with Dr. {appt.doctor.name} ({appt.status})."
+        ))
+
+    
+    recent_activities.sort(key=lambda x: x.timestamp, reverse=True)
+
+    
+    recent_activities = recent_activities[:10]
 
     return render_template('admin/reports.html',
         total_users=total_users,
