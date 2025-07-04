@@ -241,9 +241,16 @@ def manage_users():
     users = query.order_by(User.created_at.desc()).paginate(
         page=page, per_page=per_page, error_out=False
     )
-    
+    total_patients = User.query.filter_by(role='patient').count()
+    total_doctors = User.query.filter_by(role='doctor').count()
+    active_users = User.query.filter_by(is_active=True).count()
+
+    new_registrations_today = User.query.filter(
+        User.created_at >= datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    ).count()
+
     return render_template('admin/admin_users.html', users=users,
-                         role_filter=role_filter, search=search)
+                         role_filter=role_filter, search=search, total_patients=total_patients, total_doctors=total_doctors, active_users=active_users, new_registrations_today=new_registrations_today)
 
 @bp.route('/users/edit/<int:user_id>', methods=['GET', 'POST'])
 @login_required
@@ -346,11 +353,19 @@ def manage_appointments():
     appointments = query.order_by(Appointment.created_at.desc()).paginate(
         page=page, per_page=per_page, error_out=False
     )
-    
+    total_appointments = Appointment.query.count()
+    pending_appointments = Appointment.query.filter_by(status='pending').count()
+    completed_appointments = Appointment.query.filter_by(status='completed').count()
+    cancelled_appointments = Appointment.query.filter_by(status='cancelled').count()
+
     return render_template('admin/manage_appointments.html',
                          appointments=appointments,
                          status_filter=status_filter,
-                         date_filter=date_filter)
+                         date_filter=date_filter,
+                         total_appointments=total_appointments,
+                         pending_appointments=pending_appointments,
+                         completed_appointments=completed_appointments,
+                         cancelled_appointments=cancelled_appointments)
 
 @bp.route('/payments')
 @login_required
@@ -544,7 +559,7 @@ def send_announcement():
             func.max(Notification.created_at).label('created_at')
         )
         .filter(Notification.notification_type == 'system')
-        .group_by(Notification.title, Notification.message)
+        .group_by(Notification.title, Notification.message, Notification.notification_type)
         .order_by(func.max(Notification.created_at).desc())
         .limit(5)
         .all()
@@ -711,13 +726,15 @@ def system_reports():
         api_uptime=api_uptime
     )
 
-import os
+from sqlalchemy import text
+
 def get_database_size():
-    db_path = db.engine.url.database
     try:
-        return f"{os.path.getsize(db_path) / (1024 * 1024):.2f} MB"
-    except:
-        return "N/A"
+        result = db.session.execute(text("SELECT pg_size_pretty(pg_database_size(current_database()));"))
+        size = result.scalar()
+        return size or "N/A"
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
