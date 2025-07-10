@@ -94,12 +94,14 @@ def doctor_dashboard():
         Appointment.appointment_date > today
     ).order_by(Appointment.appointment_date.asc()).limit(5).all()
     
-    recent_patients = db.session.query(User).join(
+    recent_patients = db.session.query(User, Appointment.created_at).join(
         Appointment, Appointment.patient_id == User.id
     ).filter(
         Appointment.doctor_id == current_user.id,
         Appointment.status.in_(['completed', 'confirmed'])
-    ).distinct().order_by(Appointment.created_at.desc()).limit(10).all()
+    ).order_by(Appointment.created_at.desc()).limit(10).all()
+
+    recent_patients = [u for u, _ in recent_patients]
 
     total_patients = db.session.query(User.id).join(
         Appointment, Appointment.patient_id == User.id
