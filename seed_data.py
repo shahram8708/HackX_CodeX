@@ -12,8 +12,8 @@ def seed_database():
         
         
         admin = User(
-            name='HealneX MultiMosaic',
-            email='multimosaic.help@gmail.com',
+            name='HealneX Admin',
+            email='help@healnex.in',
             role='admin',
             phone='+91 9876543210',
             is_verified=True,

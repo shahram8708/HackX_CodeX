@@ -376,33 +376,50 @@
 
         const userRegCtx = document.getElementById('userRegistrationChart').getContext('2d');
         const userRegistrationChart = new Chart(userRegCtx, {
-            type: 'line',
-            data: {
-                labels: {{ user_registration_labels | safe }},
+    type: 'line',
+    data: {
+        labels: {{ user_registration_labels | tojson }},
         datasets: [{
             label: 'New Users',
-            data: {{ user_registration_data | safe }},
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.1
-                }]
-            },
-        options: {
+            data: {{ user_registration_data | tojson }},
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 4,
+            pointHoverRadius: 6
+        }]
+    },
+    options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false
+                display: true,
+                labels: {
+                    color: '#333'
+                }
             }
         },
         scales: {
+            x: {
+                ticks: {
+                    color: '#333'
+                }
+            },
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                ticks: {
+                    color: '#333'
+                },
+                grid: {
+                    color: 'rgba(200, 200, 200, 0.2)'
+                }
             }
         }
     }
-        });
-
+});
 
     const userDistCtx = document.getElementById('userDistributionChart').getContext('2d');
     const userDistributionChart = new Chart(userDistCtx, {

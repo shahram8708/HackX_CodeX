@@ -1,5 +1,5 @@
 import os
-from flask import render_template, redirect, url_for, flash, request, send_file, current_app, jsonify
+from flask import render_template, redirect, url_for, flash, request, send_file, current_app, jsonify, abort
 from markupsafe import Markup
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
@@ -255,9 +255,10 @@ def view_reports():
 @bp.route('/analyze_report/<int:file_id>', methods=['POST'])
 @login_required
 def analyze_report(file_id):
-    import requests
-    import fitz  
-    import base64
+    import google.generativeai as genai
+    import fitz
+    from PIL import Image
+    import io
 
     file = MedicalFile.query.get_or_404(file_id)
 
@@ -281,17 +282,13 @@ def analyze_report(file_id):
             page = doc.load_page(0)
             pix = page.get_pixmap(dpi=150)
             image_bytes = pix.tobytes("png")
-            mime_type = "image/png"
+            image = Image.open(io.BytesIO(image_bytes))
         
         
         else:
             with open(file_path, "rb") as f:
                 image_bytes = f.read()
-            mime_type = "image/png"
-
-        
-        base64_data = base64.b64encode(image_bytes).decode("utf-8")
-        image_url = f"data:{mime_type};base64,{base64_data}"
+            image = Image.open(io.BytesIO(image_bytes))
 
     except Exception as e:
         flash("Failed to process the file.", "danger")
@@ -384,30 +381,13 @@ Test	Value	Normal Range	Interpretation
 This report may be part of a digital health assistant workflow. Make sure it's actionable and user-friendly.
 """
 
-    payload = {
-        "model": "sonar-pro",
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": prompt_text.strip()},
-                    {"type": "image_url", "image_url": {"url": image_url}}
-                ]
-            }
-        ],
-        "stream": False
-    }
-
-    headers = {
-        "Authorization": "Bearer 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",
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-
     try:
-        response = requests.post("https://api.perplexity.ai/chat/completions", headers=headers, json=payload, timeout=30)
-        response.raise_for_status()
-        result = response.json()["choices"][0]["message"]["content"]
+        # Configure Gemini API
+        genai.configure(api_key="AIzaSyC1dSEI8aENjszrP9IcqZYX561QV8ASHa0")
+        model = genai.GenerativeModel('gemini-2.5-flash-lite')  # Using pro model for better analysis
+
+        response = model.generate_content([prompt_text, image])
+        result = response.text
 
         
         file.ai_analysis = result
@@ -415,12 +395,9 @@ This report may be part of a digital health assistant workflow. Make sure it's a
 
         flash(Markup(f"<strong>AI Analysis:</strong><br><pre>{result}</pre>"), "info")
 
-    except requests.exceptions.HTTPError as errh:
-        flash("AI analysis failed. Check the file type or content.", "danger")
-    except requests.exceptions.RequestException as e:
-        flash("Network error while connecting to AI service.", "danger")
     except Exception as e:
-        flash("Unexpected server error occurred.", "danger")
+        current_app.logger.error(f"Gemini API error: {str(e)}")
+        flash("AI analysis failed. Please try again.", "danger")
 
     return redirect(url_for('uploads.view_reports'))
 

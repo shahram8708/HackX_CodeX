@@ -7,7 +7,8 @@ from app.models import User, Appointment, Payment, MedicalFile, Message, Notific
 from app.utils.decorators import admin_required
 from app.utils.helpers import create_notification
 from datetime import datetime, timedelta
-from sqlalchemy import func
+from sqlalchemy import func, text
+import os
 from app.utils.email import send_email
 
 @bp.route('/dashboard')
@@ -608,11 +609,18 @@ def api_stats():
 
 from sqlalchemy import text
 
+def format_bytes(size):
+    for unit in ['B', 'KB', 'MB', 'GB']:
+        if size < 1024.0:
+            return f"{size:.2f} {unit}"
+        size /= 1024.0
+    return f"{size:.2f} TB"
+
 def get_file_storage_usage_percent():
     try:
-        result = db.session.execute(text("SELECT pg_database_size(current_database());"))
-        total_bytes = result.scalar() or 0 
-
+        db_path = os.path.join(os.path.dirname(current_app.root_path), 'instance', 'healnex.db')
+        total_bytes = os.path.getsize(db_path)
+        
         used_mb = total_bytes / (1024 * 1024)
         max_limit_mb = 500 
         usage_percent = (used_mb / max_limit_mb) * 100
@@ -773,13 +781,18 @@ def system_reports():
         api_uptime=api_uptime
     )
 
-from sqlalchemy import text
+def format_bytes(size):
+    for unit in ['B', 'KB', 'MB', 'GB']:
+        if size < 1024.0:
+            return f"{size:.2f} {unit}"
+        size /= 1024.0
+    return f"{size:.2f} TB"
 
 def get_database_size():
     try:
-        result = db.session.execute(text("SELECT pg_size_pretty(pg_database_size(current_database()));"))
-        size = result.scalar()
-        return size or "N/A"
+        db_path = os.path.join(os.path.dirname(current_app.root_path), 'instance', 'healnex.db')
+        total_bytes = os.path.getsize(db_path)
+        return format_bytes(total_bytes)
     except Exception as e:
         return f"Error: {str(e)}"
 
@@ -807,7 +820,7 @@ def system_settings():
     
     settings = {
         'platform_name': Setting.get('platform_name', 'HealneX'),
-        'admin_email': Setting.get('admin_email', 'multimosaic.help@gmail.com'),
+        'admin_email': Setting.get('admin_email', 'help@healnex.in'),
         'max_file_size': float(Setting.get('max_file_size', 16)),
         'session_timeout': int(Setting.get('session_timeout', 60)),
         'maintenance_mode': Setting.get('maintenance_mode', '') == 'on',

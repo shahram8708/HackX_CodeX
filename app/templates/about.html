@@ -23,8 +23,8 @@
       To connect patients and doctors seamlessly through secure, innovative, and human-centered digital healthcare.
     </p>
     {% if not current_user.is_authenticated %}
-    <a href="{{ url_for('auth.register', role='patient') }}" class="btn btn-light btn-lg me-2">Join as Patient</a>
-    <a href="{{ url_for('auth.register', role='doctor') }}" class="btn btn-outline-light btn-lg">Join as Doctor</a>
+    <a href="{{ url_for('auth.register_patient') }}" class="btn btn-light btn-lg me-2">Join as Patient</a>
+    <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-light btn-lg">Join as Doctor</a>
     {% endif %}
   </div>
 </section>

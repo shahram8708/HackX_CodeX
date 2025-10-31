@@ -5,6 +5,7 @@ flask_mail
 Flask_Migrate
 flask_sqlalchemy
 flask_wtf
+google-genai
 MarkupSafe
 Pillow
 python-dotenv
@@ -14,5 +15,4 @@ stripe
 Werkzeug
 WTForms
 gunicorn 
-psycopg2-binary
 email_validator

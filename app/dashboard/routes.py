@@ -402,11 +402,6 @@ def edit_profile():
             current_user.clinic_hospital = form.clinic_hospital.data
             current_user.consultation_fee = form.consultation_fee.data
             
-            
-            
-            
-            
-
             if not current_user.stripe_account_id:
                 flash("Please complete your Stripe onboarding to enable payouts.", "warning")
                 return redirect(url_for('dashboard.onboard_stripe'))

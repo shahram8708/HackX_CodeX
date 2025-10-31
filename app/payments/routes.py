@@ -1,7 +1,7 @@
 import stripe
 from flask import render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_required, current_user
-from app import db
+from app import db, csrf
 from app.payments import bp
 from app.payments.forms import SubscriptionForm, CheckoutForm
 from app.models import User, Appointment, Payment, Referral
@@ -54,9 +54,9 @@ def subscribe():
         
         
         pricing_table = {
-            'basic': {'monthly': 9.99, 'annual': 7.99},
-            'premium': {'monthly': 29.99, 'annual': 23.99},
-            'enterprise': {'monthly': 99.99, 'annual': 79.99}
+            'basic': {'monthly': 99.99, 'annual': 999.99},
+            'premium': {'monthly': 299.99, 'annual': 2999.99},
+            'enterprise': {'monthly': 999.99, 'annual': 9999.99}
         }
 
         
@@ -87,7 +87,7 @@ def subscribe():
                 payment_method_types=['card'],
                 line_items=[{
                     'price_data': {
-                        'currency': 'IN',
+                        'currency': 'INR',
                         'product_data': {
                             'name': f'HealneX {plan_type.title()} Subscription',
                         },
@@ -143,9 +143,9 @@ def subscription_success():
 
         
         pricing_table = {
-            'basic': {'monthly': 9.99, 'annual': 7.99},
-            'premium': {'monthly': 29.99, 'annual': 23.99},
-            'enterprise': {'monthly': 99.99, 'annual': 79.99}
+            'basic': {'monthly': 99.99, 'annual': 999.99},
+            'premium': {'monthly': 299.99, 'annual': 2999.99},
+            'enterprise': {'monthly': 999.99, 'annual': 9999.99}
         }
 
         
@@ -165,7 +165,7 @@ def subscription_success():
             user_id=current_user.id,
             payment_type='subscription',
             amount=amount,
-            currency='IN',
+            currency='INR',
             status='completed',
             plan_name=f'{plan_name.title()} ({plan.title()})',
             plan_duration=plan
@@ -243,6 +243,7 @@ def checkout_appointment(appointment_id):
 @bp.route('/process_payment/appointment/<int:appointment_id>', methods=['POST'])
 @login_required
 @patient_required
+@csrf.exempt
 def process_appointment_payment(appointment_id):
     appointment = Appointment.query.get_or_404(appointment_id)
     
@@ -264,13 +265,13 @@ def process_appointment_payment(appointment_id):
         platform_fee = 2.99
         tax_amount = 1.50
         total_amount = round(appointment.doctor.consultation_fee + platform_fee + tax_amount, 2)
-        referral_discount_applied = request.json.get('referral_discount_applied') is True
+        referral_discount_applied = request.json.get('referral_discount_applied') == 'true'
 
         consultation_fee = 0 if referral_discount_applied else appointment.doctor.consultation_fee
         total_amount = round(consultation_fee + platform_fee + tax_amount, 2)
         intent = stripe.PaymentIntent.create(
             amount=int(total_amount * 100),
-            currency='IN',
+            currency='INR',
             payment_method=payment_method_id,
             confirm=True,
             automatic_payment_methods={
@@ -305,7 +306,7 @@ def process_appointment_payment(appointment_id):
                 user_id=current_user.id,
                 payment_type='consultation',
                 amount=total_amount,
-                currency='IN',
+                currency='INR',
                 status='completed',
                 payment_method='card',
                 transaction_id=intent.id,

@@ -6,11 +6,7 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'HealneX6708@'
-    
-    
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-    #     'sqlite:///' + os.path.join(basedir, 'instance', 'healthconnect.db')
-    SQLALCHEMY_DATABASE_URI = "postgresql://healnex_user:IilfmkCqX80KTchXvQbJFwayf3Hse6kW@dpg-d1j9uefdiees73cret0g-a.singapore-postgres.render.com/healnex"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///healnex.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     

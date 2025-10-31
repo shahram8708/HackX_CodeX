@@ -220,7 +220,7 @@ class Payment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     payment_type = db.Column(db.String(20), nullable=False)  
     amount = db.Column(db.Float, nullable=False)
-    currency = db.Column(db.String(3), default='IN')
+    currency = db.Column(db.String(3), default='FI')
     status = db.Column(db.String(20), default='pending')  
     payment_method = db.Column(db.String(50))
     transaction_id = db.Column(db.String(100))
