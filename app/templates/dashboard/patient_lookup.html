@@ -1,0 +1,76 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Patient Lookup - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-search"></i> Patient Lookup</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('dashboard.patient_lookup') }}">
+                        {{ form.csrf_token }}
+                        <div class="mb-3">
+                            <label for="patient_id" class="form-label">Patient Unique ID</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <input type="text" class="form-control" id="patient_id" name="patient_id"
+                                    placeholder="Enter patient ID (e.g., HC-5F4A1B9D)" required>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </div>
+                            {% if form.patient_id.errors %}
+                            <div class="invalid-feedback d-block">{{ form.patient_id.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </form>
+
+                    {% if patient %}
+                    <hr>
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-person-check"></i> Patient Found</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Name:</strong> {{ patient.name }}</p>
+                                    <p><strong>Email:</strong> {{ patient.email }}</p>
+                                    <p><strong>Phone:</strong> {{ patient.phone or 'N/A' }}</p>
+                                    <p><strong>Age:</strong> {{ patient.age or 'N/A' }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Gender:</strong> {{ patient.gender or 'N/A' }}</p>
+                                    <p><strong>Allergies:</strong> {{ patient.allergies or 'None reported' }}</p>
+                                    <p><strong>Conditions:</strong> {{ patient.conditions or 'None reported' }}</p>
+                                    <p><strong>Emergency Contact:</strong> {{ patient.emergency_contact or 'N/A' }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient.unique_patient_id) }}"
+                                    class="btn btn-primary">
+                                    <i class="bi bi-eye"></i> View Full Profile
+                                </a>
+                                <a href="{{ url_for('dashboard.add_treatment', patient_id=patient.unique_patient_id) }}"
+                                    class="btn btn-success">
+                                    <i class="bi bi-plus-circle"></i> Add Treatment
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% elif searched %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> No patient found with ID: <strong>{{ searched_id
+                            }}</strong>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

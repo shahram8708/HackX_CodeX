@@ -1,0 +1,286 @@
+{% extends 'base/layout.html' %}
+
+{% block title %}My Treatment History - HealneX{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('dashboard.patient_dashboard') }}" class="text-decoration-none">
+                            <i class="bi bi-house-door me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="bi bi-clipboard-pulse me-1"></i>Treatment History
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h2 class="fw-bold text-primary mb-2">
+                        <i class="bi bi-clipboard-pulse me-2"></i>My Treatment History
+                    </h2>
+                    <p class="text-muted mb-0">
+                        View all your medical treatments, prescriptions, and diagnoses
+                    </p>
+                </div>
+                <div class="d-none d-md-block">
+                    <span class="badge bg-light text-dark fs-6 px-3 py-2">
+                        <i class="bi bi-files me-1"></i>
+                        {{ treatments.total }} Record{{ 's' if treatments.total != 1 else '' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if treatments.total == 0 %}
+
+        <div class="col-12">
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-clipboard-pulse text-muted" style="font-size: 4rem;"></i>
+                </div>
+                <h4 class="text-muted mb-3">No Treatment Records Found</h4>
+                <p class="text-muted mb-4">
+                    You don't have any treatment records yet. Your medical history will appear here after your first
+                    consultation.
+                </p>
+                <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-primary">
+                    <i class="bi bi-calendar-plus me-2"></i>Book an Appointment
+                </a>
+            </div>
+        </div>
+        {% else %}
+        {% for treatment in treatments.items %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 hover-shadow">
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="me-3">
+                            <i class="bi bi-clipboard-pulse text-info" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-1">{{ treatment.notes or "Treatment Record" }}</h6>
+                            <p class="text-muted small mb-1">
+                                <strong>Type:</strong> {{ (treatment.treatment_type or 'Unknown').replace('_', '
+                                ')|title }}
+                            </p>
+                            <p class="text-muted small mb-1">
+                                <strong>Doctor:</strong> Dr. {{ treatment.doctor.name }}
+                            </p>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-calendar3 me-1"></i>{{ treatment.updated_at.strftime('%b %d, %Y') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if treatment.diagnosis %}
+                    <div class="mb-3">
+                        <p class="card-text small mb-2">
+                            <strong>Diagnosis:</strong> {{ treatment.diagnosis }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% if treatment.prescription %}
+                    <div class="mb-3">
+                        <p class="card-text small mb-2">
+                            <strong>Medications:</strong> {{ treatment.prescription }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% if treatment.attached_file %}
+                    <div class="border-top pt-3">
+                        <p class="card-text small mb-0">
+                            <i class="bi bi-paperclip me-1 text-success"></i>
+                            <a href="{{ url_for('static', filename='uploads/treatments/' ~ treatment.attached_file) }}"
+                                download class="text-decoration-none">
+                                <i class="bi bi-download me-1"></i>Download Attachment
+                            </a>
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+
+
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            {{ treatment.created_at.strftime('%I:%M %p') if treatment.created_at else 'N/A' }}
+                        </small>
+                        {% if treatment.status %}
+                        <span
+                            class="badge bg-{{ 'success' if treatment.status == 'completed' else 'warning' if treatment.status == 'pending' else 'secondary' }}">
+                            {{ treatment.status|title }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+
+    {% if treatments.pages > 1 %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Treatment records pagination">
+                <ul class="pagination justify-content-center">
+                    {% if treatments.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('dashboard.treatment_history', page=treatments.prev_num) }}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="bi bi-chevron-left"></i>
+                        </span>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in treatments.iter_pages() %}
+                    {% if page_num %}
+                    {% if page_num != treatments.page %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('dashboard.treatment_history', page=page_num) }}">{{
+                            page_num }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_num }}</span>
+                    </li>
+                    {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if treatments.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('dashboard.treatment_history', page=treatments.next_num) }}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="bi bi-chevron-right"></i>
+                        </span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('dashboard.patient_dashboard') }}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .hover-shadow {
+        transition: box-shadow 0.3s ease;
+    }
+
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        transform: translateY(-2px);
+    }
+
+    .card {
+        transition: transform 0.2s ease;
+    }
+
+    .breadcrumb-item.active {
+        color: #6c757d;
+    }
+
+    .badge {
+        font-size: 0.75em;
+    }
+
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function (alert) {
+                if (alert.classList.contains('show')) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            });
+        }, 5000);
+    });
+
+
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+
+    if (document.body.scrollHeight > window.innerHeight) {
+        const scrollBtn = document.createElement('button');
+        scrollBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
+        scrollBtn.className = 'btn btn-primary rounded-circle position-fixed';
+        scrollBtn.style.cssText = 'bottom: 20px; right: 20px; z-index: 1000; width: 50px; height: 50px; display: none;';
+        scrollBtn.onclick = scrollToTop;
+        document.body.appendChild(scrollBtn);
+
+        window.addEventListener('scroll', function () {
+            if (window.pageYOffset > 100) {
+                scrollBtn.style.display = 'block';
+            } else {
+                scrollBtn.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

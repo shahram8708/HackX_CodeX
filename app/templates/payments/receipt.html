@@ -1,0 +1,68 @@
+{% extends "base/layout.html" %}
+{% block title %}Payment Receipt{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white text-center">
+                    <i class="bi bi-check-circle fs-1"></i>
+                    <h4 class="mt-2">Payment Successful!</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h2 class="text-success">₹{{ payment.amount }}</h2>
+                        <p class="text-muted">Transaction ID: {{ payment.transaction_id or payment.id }}</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Payment Details</h6>
+                            <p><strong>Amount:</strong> ₹{{ payment.amount }}</p>
+                            <p><strong>Type:</strong> {{ payment.payment_type.replace('_', ' ').title() }}</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">{{ payment.status.title()
+                                    }}</span></p>
+                            <p><strong>Date:</strong> {{ payment.payment_date.strftime('%B %d, %Y at %I:%M %p') if
+                                payment.payment_date else 'N/A' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>{{ 'Appointment' if payment.payment_type == 'consultation' else 'Subscription' }}
+                                Details</h6>
+                            {% if payment.appointment %}
+                            <p><strong>Doctor:</strong> {{ payment.appointment.doctor.name if payment.appointment.doctor
+                                else 'N/A' }}</p>
+                            <p><strong>Date:</strong> {{ payment.appointment.appointment_date.strftime('%B %d, %Y') if
+                                payment.appointment.appointment_date else 'N/A' }}</p>
+                            <p><strong>Type:</strong> {{ payment.appointment.appointment_type.replace('_', ' ').title()
+                                if payment.appointment.appointment_type else 'N/A' }}</p>
+                            {% elif payment.payment_type == 'subscription' %}
+                            <p><strong>Plan:</strong> {{ payment.subscription_plan or 'N/A' }}</p>
+                            <p><strong>Duration:</strong> {{ payment.subscription_duration or 'N/A' }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-center">
+                        <p class="text-muted">Thank you for using HealneX!</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button onclick="window.print()" class="btn btn-outline-primary">
+                                <i class="bi bi-printer"></i> Print Receipt
+                            </button>
+                            <a href="{{ url_for('payments.view_receipt', payment_id=payment.id) }}"
+                                class="btn btn-outline-secondary">
+                                <i class="bi bi-download"></i> Download PDF
+                            </a>
+                            <a href="{{ url_for('dashboard.patient_lookup' if current_user.role == 'patient' else 'admin.admin_dashboard') }}"
+                                class="btn btn-primary">
+                                <i class="bi bi-house"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>New Support Request</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .header {
+            background: #0d6efd;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .details {
+            background: #f1f1f1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>📬 New Support Request</h2>
+        </div>
+
+        <div class="content">
+            <p>You have received a new support message from a user.</p>
+
+            <div class="details">
+                <p><strong>Name:</strong> {{ name }}</p>
+                <p><strong>Email:</strong> {{ email }}</p>
+                <p><strong>Category:</strong> {{ category }}</p>
+                <p><strong>Message:</strong></p>
+                <p>{{ message }}</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>This message was sent automatically by HealneX support system.</p>
+            <p>© 2025 HealneX. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>

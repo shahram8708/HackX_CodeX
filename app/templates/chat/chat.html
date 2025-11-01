@@ -1,0 +1,580 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Chat - HealneX{% endblock %}
+
+{% block content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-lg-3 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-chat-dots me-2"></i>
+                        {% if current_user.role == 'patient' %}My Doctors{% else %}My Patients{% endif %}
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" id="contacts-list">
+                        {% for contact_data in contacts %}
+                        {% set contact = contact_data.user %}
+                        <a href="{{ url_for('chat.chat_with_user', user_id=contact.id) }}"
+                            class="list-group-item list-group-item-action py-3 px-3 {{ 'active' if contact.id == selected_user.id else '' }}">
+
+                            <div class="d-flex align-items-start justify-content-between w-100">
+
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <div class="rounded-circle bg-{{ 'success' if current_user.role == 'patient' else 'primary' }} text-white d-flex align-items-center justify-content-center fw-bold"
+                                            style="width: 48px; height: 48px; font-size: 1.2rem;">
+                                            {{ contact.name[0].upper() }}
+                                        </div>
+                                    </div>
+                                    <div class="text-start">
+                                        <div class="fw-semibold mb-0">
+                                            {% if current_user.role == 'patient' %}Dr. {% endif %}{{ contact.name }}
+                                        </div>
+                                        <div class="text-muted small">
+                                            {% if current_user.role == 'patient' %}
+                                            {{ contact.specialization }}
+                                            {% else %}
+                                            {{ contact.unique_patient_id }}
+                                            {% endif %}
+                                        </div>
+                                        {% if contact_data.last_message %}
+                                        <div class="text-muted small mt-1">
+                                            {{ contact_data.last_message.content[:30] }}{% if
+                                            contact_data.last_message.content|length > 30 %}...{% endif %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+
+                                <div class="text-end">
+                                    {% if contact_data.unread_count > 0 %}
+                                    <span class="badge bg-danger rounded-pill mb-1">{{ contact_data.unread_count
+                                        }}</span><br>
+                                    {% endif %}
+                                    <button class="btn btn-sm btn-outline-danger" title="Delete Chat"
+                                        onclick="deleteConversation({{ contact.id }})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+
+                    {% if not contacts %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-chat text-muted mb-3" style="font-size: 3rem;"></i>
+                        <p class="text-muted small">
+                            {% if current_user.role == 'patient' %}
+                            Book an appointment to start chatting with doctors
+                            {% else %}
+                            Your patients will appear here
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-9">
+            {% if selected_user %}
+            <div class="card border-0 shadow-sm h-100" style="min-height: 500px;">
+
+                <div class="card-header bg-light border-bottom">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <div class="bg-{{ 'success' if current_user.role == 'patient' else 'primary' }} text-white rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 45px; height: 45px;">
+                                    {{ selected_user.name[0].upper() }}
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">
+                                    {% if current_user.role == 'patient' %}Dr. {% endif %}{{ selected_user.name }}
+                                </h6>
+                                <p class="text-muted small mb-0">
+                                    {% if current_user.role == 'patient' %}
+                                    {{ selected_user.specialization }} • {{ selected_user.clinic_hospital }}
+                                    {% else %}
+                                    {{ selected_user.unique_patient_id }} • {{ selected_user.age }} years old
+                                    {% endif %}
+                                </p>
+                                <p class="text-success small mb-0" id="online-status">
+                                    <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i> Online
+                                </p>
+                            </div>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="videoCallBtn"
+                                onclick="startVideoCall()">
+                                <span id="videoCallBtnIcon"><i class="bi bi-camera-video"></i> Video Call</span>
+                                <span id="videoCallBtnSpinner" class="spinner-border spinner-border-sm d-none"
+                                    role="status" aria-hidden="true"></span>
+                            </button>
+
+                            {% if current_user.role == 'doctor' %}
+                            <a href="{{ url_for('dashboard.view_patient_profile', patient_id=selected_user.unique_patient_id) }}"
+                                class="btn btn-outline-info btn-sm">
+                                <i class="bi bi-person"></i> Profile
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card-body p-0 d-flex flex-column" style="height: 400px;">
+                    <div class="flex-grow-1 overflow-auto p-3" id="messages-container">
+                        {% for message in messages %}
+                        <div class="mb-3 {{ 'text-end' if message.sender_id == current_user.id else 'text-start' }}">
+                            <div class="d-inline-block p-3 rounded-3 {{ 'bg-primary text-white' if message.sender_id == current_user.id else 'bg-light' }}"
+                                style="max-width: 70%;">
+                                <p class="mb-1">{{ message.content }}</p>
+                                <small
+                                    class="{{ 'text-white-50' if message.sender_id == current_user.id else 'text-muted' }}">
+                                    {{ message.timestamp.strftime('%I:%M %p') }}
+                                    {% if message.sender_id == current_user.id %}
+                                    {% if message.is_read %}
+                                    <i class="bi bi-check2-all text-success" title="Read"></i>
+                                    {% else %}
+                                    <i class="bi bi-check2" title="Sent"></i>
+                                    {% endif %}
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+
+                        <div id="typing-indicator" class="mb-3 text-start" style="display: none;">
+                            <div class="d-inline-block p-3 rounded-3 bg-light">
+                                <div class="typing-animation">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="border-top p-3">
+                        <form id="message-form" class="d-flex gap-2">
+                            <input type="text" class="form-control" id="message-input"
+                                placeholder="Type your message..." autocomplete="off" maxlength="500">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </form>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <small class="text-muted">
+                                <i class="bi bi-shield-check me-1"></i>Messages are encrypted and secure
+                            </small>
+                            <small class="text-muted" id="char-count">0/500</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <div class="text-center">
+                        <i class="bi bi-chat-square-text text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted mb-3">Select a conversation</h4>
+                        <p class="text-muted">
+                            {% if current_user.role == 'patient' %}
+                            Choose a doctor from the sidebar to start chatting
+                            {% else %}
+                            Choose a patient from the sidebar to start chatting
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="videoCallModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content border-0">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-camera-video me-2"></i>Live Video Call
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    onclick="endVideoCall()"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 85vh;">
+                <iframe id="video-call-frame" src="" allow="camera; microphone; fullscreen; display-capture"
+                    style="width: 100%; height: 100%; border: 0;">
+                </iframe>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button class="btn btn-outline-secondary" onclick="toggleFullscreen()">
+                    <i class="bi bi-arrows-fullscreen"></i> Fullscreen
+                </button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="endVideoCall()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let modal;
+    let iframe;
+    const isPatient = {{ 'true' if current_user.role == 'patient' else 'false' }};
+    let checkForVideoInterval = null;
+
+    function openVideoCall(roomName) {
+        iframe.src = `https://meet.jit.si/${roomName}`;
+        modal.show();
+    }
+
+    function endVideoCall() {
+        iframe.src = '';
+    }
+
+    function toggleFullscreen() {
+        const elem = document.getElementById('videoCallModal');
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen().catch(err => {
+                alert(`Error attempting fullscreen: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    function pollForIncomingVideoCall() {
+        if (!selectedUserId || !isPatient) return;
+
+        checkForVideoInterval = setInterval(() => {
+            fetch(`/chat/video/join/${selectedUserId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.room_name) {
+                        clearInterval(checkForVideoInterval);
+                        openVideoCall(data.room_name);
+                    }
+                });
+        }, 5000);
+    }
+
+    function startVideoCall() {
+        const btn = document.getElementById('videoCallBtn');
+        const icon = document.getElementById('videoCallBtnIcon');
+        const spinner = document.getElementById('videoCallBtnSpinner');
+
+
+        btn.disabled = true;
+        icon.classList.add('d-none');
+        spinner.classList.remove('d-none');
+
+        {% if current_user.role == 'doctor' %}
+        fetch(`/chat/video/start/${selectedUserId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({})
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.room_name) {
+                    openVideoCall(data.room_name);
+                } else {
+                    alert(data.error || 'Error creating video room.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Something went wrong.");
+            })
+            .finally(() => {
+                btn.disabled = false;
+                icon.classList.remove('d-none');
+                spinner.classList.add('d-none');
+            });
+
+        {% elif current_user.role == 'patient' %}
+        fetch(`/chat/video/join/${selectedUserId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.room_name) {
+                    openVideoCall(data.room_name);
+                } else {
+                    alert(data.error || 'Doctor has not started the video call yet.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Something went wrong.");
+            })
+            .finally(() => {
+                btn.disabled = false;
+                icon.classList.remove('d-none');
+                spinner.classList.add('d-none');
+            });
+        {% endif %}
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        modal = new bootstrap.Modal(document.getElementById('videoCallModal'));
+        iframe = document.getElementById('video-call-frame');
+
+        pollForIncomingVideoCall();
+    });
+</script>
+
+<script>
+    const isPatient = {{ 'true' if current_user.role == 'patient' else 'false' }};
+    let checkForVideoInterval = null;
+
+    function pollForIncomingVideoCall() {
+        if (!selectedUserId || !isPatient) return;
+
+        checkForVideoInterval = setInterval(() => {
+            fetch(`/chat/video/join/${selectedUserId}`)
+                .then(res => {
+                    if (!res.ok) return null;
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data) return;
+
+                    if (data.room_name) {
+                        clearInterval(checkForVideoInterval);
+                        openVideoCall(data.room_name);
+                    } else {
+
+                        console.log("[Video] No active call yet.");
+                    }
+                })
+                .catch(err => {
+                    console.warn("[Video] Error polling:", err);
+                });
+        }, 5000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        pollForIncomingVideoCall();
+    });
+</script>
+
+<style>
+    .typing-animation {
+        display: inline-flex;
+        gap: 2px;
+    }
+
+    .typing-animation span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #6c757d;
+        animation: typing 1.4s ease-in-out infinite;
+    }
+
+    .typing-animation span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-animation span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+
+        0%,
+        60%,
+        100% {
+            transform: translateY(0);
+            opacity: 0.5;
+        }
+
+        30% {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
+    }
+
+    #messages-container {
+        scroll-behavior: smooth;
+    }
+</style>
+<script>
+    const currentUserId = {{ current_user.id }};
+    const selectedUserId = {{ selected_user.id if selected_user else 'null' }};
+
+
+    const POLLING_INTERVAL = 3000;
+
+
+    let lastMessageTimestamp = null;
+
+
+    function scrollToBottom() {
+        const container = document.getElementById('messages-container');
+        if (container) container.scrollTop = container.scrollHeight;
+    }
+
+    function formatTime(timestamp) {
+
+        let date = new Date(timestamp);
+        if (isNaN(date.getTime())) {
+
+            date = new Date(timestamp.replace('Z', '+00:00'));
+            if (isNaN(date.getTime())) {
+                console.warn("Could not parse timestamp:", timestamp);
+                return 'Invalid Time';
+            }
+        }
+        return date.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+
+
+    function addMessageToUI(content, senderId, timestamp, isRead) {
+        const container = document.getElementById('messages-container');
+        const isCurrentUser = senderId === currentUserId;
+        const msg = document.createElement('div');
+        msg.className = `mb-3 ${isCurrentUser ? 'text-end' : 'text-start'}`;
+        msg.innerHTML = `
+        <div class="d-inline-block p-3 rounded-3 ${isCurrentUser ? 'bg-primary text-white' : 'bg-light'}" style="max-width: 70%;">
+            <p class="mb-1">${content}</p>
+            <small class="${isCurrentUser ? 'text-white-50' : 'text-muted'}">
+                ${timestamp} ${isCurrentUser ? (isRead ? '<i class="bi bi-check2-all text-success" title="Read"></i>' : '<i class="bi bi-check2" title="Sent"></i>') : ''}
+            </small>
+        </div>`;
+        container.appendChild(msg);
+        scrollToBottom();
+    }
+
+
+    async function fetchMessages() {
+        if (!selectedUserId) return;
+
+        const res = await fetch(`/chat/api/messages/${selectedUserId}`);
+        const data = await res.json();
+        const container = document.getElementById('messages-container');
+        container.innerHTML = '';
+
+        data.forEach(msg => {
+            addMessageToUI(msg.content, msg.sender_id, msg.timestamp, msg.is_read);
+            lastMessageTimestamp = msg.timestamp;
+        });
+
+        scrollToBottom();
+    }
+
+    function getCSRFToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
+    async function sendMessage(content) {
+        if (!selectedUserId || isNaN(selectedUserId)) {
+            alert("No user selected to send message.");
+            return;
+        }
+
+        try {
+            const res = await fetch('/chat/api/send_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({
+                    receiver_id: selectedUserId,
+                    content: content
+                })
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error("Server response not OK:", text);
+                alert("Error sending message: " + text);
+                return;
+            }
+
+            const result = await res.json();
+            if (result.success) {
+                await fetchMessages();
+            }
+        } catch (err) {
+            console.error("Send failed:", err);
+            alert("Failed to send message.");
+        }
+    }
+
+
+    setInterval(async () => {
+        await fetchMessages();
+    }, POLLING_INTERVAL);
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchMessages();
+
+        const input = document.getElementById('message-input');
+        const form = document.getElementById('message-form');
+        const charCount = document.getElementById('char-count');
+
+        input.addEventListener('input', function () {
+            charCount.textContent = `${this.value.length}/500`;
+        });
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const msg = input.value.trim();
+            if (msg.length === 0) return;
+            await sendMessage(msg);
+            input.value = '';
+            charCount.textContent = '0/500';
+        });
+    });
+    function deleteConversation(userId) {
+        if (!confirm("Are you sure you want to delete this conversation?")) return;
+
+        fetch(`/chat/api/delete_conversation/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Conversation deleted.");
+                    window.location.href = "/chat";  // redirect to chat list
+                } else {
+                    alert(data.error || "Failed to delete conversation.");
+                }
+            })
+            .catch(err => {
+                console.error("Error deleting conversation:", err);
+                alert("Something went wrong.");
+            });
+    }
+
+</script>
+
+{% endblock %}

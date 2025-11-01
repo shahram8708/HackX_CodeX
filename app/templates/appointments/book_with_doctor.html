@@ -1,0 +1,313 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Book Appointment with {{ doctor.name }} - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-calendar-plus"></i> Book Appointment
+                    </h4>
+                </div>
+                <div class="card-body">
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div
+                                    class="avatar-lg bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2">
+                                    <i class="bi bi-person-badge fs-2 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <h5>{{ doctor.name }}</h5>
+                            <p class="text-muted mb-1">
+                                <i class="bi bi-hospital"></i> {{ doctor.specialization }}
+                            </p>
+                            <p class="text-muted mb-1">
+                                <i class="bi bi-building"></i> {{ doctor.clinic_hospital or 'N/A' }}
+                            </p>
+                            <p class="text-muted mb-1">
+                                <i class="bi bi-currency-rupee"></i> Consultation Fee: ₹{{ doctor.consultation_fee }}
+                            </p>
+                            <p class="text-muted">
+                                <i class="bi bi-clock"></i> Working Hours: {{ doctor.working_hours_start.strftime('%I:%M
+                                %p') }} - {{ doctor.working_hours_end.strftime('%I:%M %p') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+
+                    <form method="POST" id="bookingForm"
+                        action="{{ url_for('appointments.book_appointment_with_doctor', doctor_id=doctor.id) }}">
+                        {{ form.csrf_token }}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="appointment_type" class="form-label">Appointment Type *</label>
+                                    {{ form.appointment_type(class="form-select", id="appointment_type") }}
+
+                                    {% if form.appointment_type.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.appointment_type.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="priority" class="form-label">Priority</label>
+                                    <select class="form-select" id="priority" name="priority">
+                                        <option value="normal">Normal</option>
+                                        <option value="urgent">Urgent</option>
+                                        <option value="emergency">Emergency</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="appointment_date" class="form-label">Preferred Date *</label>
+                                    <input type="date" class="form-control" id="appointment_date"
+                                        name="appointment_date" min="{{ today }}" max="{{ max_date }}" required>
+                                    {% if form.appointment_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.appointment_date.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="appointment_time" class="form-label">Preferred Time *</label>
+                                    <div id="time-slots" class="d-flex flex-wrap gap-2"></div>
+                                    {{ form.doctor_id(type="hidden") }}
+                                    {{ form.appointment_time(type="hidden", id="appointment_time") }}
+                                    {% if form.appointment_time.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.appointment_time.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="symptoms" class="form-label">Symptoms/Reason for Visit</label>
+                            {{ form.reason(class="form-control", id="symptoms", placeholder="Describe symptoms...") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.payment_method.label(class="form-label") }}
+                            {{ form.payment_method(class="form-select") }}
+                        </div>
+                        <script>
+                            document.querySelector('select[name="appointment_type"]').addEventListener('change', function () {
+                                const paymentSelect = document.querySelector('select[name="payment_method"]');
+                                const selectedType = this.value;
+
+                                paymentSelect.innerHTML = '';
+
+                                if (selectedType === 'in-person') {
+                                    paymentSelect.innerHTML += '<option value="online">Online</option>';
+                                    paymentSelect.innerHTML += '<option value="offline">Offline</option>';
+                                } else if (selectedType === 'teleconsultation') {
+                                    paymentSelect.innerHTML += '<option value="online">Online</option>';
+                                }
+                            });
+
+                        </script>
+
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-credit-card"></i> Payment Summary
+                                </h6>
+                                <div class="d-flex justify-content-between">
+                                    <span>Consultation Fee:</span>
+                                    <span class="fw-bold">₹{{ doctor.consultation_fee }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Platform Fee (Stripe ₹2.99 + Service ₹1.50):</span>
+                                    <span class="fw-bold">₹{{ '%.2f' % (2.99 + 1.50) }}</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold">Total Amount:</span>
+                                    <span class="fw-bold fs-5 text-primary">₹{{ '%.2f' % (doctor.consultation_fee + 2.99
+                                        + 1.50) }}</span>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms_agreed" name="terms_agreed"
+                                    required>
+                                <label class="form-check-label" for="terms_agreed">
+                                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms
+                                        and Conditions</a>
+                                    and <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy
+                                        Policy</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('dashboard.patient_lookup') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="bookBtn">
+                                <i class="bi bi-calendar-check"></i> Book
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>By booking an appointment through HealneX, you agree to:</p>
+                <ul>
+                    <li>Provide accurate medical information</li>
+                    <li>Arrive on time for in-person appointments</li>
+                    <li>Have stable internet connection for teleconsultations</li>
+                    <li>Pay the consultation fee as agreed</li>
+                    <li>Follow the doctor's prescribed treatment plan</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your privacy is important to us. We collect and use your information to:</p>
+                <ul>
+                    <li>Facilitate medical consultations</li>
+                    <li>Maintain your medical records securely</li>
+                    <li>Send appointment reminders</li>
+                    <li>Process payments securely</li>
+                </ul>
+                <p>We never share your medical information without your consent.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectTimeSlot(button) {
+        document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('btn-primary'));
+        button.classList.add('btn-primary');
+        document.getElementById('appointment_time').value = button.dataset.time;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateInput = document.getElementById('appointment_date');
+        const timeSelect = document.getElementById('appointment_time');
+        const doctorId = {{ doctor.id }};
+
+
+    function generateTimeSlots() {
+        const slots = [];
+        for (let hour = 9; hour < 18; hour++) {
+            for (let minute = 0; minute < 60; minute += 30) {
+                const time = String(hour).padStart(2, '0') + ':' + String(minute).padStart(2, '0');
+                slots.push(time);
+            }
+        }
+        return slots;
+    }
+
+    function loadTimeSlots(date) {
+        if (!date) return;
+
+        const timeSelect = document.getElementById('appointment_time');
+        const timeSlotsContainer = document.getElementById('time-slots');
+        timeSelect.innerHTML = '<option value="">Loading...</option>';
+        timeSlotsContainer.innerHTML = '<span class="text-muted">Loading...</span>';
+
+        fetch(`/appointments/api/available_times/${doctorId}/${date}`)
+            .then(response => response.json())
+            .then(data => {
+                timeSelect.innerHTML = '<option value="">Select time slot</option>';
+                timeSlotsContainer.innerHTML = '';
+
+                if (Array.isArray(data.times) && data.times.length > 0) {
+                    data.times.forEach(slot => {
+                        const value = slot[0];
+                        const label = slot[1];
+
+
+                        const option = document.createElement('option');
+                        option.value = value;
+                        option.textContent = label;
+                        timeSelect.appendChild(option);
+
+
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'btn btn-outline-primary btn-sm time-slot';
+                        button.textContent = label;
+                        button.dataset.time = value;
+                        button.onclick = () => selectTimeSlot(button);
+                        timeSlotsContainer.appendChild(button);
+                    });
+                } else {
+                    timeSlotsContainer.innerHTML = '<p class="text-muted">No slots available</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading time slots:', error);
+                timeSelect.innerHTML = '<option value="">Error loading slots</option>';
+                timeSlotsContainer.innerHTML = '<p class="text-danger">Failed to load time slots</p>';
+            });
+    }
+
+
+    dateInput.addEventListener('change', function () {
+        loadTimeSlots(this.value);
+    });
+
+
+    document.getElementById('bookingForm').addEventListener('submit', function (e) {
+        const bookBtn = document.getElementById('bookBtn');
+        bookBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Processing...';
+        bookBtn.disabled = true;
+    });
+});
+</script>
+{% endblock %}

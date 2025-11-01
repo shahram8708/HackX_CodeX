@@ -1,0 +1,270 @@
+{% extends 'base/layout.html' %}
+{% block title %}Reschedule Appointment - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light rounded px-3 py-2 shadow-sm align-items-center small">
+            <li class="breadcrumb-item">
+                <a href="{{ url_for('dashboard.patient_dashboard' if current_user.role == 'patient' else 'dashboard.doctor_dashboard') }}"
+                    class="text-decoration-none d-flex align-items-center">
+                    <i class="bi bi-house-fill text-primary me-2"></i>Dashboard
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ url_for('appointments.my_appointments') }}"
+                    class="text-decoration-none d-flex align-items-center">
+                    <i class="bi bi-calendar-event text-info me-2"></i>Appointments
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ url_for('appointments.view_appointment', appointment_id=appointment.id) }}"
+                    class="text-decoration-none d-flex align-items-center">
+                    <i class="bi bi-eye text-secondary me-2"></i>View Details
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-muted d-flex align-items-center" aria-current="page">
+                <i class="bi bi-calendar-range me-2"></i>Reschedule
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        Current Appointment Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-person-circle text-muted me-2"></i>
+                                <strong>
+                                    {% if current_user.role == 'patient' %}
+                                    Doctor: Dr. {{ appointment.doctor.name }}
+                                    {% else %}
+                                    Patient: {{ appointment.patient.name }}
+                                    {% endif %}
+                                </strong>
+                            </div>
+                            {% if current_user.role == 'patient' %}
+                            <small class="text-muted">{{ appointment.doctor.specialization }}</small>
+                            {% else %}
+                            <small class="text-muted">{{ appointment.patient.unique_patient_id }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar-date text-muted me-2"></i>
+                                <strong>Current Date & Time</strong>
+                            </div>
+                            <div>
+                                {{ appointment.appointment_date.strftime('%B %d, %Y') }}<br>
+                                <small class="text-muted">{{ appointment.appointment_time.strftime('%I:%M %p')
+                                    }}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-info-circle text-muted me-2"></i>
+                                <strong>Type</strong>
+                            </div>
+                            <span
+                                class="badge bg-{{ 'info' if appointment.appointment_type == 'teleconsultation' else 'success' }}">
+                                {{ appointment.appointment_type|title }}
+                            </span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-flag text-muted me-2"></i>
+                                <strong>Status</strong>
+                            </div>
+                            <span
+                                class="badge bg-{{ 'warning' if appointment.status == 'pending' else 'primary' if appointment.status == 'confirmed' else 'success' if appointment.status == 'completed' else 'danger' }}">
+                                {{ appointment.status|title }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-range me-2"></i>
+                        Reschedule Appointment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" class="needs-validation" novalidate>
+                        {{ form.csrf_token }}
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    {{ form.appointment_date(class="form-control", id="appointment_date",
+                                    value=appointment.appointment_date.strftime('%Y-%m-%d'), required=true) }}
+                                    {{ form.appointment_date.label(class="form-label") }}
+                                    {% if form.appointment_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.appointment_date.errors %}
+                                        <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <small class="form-text text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Select a new date for your appointment
+                                </small>
+                            </div>
+
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    {{ form.appointment_time(class="form-control", id="appointment_time", required=true)
+                                    }}
+                                    {{ form.appointment_time.label(class="form-label") }}
+                                    {% if form.appointment_time.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.appointment_time.errors %}
+                                        <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <small class="form-text text-muted">
+                                    <i class="bi bi-clock me-1"></i>
+                                    Choose a preferred time slot
+                                </small>
+                            </div>
+                        </div>
+
+
+                        {% if current_user.role == 'patient' and appointment.doctor.working_hours %}
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="bi bi-clock-history me-2"></i>
+                            <div>
+                                <strong>Doctor's Working Hours:</strong> {{ appointment.doctor.working_hours }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+
+                        {% if form.reason %}
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                {{ form.reason(class="form-control", rows="3", placeholder="Optional reason for
+                                rescheduling") }}
+                                {{ form.reason.label(class="form-label") }}
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="bi bi-chat-text me-1"></i>
+                                Optional: Let the other party know why you're rescheduling
+                            </small>
+                        </div>
+                        {% endif %}
+
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('appointments.view_appointment', appointment_id=appointment.id) }}"
+                                class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                Reschedule Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="card border-warning mt-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-exclamation-triangle text-warning me-3 mt-1"></i>
+                        <div>
+                            <h6 class="card-title mb-2">Important Notice</h6>
+                            <ul class="mb-0 small text-muted">
+                                <li>Please ensure the new time slot fits your schedule</li>
+                                <li>
+                                    {% if current_user.role == 'patient' %}
+                                    The doctor will be notified of this reschedule request
+                                    {% else %}
+                                    The patient will be notified of this reschedule
+                                    {% endif %}
+                                </li>
+                                <li>Completed or cancelled appointments cannot be rescheduled</li>
+                                <li>Make sure to check the doctor's availability before selecting a time</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateInput = document.getElementById('appointment_date');
+        const timeSelect = document.getElementById('appointment_time');
+        const selectedTime = "{{ appointment.appointment_time.strftime('%H:%M') }}";
+
+
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+
+
+            loadAvailableTimes(dateInput.value);
+        }
+
+
+        dateInput.addEventListener('change', function () {
+            loadAvailableTimes(this.value);
+        });
+
+        function loadAvailableTimes(date) {
+            if (!date) return;
+
+            fetch(`/appointments/api/available_times/{{ appointment.doctor_id }}/${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    timeSelect.innerHTML = "";
+
+                    if (data.times && data.times.length > 0) {
+                        data.times.forEach(([value, label]) => {
+                            const option = document.createElement('option');
+                            option.value = value;
+                            option.textContent = label;
+                            if (value === selectedTime) {
+                                option.selected = true;
+                            }
+                            timeSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = "";
+                        option.textContent = "No available time slots";
+                        timeSelect.appendChild(option);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching time slots:", error);
+                });
+        }
+    });
+</script>
+
+{% endblock %}

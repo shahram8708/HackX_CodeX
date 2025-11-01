@@ -1,0 +1,79 @@
+{% extends "base/layout.html" %}
+{% block title %}Notification - HealneX{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="bi bi-bell"></i> Notification Details</h5>
+                    <small class="text-muted">
+                        {{ notification.created_at.strftime('%B %d, %Y at %I:%M %p') if notification.created_at else
+                        'N/A' }}
+                    </small>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="me-3">
+                            <div
+                                class="avatar bg-{{ 'success' if notification.notification_type == 'appointment' else 'info' if notification.notification_type == 'message' else 'warning' }} rounded-circle p-2">
+                                <i
+                                    class="bi bi-{{ 'calendar-check' if notification.notification_type == 'appointment' else 'chat' if notification.notification_type == 'message' else 'exclamation-triangle' }} text-white"></i>
+                            </div>
+
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">{{ notification.title }}</h6>
+                            <span
+                                class="badge bg-{{ 'success' if notification.notification_type == 'appointment' else 'info' if notification.notification_type == 'message' else 'warning' }}">
+                                {{ notification.notification_type.replace('_', ' ').title() }}
+                            </span>
+
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <p>{{ notification.message }}</p>
+                    </div>
+
+                    {% if notification.type == 'appointment' and notification.appointment %}
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>Appointment Details</h6>
+                            <p class="mb-1"><strong>Date:</strong> {{ notification.appointment.date.strftime('%B %d,
+                                %Y') if notification.appointment.date else 'N/A' }}</p>
+                            <p class="mb-1"><strong>Time:</strong> {{ notification.appointment.time or 'N/A' }}</p>
+                            <p class="mb-0"><strong>Type:</strong> {{
+                                notification.appointment.appointment_type.replace('_', ' ').title() if
+                                notification.appointment.appointment_type else 'N/A' }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div>
+                            {% if not notification.is_read %}
+                            <form method="POST"
+                                action="{{ url_for('notifications.mark_read', notification_id=notification.id) }}"
+                                class="d-inline">
+                                {{ csrf_token() }}
+                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-check"></i> Mark as Read
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="text-success"><i class="bi bi-check-circle"></i> Read</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="{{ url_for('notifications.notifications') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Notifications
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,390 @@
+{% extends "base/layout.html" %}
+
+{% block title %}My Appointments - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="bi bi-calendar-event text-primary me-2"></i>
+                        {% if current_user.role == 'patient' %}My Appointments{% else %}Appointments{% endif %}
+                    </h2>
+                    <p class="text-muted mb-0">Manage your scheduled appointments</p>
+                </div>
+                {% if current_user.role == 'patient' %}
+                <a href="{{ url_for('appointments.book_appointment') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Book New Appointment
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-pills nav-fill" id="appointment-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="upcoming-tab" data-bs-toggle="pill" data-bs-target="#upcoming"
+                        type="button" role="tab">
+                        <i class="bi bi-calendar-plus me-2"></i>
+                        Upcoming <span class="badge bg-light text-dark ms-2">{{ upcoming_appointments|length }}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="completed-tab" data-bs-toggle="pill" data-bs-target="#completed"
+                        type="button" role="tab">
+                        <i class="bi bi-calendar-check me-2"></i>
+                        Completed <span class="badge bg-light text-dark ms-2">{{ completed_appointments|length }}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="cancelled-tab" data-bs-toggle="pill" data-bs-target="#cancelled"
+                        type="button" role="tab">
+                        <i class="bi bi-calendar-x me-2"></i>
+                        Cancelled <span class="badge bg-light text-dark ms-2">{{ cancelled_appointments|length }}</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="tab-content" id="appointmentTabContent">
+
+
+        <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
+            {% if upcoming_appointments %}
+            <div class="row">
+                {% for appointment in upcoming_appointments %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title mb-1">
+                                        {% if current_user.role == 'patient' %}
+                                        Dr. {{ appointment.doctor.name }}
+                                        {% else %}
+                                        {{ appointment.patient.name }}
+                                        {% endif %}
+                                    </h5>
+                                    <p class="text-muted small mb-0">
+                                        {% if current_user.role == 'patient' %}
+                                        {{ appointment.doctor.specialization }}
+                                        {% else %}
+                                        {{ appointment.patient.unique_patient_id }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <span
+                                    class="badge bg-{{ 'info' if appointment.appointment_type == 'teleconsultation' else 'success' }}">
+                                    {{ appointment.appointment_type|title }}
+                                </span>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="bi bi-calendar3 me-2"></i>
+                                        <span>{{ appointment.appointment_date.strftime('%B %d, %Y') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="bi bi-clock me-2"></i>
+                                        <span>{{ appointment.appointment_time.strftime('%I:%M %p') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if appointment.reason %}
+                            <div class="mb-3">
+                                <small class="text-muted">Reason:</small>
+                                <p class="small mb-0">{{ appointment.reason }}</p>
+                            </div>
+                            {% endif %}
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span
+                                    class="badge bg-{{ 'warning' if appointment.status == 'pending' else 'success' if appointment.status == 'confirmed' else 'secondary' }}">
+                                    {{ appointment.status|title }}
+                                </span>
+
+                                <div class="btn-group btn-group-sm" role="group">
+                                    {% if appointment.appointment_type == 'teleconsultation' %}
+                                    {% if current_user.role == 'patient' %}
+                                    <a href="{{ url_for('chat.chat_index', user_id=appointment.doctor.id) }}"
+                                        class="btn btn-outline-primary" title="Join Video Call">
+                                        <i class="bi bi-camera-video"></i>
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('chat.chat_index', user_id=appointment.patient.id) }}"
+                                        class="btn btn-outline-primary" title="Start Video Call">
+                                        <i class="bi bi-camera-video"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% endif %}
+                                    <a href="{{ url_for('appointments.view_appointment', appointment_id=appointment.id) }}"
+                                        class="btn btn-outline-secondary" title="View Appointment Details">
+                                        <i class="bi bi-info-circle"></i>
+                                    </a>
+                                    {% if current_user.role == 'doctor' %}
+                                    <a href="{{ url_for('dashboard.view_patient_profile', patient_id=appointment.patient.unique_patient_id) }}"
+                                        class="btn btn-outline-info" title="View Patient Profile">
+                                        <i class="bi bi-person"></i>
+                                    </a>
+                                    {% if appointment.status != 'completed' %}
+                                    <form method="POST"
+                                        action="{{ url_for('appointments.complete_appointment', appointment_id=appointment.id) }}"
+                                        class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-outline-success"
+                                            onclick="return confirm('Mark this appointment as completed?')">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    {% endif %}
+
+                                    {% if appointment.status in ['pending', 'confirmed'] %}
+                                    <form method="POST"
+                                        action="{{ url_for('appointments.cancel_appointment', appointment_id=appointment.id) }}"
+                                        class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-outline-danger"
+                                            onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-plus text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mb-3">No upcoming appointments</h4>
+                {% if current_user.role == 'patient' %}
+                <a href="{{ url_for('appointments.book_appointment') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Book Your First Appointment
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+
+        <div class="tab-pane fade" id="completed" role="tabpanel">
+            {% if completed_appointments %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>
+                                {% if current_user.role == 'patient' %}Doctor{% else %}Patient{% endif %}
+                            </th>
+                            <th>Type</th>
+                            <th>Fee</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in completed_appointments %}
+                        <tr>
+                            <td>
+                                <strong>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</strong><br>
+                                <small class="text-muted">{{ appointment.appointment_time.strftime('%I:%M %p')
+                                    }}</small>
+                            </td>
+                            <td>
+                                {% if current_user.role == 'patient' %}
+                                <strong>Dr. {{ appointment.doctor.name }}</strong><br>
+                                <small class="text-muted">{{ appointment.doctor.specialization }}</small>
+                                {% else %}
+                                <strong>{{ appointment.patient.name }}</strong><br>
+                                <small class="text-muted">{{ appointment.patient.unique_patient_id }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span
+                                    class="badge bg-{{ 'info' if appointment.appointment_type == 'teleconsultation' else 'success' }}">
+                                    {{ appointment.appointment_type|title }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if current_user.role == 'patient' %}
+                                ₹{{ appointment.doctor.consultation_fee }}
+                                {% else %}
+                                ₹{{ current_user.consultation_fee }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    {% if current_user.role == 'patient' %}
+                                    <a href="{{ url_for('appointments.book_appointment', doctor_id=appointment.doctor.id) }}"
+                                        class="btn btn-outline-primary" title="Book Again">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </a>
+                                    <a href="{{ url_for('uploads.view_reports', doctor_id=appointment.doctor.id) }}"
+                                        class="btn btn-outline-success" title="View Reports">
+                                        <i class="bi bi-file-earmark-medical"></i>
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('dashboard.view_patient_profile', patient_id=appointment.patient.unique_patient_id) }}"
+                                        class="btn btn-outline-info" title="View Patient">
+                                        <i class="bi bi-person"></i>
+                                    </a>
+                                    <a href="{{ url_for('uploads.upload_report', patient_id=appointment.patient.unique_patient_id) }}"
+                                        class="btn btn-outline-success" title="Upload Report">
+                                        <i class="bi bi-file-plus"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-check text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mb-3">No completed appointments</h4>
+                <p class="text-muted">Completed appointments will appear here</p>
+            </div>
+            {% endif %}
+        </div>
+
+
+        <div class="tab-pane fade" id="cancelled" role="tabpanel">
+            {% if cancelled_appointments %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>
+                                {% if current_user.role == 'patient' %}Doctor{% else %}Patient{% endif %}
+                            </th>
+                            <th>Type</th>
+                            <th>Cancelled By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in cancelled_appointments %}
+                        <tr>
+                            <td>
+                                <strong>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</strong><br>
+                                <small class="text-muted">{{ appointment.appointment_time.strftime('%I:%M %p')
+                                    }}</small>
+                            </td>
+                            <td>
+                                {% if current_user.role == 'patient' %}
+                                <strong>Dr. {{ appointment.doctor.name }}</strong><br>
+                                <small class="text-muted">{{ appointment.doctor.specialization }}</small>
+                                {% else %}
+                                <strong>{{ appointment.patient.name }}</strong><br>
+                                <small class="text-muted">{{ appointment.patient.unique_patient_id }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span
+                                    class="badge bg-{{ 'info' if appointment.appointment_type == 'teleconsultation' else 'success' }}">
+                                    {{ appointment.appointment_type|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-muted">{{ appointment.cancelled_by|default('System') }}</span>
+                            </td>
+                            <td>
+                                {% if current_user.role == 'patient' %}
+                                <a href="{{ url_for('appointments.book_appointment', doctor_id=appointment.doctor.id) }}"
+                                    class="btn btn-sm btn-outline-primary" title="Book Again">
+                                    <i class="bi bi-arrow-repeat"></i> Book Again
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-x text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mb-3">No cancelled appointments</h4>
+                <p class="text-muted">Cancelled appointments will appear here</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function markComplete(appointmentId) {
+        if (confirm('Mark this appointment as completed?')) {
+            fetch(`/appointment/${appointmentId}/complete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Appointment marked as completed', 'success');
+                        location.reload();
+                    } else {
+                        showToast('Error updating appointment', 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('Network error', 'error');
+                });
+        }
+    }
+
+    function cancelAppointment(appointmentId) {
+        if (confirm('Are you sure you want to cancel this appointment?')) {
+            fetch(`/appointment/${appointmentId}/cancel`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Appointment cancelled successfully', 'success');
+                        location.reload();
+                    } else {
+                        showToast('Error cancelling appointment', 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('Network error', 'error');
+                });
+        }
+    }
+
+
+    setInterval(function () {
+        if (document.getElementById('upcoming-tab').classList.contains('active')) {
+            location.reload();
+        }
+    }, 300000); 
+</script>
+{% endblock %}

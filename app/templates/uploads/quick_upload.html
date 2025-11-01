@@ -1,0 +1,236 @@
+{% extends "base/layout.html" %}
+{% block title %}Quick Upload{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-cloud-upload"></i> Quick Upload</h4>
+                    <p class="text-muted mb-0">Upload medical reports, prescriptions, or diagnostic files</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                        {{ form.csrf_token }}
+
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.report_type.label(class="form-label") }}
+                            {{ form.report_type(class="form-select", id="report_type") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", id="description", rows="3") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.file.label(class="form-label") }}
+                            {{ form.file(class="form-control", id="file") }}
+                        </div>
+
+
+                        <div id="uploadProgress" class="mb-3" style="display: none;">
+                            <label class="form-label">Upload Progress</label>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('uploads.doctor_uploads') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Files
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="uploadBtn">
+                                <i class="bi bi-cloud-upload"></i> Upload File
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            {% if recent_uploads %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6><i class="bi bi-clock-history"></i> Recent Uploads</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for upload in recent_uploads %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ upload.filename }}</h6>
+                                <p class="mb-1 text-muted small">{{ upload.report_type.replace('_', ' ').title() }}</p>
+                                <small class="text-muted">{{ upload.upload_date.strftime('%b %d, %Y at %I:%M %p') if
+                                    upload.upload_date else 'N/A' }}</small>
+                            </div>
+                            <div>
+                                <a href="{{ url_for('uploads.download_file', file_id=upload.id) }}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('uploads.doctor_uploads') }}" class="btn btn-outline-primary btn-sm">
+                            View All Files <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .upload-area {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .upload-area:hover {
+        border-color: #007bff;
+        background-color: #f8f9fa;
+    }
+
+    .upload-area.dragover {
+        border-color: #007bff;
+        background-color: #e3f2fd;
+    }
+
+    .upload-area input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .upload-text {
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('file');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadProgress = document.getElementById('uploadProgress');
+
+
+        uploadArea.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function (e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                showFileInfo(files[0]);
+            }
+        });
+
+
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                showFileInfo(e.target.files[0]);
+            }
+        });
+
+        function showFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = `(${formatFileSize(file.size)})`;
+            fileInfo.style.display = 'block';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+
+        uploadForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(uploadForm);
+
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Uploading...';
+            uploadProgress.style.display = 'block';
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', function (e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    const progressBar = uploadProgress.querySelector('.progress-bar');
+                    progressBar.style.width = percentComplete + '%';
+                    progressBar.textContent = Math.round(percentComplete) + '%';
+                }
+            });
+
+            xhr.addEventListener('load', function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        showToast('File uploaded successfully!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '{{ url_for("uploads.doctor_uploads") }}';
+                        }, 1500);
+                    } else {
+                        showToast(response.message || 'Upload failed', 'error');
+                        resetForm();
+                    }
+                } else {
+                    showToast('Upload failed. Please try again.', 'error');
+                    resetForm();
+                }
+            });
+
+            xhr.addEventListener('error', function () {
+                showToast('Upload failed. Please check your connection.', 'error');
+                resetForm();
+            });
+
+            xhr.open('POST', uploadForm.action);
+            xhr.send(formData);
+        });
+
+        function resetForm() {
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = '<i class="bi bi-cloud-upload"></i> Upload File';
+            uploadProgress.style.display = 'none';
+            uploadProgress.querySelector('.progress-bar').style.width = '0%';
+        }
+    });
+</script>
+{% endblock %}

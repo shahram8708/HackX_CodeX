@@ -1,0 +1,342 @@
+{% extends "base/layout.html" %}
+{% block title %}Manage Files - HealneX Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h4 class="mb-0">
+                                <i class="bi bi-file-earmark-medical me-2"></i>
+                                Medical Files Management
+                            </h4>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchFiles" placeholder="Search files...">
+                                <button class="btn btn-outline-light" type="button">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterReportType">
+                                <option value="">All Report Types</option>
+                                <option value="prescription">Prescription</option>
+                                <option value="x_ray">X-Ray</option>
+                                <option value="blood_test">Blood Test</option>
+                                <option value="mri">MRI</option>
+                                <option value="ct_scan">CT Scan</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterDoctor">
+                                <option value="">All Doctors</option>
+                                {% for doctor in doctors %}
+                                <option value="{{ doctor.id }}">Dr. {{ doctor.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="filterDate" placeholder="Filter by date">
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary w-100" onclick="clearFilters()">
+                                <i class="bi bi-x-circle me-2"></i>Clear Filters
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="card border-0 shadow-sm rounded-3">
+                        <div
+                            class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="bi bi-folder2-open me-2 text-primary"></i>Uploaded Medical Files
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0" id="filesTable">
+                                    <thead class="table-light text-muted">
+                                        <tr>
+                                            <th>File</th>
+                                            <th>Report Type</th>
+                                            <th>Patient</th>
+                                            <th>Doctor</th>
+                                            <th>Upload Date</th>
+                                            <th>Size</th>
+                                            <th class="text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if files %}
+                                        {% for file in files %}
+                                        <tr data-report-type="{{ file.report_type }}"
+                                            data-doctor-id="{{ file.doctor_id }}"
+                                            data-date="{{ file.upload_date.strftime('%Y-%m-%d') }}">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i
+                                                        class="bi bi-file-{{ 'pdf' if file.filename.endswith('.pdf') else 'image' }} fs-4 text-primary me-2"></i>
+                                                    <div>
+                                                        <strong>{{ file.filename }}</strong>
+                                                        {% if file.description %}
+                                                        <br><small class="text-muted">{{ file.description[:50] }}{% if
+                                                            file.description|length > 50 %}...{% endif %}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary rounded-pill">{{
+                                                    file.report_type.replace('_', ' ').title() }}</span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('admin.edit_user', user_id=file.patient.id) }}"
+                                                    class="text-decoration-none fw-semibold">
+                                                    {{ file.patient.name }}
+                                                </a>
+                                                <br><small class="text-muted">ID: {{ file.patient.unique_patient_id
+                                                    }}</small>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('admin.edit_user', user_id=file.doctor.id) }}"
+                                                    class="text-decoration-none fw-semibold">
+                                                    Dr. {{ file.doctor.name }}
+                                                </a>
+                                                <br><small class="text-muted">{{ file.doctor.specialization }}</small>
+                                            </td>
+                                            <td>
+                                                {{ file.upload_date.strftime('%b %d, %Y') }}
+                                                <br><small class="text-muted">{{ file.upload_date.strftime('%I:%M %p')
+                                                    }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark rounded-pill">
+                                                    {{ "%.1f"|format(file.file_size / 1024) }} KB
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{{ url_for('uploads.download_file', file_id=file.id) }}"
+                                                        class="btn btn-outline-primary" title="Download">
+                                                        <i class="bi bi-download"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-outline-info"
+                                                        data-bs-toggle="modal" data-bs-target="#viewModal{{ file.id }}"
+                                                        title="View Details">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                        <tr>
+                                            <td colspan="7" class="text-center py-5">
+                                                <i class="bi bi-folder-x text-muted mb-2" style="font-size: 3rem;"></i>
+                                                <h5 class="text-muted">No files uploaded</h5>
+                                                <p class="text-muted small">Try adjusting filters or uploading new
+                                                    records.</p>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% if files.pages > 1 %}
+                    <nav aria-label="Files pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if files.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="{{ url_for('admin.manage_files', page=files.prev_num) }}">Previous</a>
+                            </li>
+                            {% endif %}
+
+                            {% for page_num in files.iter_pages() %}
+                            {% if page_num %}
+                            {% if page_num != files.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.manage_files', page=page_num) }}">{{
+                                    page_num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                            {% endif %}
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if files.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="{{ url_for('admin.manage_files', page=files.next_num) }}">Next</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% for file in files %}
+
+<div class="modal fade" id="viewModal{{ file.id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ file.id }}"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content shadow-lg rounded-3">
+            <div class="modal-header bg-light border-bottom">
+                <h5 class="modal-title d-flex align-items-center" id="viewModalLabel{{ file.id }}">
+                    <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                    File Details: <span class="ms-1 text-dark fw-semibold">{{ file.filename }}</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">
+                                <strong>📄 File Name:</strong><br>{{ file.filename }}
+                            </li>
+                            <li class="list-group-item px-0">
+                                <strong>🗂 Report Type:</strong><br>{{ file.report_type.replace('_', ' ').title() }}
+                            </li>
+                            <li class="list-group-item px-0">
+                                <strong>📅 Upload Date:</strong><br>{{ file.upload_date.strftime('%b %d, %Y at %I:%M
+                                %p') }}
+                            </li>
+                            <li class="list-group-item px-0">
+                                <strong>💾 File Size:</strong><br>{{ "%.1f"|format(file.file_size / 1024) }} KB
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">
+                                <strong>🧑‍⚕️ Patient:</strong><br>{{ file.patient.name }} <small class="text-muted">({{
+                                    file.patient.unique_patient_id }})</small>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <strong>👨‍⚕️ Doctor:</strong><br>Dr. {{ file.doctor.name }}
+                            </li>
+                            <li class="list-group-item px-0">
+                                <strong>🏥 Specialization:</strong><br>{{ file.doctor.specialization }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {% if file.description %}
+                <div class="mt-4">
+                    <strong>📝 Description:</strong>
+                    <p class="text-muted border rounded bg-light p-3">{{ file.description }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="modal-footer bg-light border-top d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Close
+                </button>
+                <a href="{{ url_for('uploads.download_file', file_id=file.id) }}" class="btn btn-primary">
+                    <i class="bi bi-download me-2"></i>Download File
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const searchInput = document.getElementById('searchFiles');
+        const table = document.getElementById('filesTable');
+        const rows = table.querySelectorAll('tbody tr');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+
+        const reportTypeFilter = document.getElementById('filterReportType');
+        const doctorFilter = document.getElementById('filterDoctor');
+        const dateFilter = document.getElementById('filterDate');
+
+        function applyFilters() {
+            const reportType = reportTypeFilter.value;
+            const doctorId = doctorFilter.value;
+            const filterDate = dateFilter.value;
+
+            rows.forEach(row => {
+                let show = true;
+
+                if (reportType && row.dataset.reportType !== reportType) {
+                    show = false;
+                }
+
+                if (doctorId && row.dataset.doctorId !== doctorId) {
+                    show = false;
+                }
+
+                if (filterDate && row.dataset.date !== filterDate) {
+                    show = false;
+                }
+
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        reportTypeFilter.addEventListener('change', applyFilters);
+        doctorFilter.addEventListener('change', applyFilters);
+        dateFilter.addEventListener('change', applyFilters);
+    });
+
+    function clearFilters() {
+        document.getElementById('filterReportType').value = '';
+        document.getElementById('filterDoctor').value = '';
+        document.getElementById('filterDate').value = '';
+        document.getElementById('searchFiles').value = '';
+
+        const rows = document.querySelectorAll('#filesTable tbody tr');
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+    }
+</script>
+{% endblock %}

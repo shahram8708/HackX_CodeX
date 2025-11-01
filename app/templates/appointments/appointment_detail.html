@@ -1,0 +1,368 @@
+{% extends "base/layout.html" %}
+{% block title %}Appointment Details - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+            <li class="breadcrumb-item">
+                <a class="text-decoration-none d-flex align-items-center gap-2"
+                    href="{{ url_for('dashboard.patient_dashboard' if current_user.role == 'patient' else 'dashboard.doctor_dashboard') }}">
+                    <i class="bi bi-house-door text-primary"></i>
+                    <span class="text-body">Dashboard</span>
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a class="text-decoration-none d-flex align-items-center gap-2"
+                    href="{{ url_for('appointments.my_appointments') }}">
+                    <i class="bi bi-calendar-event text-success"></i>
+                    <span class="text-body">Appointments</span>
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-muted" aria-current="page">
+                <i class="bi bi-info-circle me-1"></i> Appointment Details
+            </li>
+        </ol>
+    </nav>
+
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="bi bi-calendar-check me-2"></i>
+                            Appointment Details
+                        </h4>
+                        <span
+                            class="badge bg-{{ 'warning' if appointment.status == 'pending' else 'success' if appointment.status == 'confirmed' else 'info' if appointment.status == 'completed' else 'danger' }} fs-6">
+                            {{ appointment.status|title }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar3 text-primary me-2"></i>
+                                <h6 class="mb-0 text-muted">Appointment Date</h6>
+                            </div>
+                            <p class="mb-0 fw-bold">{{ appointment.appointment_date.strftime('%B %d, %Y') }}</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-clock text-primary me-2"></i>
+                                <h6 class="mb-0 text-muted">Time</h6>
+                            </div>
+                            <p class="mb-0 fw-bold">{{ appointment.appointment_time.strftime('%I:%M %p') }}</p>
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-person text-primary me-2"></i>
+                                <h6 class="mb-0 text-muted">Patient</h6>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                    style="width: 40px; height: 40px;">
+                                    {{ appointment.patient.name[0].upper() }}
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold">{{ appointment.patient.name }}</p>
+                                    <small class="text-muted">{{ appointment.patient.unique_patient_id }}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-person-badge text-primary me-2"></i>
+                                <h6 class="mb-0 text-muted">Doctor</h6>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                    style="width: 40px; height: 40px;">
+                                    {{ appointment.doctor.name[0].upper() }}
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold">Dr. {{ appointment.doctor.name }}</p>
+                                    <small class="text-muted">{{ appointment.doctor.specialization }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i
+                                    class="bi bi-{{ 'laptop' if appointment.appointment_type == 'teleconsultation' else 'building' }} text-primary me-2"></i>
+                                <h6 class="mb-0 text-muted">Appointment Type</h6>
+                            </div>
+                            <span
+                                class="badge bg-{{ 'info' if appointment.appointment_type == 'teleconsultation' else 'success' }} fs-6">
+                                <i
+                                    class="bi bi-{{ 'camera-video' if appointment.appointment_type == 'teleconsultation' else 'geo-alt' }} me-1"></i>
+                                {{ appointment.appointment_type|title }}
+                            </span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-currency-rupee text-primary me-2"></i>
+                                <h6 class="mb-0 text-muted">Consultation Fee</h6>
+                            </div>
+                            <p class="mb-0 fw-bold text-success">₹{{ appointment.doctor.consultation_fee }}</p>
+                        </div>
+                    </div>
+
+
+                    {% if appointment.reason or appointment.notes %}
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-file-text text-primary me-2"></i>
+                            <h6 class="mb-0 text-muted">Visit Details</h6>
+                        </div>
+                        <div class="bg-light p-3 rounded">
+                            {% if appointment.reason %}
+                            <p class="mb-2"><strong>Reason:</strong> {{ appointment.reason }}</p>
+                            {% endif %}
+                            {% if appointment.notes %}
+                            <p class="mb-0"><strong>Notes:</strong> {{ appointment.notes }}</p>
+                            {% endif %}
+                            {% if not appointment.reason and not appointment.notes %}
+                            <p class="mb-0">No additional notes provided.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% endif %}
+
+
+                    {% if appointment.payment %}
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-credit-card text-primary me-2"></i>
+                            <h6 class="mb-0 text-muted">Payment Status</h6>
+                        </div>
+                        <span
+                            class="badge bg-{{ 'success' if appointment.payment.status == 'completed' else 'warning' if appointment.payment.status == 'pending' else 'danger' }} fs-6">
+                            <i
+                                class="bi bi-{{ 'check-circle' if appointment.payment.status == 'completed' else 'clock' if appointment.payment.status == 'pending' else 'x-circle' }} me-1"></i>
+                            {{ appointment.payment.status|title }}
+                        </span>
+                        {% if appointment.payment.status == 'completed' %}
+                        <small class="text-muted d-block mt-1">
+                            Paid on {{ appointment.payment.payment_date.strftime('%B %d, %Y at %I:%M %p') }}
+                        </small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+
+                    <div class="border-top pt-3">
+                        {% if current_user.role == 'doctor' %}
+
+                        {% if appointment.status in ['pending', 'confirmed'] %}
+                        <div class="d-flex flex-wrap gap-2">
+                            <form method="POST"
+                                action="{{ url_for('appointments.complete_appointment', appointment_id=appointment.id) }}"
+                                class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-success"
+                                    onclick="return confirm('Mark this appointment as completed?')">
+                                    <i class="bi bi-check-circle me-2"></i>Mark Completed
+                                </button>
+                            </form>
+
+                            <form method="POST"
+                                action="{{ url_for('appointments.cancel_appointment', appointment_id=appointment.id) }}"
+                                class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </button>
+                            </form>
+
+                            {% if appointment.appointment_type == 'teleconsultation' %}
+                            <a href="{{ url_for('chat.chat_with_user', user_id=appointment.patient_id) }}"
+                                class="btn btn-info">
+                                <i class="bi bi-camera-video me-2"></i>Start Video Call
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-2">
+                            <a href="{{ url_for('chat.chat_with_user', user_id=appointment.patient_id) }}"
+                                class="btn btn-outline-primary">
+                                <i class="bi bi-chat-dots me-2"></i>Message Patient
+                            </a>
+
+                            <a href="{{ url_for('uploads.upload_report', patient_id=appointment.patient_id) }}"
+                                class="btn btn-outline-secondary">
+                                <i class="bi bi-file-earmark-plus me-2"></i>Upload Report
+                            </a>
+                            <a href="{{ url_for('dashboard.add_treatment', patient_id=appointment.patient.unique_patient_id) }}"
+                                class="btn btn-outline-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Upload Treatment
+                            </a>
+                        </div>
+
+                        {% elif current_user.role == 'patient' %}
+
+                        <div class="d-flex flex-wrap gap-2">
+                            {% if appointment.status in ['pending', 'confirmed'] and appointment.appointment_date >=
+                            today_date %}
+                            <form method="POST"
+                                action="{{ url_for('appointments.cancel_appointment', appointment_id=appointment.id) }}"
+                                class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-outline-danger"
+                                    onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel Appointment
+                                </button>
+                            </form>
+                            <a href="{{ url_for('appointments.reschedule_appointment', appointment_id=appointment.id) }}"
+                                class="btn btn-outline-warning">
+                                <i class="bi bi-calendar-range me-2"></i>Reschedule Appointment
+                            </a>
+                            {% endif %}
+
+                            {% if appointment.payment_method == 'online'
+                            and appointment.payment.status != 'completed' %}
+                            <a href="{{ url_for('payments.checkout_appointment', appointment_id=appointment.id) }}"
+                                class="btn btn-outline-success">
+                                <i class="bi bi-cash-stack me-2"></i>Make Payment
+                            </a>
+                            {% endif %}
+
+                            <a href="{{ url_for('chat.chat_with_user', user_id=appointment.doctor_id) }}"
+                                class="btn btn-outline-primary">
+                                <i class="bi bi-chat-dots me-2"></i>Message Doctor
+                            </a>
+
+                            {% if appointment.appointment_type == 'teleconsultation' and appointment.status ==
+                            'confirmed' %}
+                            <a href="{{ url_for('chat.chat_index', doctor_id=appointment.doctor_id) }}"
+                                class="btn btn-success">
+                                <i class="bi bi-camera-video me-2"></i>Join Video Call
+                            </a>
+                            {% endif %}
+
+                            <a href="{{ url_for('uploads.view_reports') }}" class="btn btn-outline-info">
+                                <i class="bi bi-file-earmark-text me-2"></i>View Reports
+                            </a>
+                            <a href="{{ url_for('dashboard.treatment_history') }}" class="btn btn-outline-primary">
+                                <i class="bi bi-clipboard-check me-2"></i>Treatment List
+                            </a>
+                        </div>
+                        {% endif %}
+
+
+                        <div class="mt-2">
+                            <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Appointments
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            {% if current_user.role == 'doctor' and appointment.patient %}
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-lines-fill me-2"></i>
+                        Patient Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <strong>Age:</strong> {{ appointment.patient.age or 'Not specified' }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Gender:</strong> {{ appointment.patient.gender or 'Not specified' }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Phone:</strong> {{ appointment.patient.phone or 'Not provided' }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Email:</strong> {{ appointment.patient.email }}
+                        </div>
+                        {% if appointment.patient.allergies %}
+                        <div class="col-12 mb-3">
+                            <strong>Allergies:</strong>
+                            <span class="badge bg-warning text-dark">{{ appointment.patient.allergies }}</span>
+                        </div>
+                        {% endif %}
+                        {% if appointment.patient.medical_conditions %}
+                        <div class="col-12 mb-3">
+                            <strong>Medical Conditions:</strong>
+                            <span class="badge bg-info">{{ appointment.patient.medical_conditions }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Cancel Appointment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to cancel this appointment? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep It</button>
+                <button type="button" class="btn btn-danger" id="confirmCancel">Yes, Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const cancelButtons = document.querySelectorAll('button[onclick*="cancel"]');
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
+                modal.show();
+
+                document.getElementById('confirmCancel').onclick = function () {
+                    form.submit();
+                };
+            });
+        });
+    });
+</script>
+{% endblock %}

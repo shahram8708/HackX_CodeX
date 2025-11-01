@@ -1,0 +1,394 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Referral Program - HealneX{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-1">
+                <i class="bi bi-share text-warning me-2"></i>
+                Referral Program
+            </h2>
+            <p class="text-muted">Refer friends and earn rewards!</p>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body text-center">
+                    <div class="mb-2">
+                        <i class="bi bi-people" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="mb-1">{{ total_referrals|default(0) }}</h3>
+                    <p class="small mb-0 opacity-75">Total Referrals</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm bg-success text-white">
+                <div class="card-body text-center">
+                    <div class="mb-2">
+                        <i class="bi bi-star" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="mb-1">{{ referral_points|default(0) }}</h3>
+                    <p class="small mb-0 opacity-75">Reward Points</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm bg-warning text-white">
+                <div class="card-body text-center">
+                    <div class="mb-2">
+                        <i class="bi bi-currency-rupee" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="mb-1">₹{{ reward_value|default(0) }}</h3>
+                    <p class="small mb-0 opacity-75">Reward Value</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-qr-code me-2"></i>Your Referral Code
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary text-white p-4 rounded-3 d-inline-block">
+                            <h2 class="mb-0 font-monospace" id="referral-code">{{ current_user.referral_code }}</h2>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-primary w-100" onclick="copyReferralCode()">
+                                <i class="bi bi-clipboard me-2"></i>Copy Code
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-success w-100" onclick="shareReferralCode()">
+                                <i class="bi bi-share me-2"></i>Share
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info border-0">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-info-circle me-2 mt-1"></i>
+                            <div>
+                                <strong>How it works:</strong>
+                                <ul class="small mb-0 mt-2">
+                                    <li>Share your referral code with friends</li>
+                                    <li>They get ₹10 off their first consultation</li>
+                                    <li>You earn 100 points for each successful referral</li>
+                                    <li>Redeem points for subscription discounts</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-gift me-2"></i>Available Rewards
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="text-center p-3 border rounded">
+                                <i class="bi bi-percent text-primary mb-2" style="font-size: 2rem;"></i>
+                                <h6>10% Off</h6>
+                                <p class="small text-muted mb-1">Monthly Subscription</p>
+                                <span class="badge bg-primary">500 Points</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="text-center p-3 border rounded">
+                                <i class="bi bi-calendar-check text-success mb-2" style="font-size: 2rem;"></i>
+                                <h6>Free Consultation</h6>
+                                <p class="small text-muted mb-1">One-time use</p>
+                                <span class="badge bg-success">1000 Points</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if referral_points >= 500 %}
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-primary" onclick="redeemReward()">
+                            <i class="bi bi-star me-2"></i>Redeem Rewards
+                        </button>
+                    </div>
+                    {% else %}
+                    <div class="text-center">
+                        <p class="text-muted small mb-0">
+                            You need {{ 500 - (referral_points|default(0)) }} more points to redeem rewards
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-ul me-2"></i>Referral History
+                        </h5>
+                        <a href="{{ url_for('referrals.referral_history') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-eye"></i> View Full History
+                        </a>
+                    </div>
+
+
+                </div>
+                <div class="card-body">
+                    {% if referrals %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Friend</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for referral in referrals %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ referral.referred_user.name if referral.referred_user else 'Pending'
+                                            }}</strong><br>
+                                    </td>
+                                    <td>
+                                        {{ referral.date_referred.strftime('%b %d, %Y') }}
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ 'success' if referral.status == 'completed' else 'warning' if referral.status == 'pending' else 'secondary' }}">
+                                            {{ referral.status|title }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-people text-muted mb-3" style="font-size: 3rem;"></i>
+                        <h6 class="text-muted mb-2">No referrals yet</h6>
+                        <p class="text-muted small">Start referring friends to earn rewards!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-trophy me-2"></i>Top Referrers
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if top_referrers %}
+                    {% for referrer in top_referrers[:5] %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            {% if loop.index == 1 %}
+                            <i class="bi bi-trophy-fill text-warning" style="font-size: 1.5rem;"></i>
+                            {% elif loop.index == 2 %}
+                            <i class="bi bi-award-fill text-secondary" style="font-size: 1.5rem;"></i>
+                            {% elif loop.index == 3 %}
+                            <i class="bi bi-award-fill text-warning" style="font-size: 1.5rem;"></i>
+                            {% else %}
+                            <span class="badge bg-light text-dark">{{ loop.index }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">{{ referrer.name[:1] }}***</h6>
+                        </div>
+                        <div>
+                            <span class="badge bg-primary">{{ referrer.total_referrals }} referrals</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="bi bi-trophy text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted small mb-0">Be the first to start referring!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-share me-2"></i>Share Your Referral Code
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Share Message</label>
+                    <textarea class="form-control" rows="4" id="share-message" readonly>
+Hey! I've been using HealneX for my healthcare needs and it's amazing! 
+
+Use my referral code {{ current_user.referral_code }} to get ₹10 off your first consultation.
+
+Sign up at: {{ request.url_root }}auth/register/patient?ref={{ current_user.referral_code }}
+                    </textarea>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-success" onclick="shareViaWhatsApp()">
+                        <i class="bi bi-whatsapp me-2"></i>Share on WhatsApp
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="shareViaEmail()">
+                        <i class="bi bi-envelope me-2"></i>Share via Email
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="copyShareMessage()">
+                        <i class="bi bi-clipboard me-2"></i>Copy Message
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="redeemModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-gift me-2"></i>Redeem Rewards
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <h4>Available Points: <span class="text-primary">{{ referral_points|default(0) }}</span></h4>
+                </div>
+
+                <div class="row">
+                    {% if referral_points >= 500 %}
+                    <div class="col-12 mb-3">
+                        <div class="card border">
+                            <div class="card-body text-center">
+                                <i class="bi bi-percent text-primary mb-2" style="font-size: 2rem;"></i>
+                                <h6>10% Off Monthly Subscription</h6>
+                                <p class="text-muted small">Valid for 3 months</p>
+                                <button type="button" class="btn btn-primary btn-sm"
+                                    onclick="redeemOffer('subscription_discount')">
+                                    Redeem for 500 Points
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if referral_points >= 1000 %}
+                    <div class="col-12 mb-3">
+                        <div class="card border">
+                            <div class="card-body text-center">
+                                <i class="bi bi-calendar-check text-success mb-2" style="font-size: 2rem;"></i>
+                                <h6>Free Consultation</h6>
+                                <p class="text-muted small">One-time use voucher</p>
+                                <button type="button" class="btn btn-success btn-sm"
+                                    onclick="redeemOffer('free_consultation')">
+                                    Redeem for 1000 Points
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyReferralCode() {
+        const code = document.getElementById('referral-code').textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            showToast('Referral code copied!', 'success');
+        });
+    }
+
+    function shareReferralCode() {
+        new bootstrap.Modal(document.getElementById('shareModal')).show();
+    }
+
+    function copyShareMessage() {
+        const message = document.getElementById('share-message').value;
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Message copied!', 'success');
+        });
+    }
+
+    function shareViaWhatsApp() {
+        const message = encodeURIComponent(document.getElementById('share-message').value);
+        window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+
+    function shareViaEmail() {
+        const message = encodeURIComponent(document.getElementById('share-message').value);
+        window.open(`mailto:?subject=Join HealneX&body=${message}`, '_blank');
+    }
+
+    function redeemReward() {
+        new bootstrap.Modal(document.getElementById('redeemModal')).show();
+    }
+
+    function redeemOffer(offerType) {
+        fetch('/referrals/redeem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                offer_type: offerType
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(data.error, 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Error redeeming reward', 'error');
+            });
+
+        bootstrap.Modal.getInstance(document.getElementById('redeemModal')).hide();
+    }
+</script>
+{% endblock %}

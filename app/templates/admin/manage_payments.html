@@ -1,0 +1,242 @@
+{% extends "base/layout.html" %}
+{% block title %}Payment Management - HealneX{% endblock %}
+{% block content %}
+<div class="container-fluid">
+
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-1">
+                    <i class="bi bi-credit-card text-info me-2"></i>
+                    Payment Management
+                </h2>
+                <p class="text-muted mb-0">Monitor all platform transactions and revenue streams</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mb-4 g-3">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card bg-gradient bg-success text-white h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-2">
+                        <i class="bi bi-currency-rupee fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">₹{{ total_revenue|default(0) }}</h3>
+                    <p class="small opacity-75 mb-0">Total Revenue</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card bg-primary text-white h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-2">
+                        <i class="bi bi-people fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">₹{{ consultation_revenue|default(0) }}</h3>
+                    <p class="small opacity-75 mb-0">Consultation Revenue</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card bg-info text-white h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-2">
+                        <i class="bi bi-repeat fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">₹{{ subscription_revenue|default(0) }}</h3>
+                    <p class="small opacity-75 mb-0">Subscription Revenue</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card bg-warning text-white h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-2">
+                        <i class="bi bi-x-circle fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">{{ failed_payments|default(0) }}</h3>
+                    <p class="small opacity-75 mb-0">Failed Payments</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="GET" class="row g-3 align-items-end">
+
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Search</label>
+                            <input type="text" class="form-control" name="search"
+                                value="{{ request.args.get('search', '') }}" placeholder="User name or Payment ID">
+                        </div>
+
+
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Type</label>
+                            <select class="form-select" name="type">
+                                <option value="">All Types</option>
+                                <option value="consultation" {% if request.args.get('type')=='consultation' %}selected{%
+                                    endif %}>Consultation</option>
+                                <option value="subscription" {% if request.args.get('type')=='subscription' %}selected{%
+                                    endif %}>Subscription</option>
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select class="form-select" name="status">
+                                <option value="">All Status</option>
+                                <option value="completed" {% if request.args.get('status')=='completed' %}selected{%
+                                    endif %}>Completed</option>
+                                <option value="pending" {% if request.args.get('status')=='pending' %}selected{% endif
+                                    %}>Pending</option>
+                                <option value="failed" {% if request.args.get('status')=='failed' %}selected{% endif %}>
+                                    Failed</option>
+                                <option value="refunded" {% if request.args.get('status')=='refunded' %}selected{% endif
+                                    %}>Refunded</option>
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Date Range</label>
+                            <select class="form-select" name="date_range">
+                                <option value="">All Time</option>
+                                <option value="today" {% if request.args.get('date_range')=='today' %}selected{% endif
+                                    %}>Today</option>
+                                <option value="week" {% if request.args.get('date_range')=='week' %}selected{% endif %}>
+                                    This Week</option>
+                                <option value="month" {% if request.args.get('date_range')=='month' %}selected{% endif
+                                    %}>This Month</option>
+                                <option value="quarter" {% if request.args.get('date_range')=='quarter' %}selected{%
+                                    endif %}>This Quarter</option>
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-2 d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search me-1"></i> Filter
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-receipt text-primary me-2"></i>Payment Transactions
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col"># Payment ID</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td>
+                                        <span class="text-dark fw-semibold">
+                                            <i class="bi bi-hash text-muted me-1"></i>
+                                            {{ payment.payment_id or payment.id }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ payment.payment_date.strftime('%b %d, %Y') }}<br>
+                                            <small class="text-muted">{{ payment.payment_date.strftime('%I:%M %p')
+                                                }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong>{{ payment.user.name }}</strong><br>
+                                            <small class="text-muted">{{ payment.user.email }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ 'primary' if payment.payment_type == 'consultation' else 'info' }}">
+                                            <i
+                                                class="bi bi-{{ 'person-video' if payment.payment_type == 'consultation' else 'repeat' }}"></i>
+                                            {{ payment.payment_type|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">₹{{ '%.2f'|format(payment.amount) }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ 
+                                        'success' if payment.status == 'completed' 
+                                        else 'warning' if payment.status == 'pending' 
+                                        else 'danger' if payment.status == 'failed' 
+                                        else 'secondary' }}">
+                                            <i class="bi bi-{{ 
+                                            'check-circle' if payment.status == 'completed' 
+                                            else 'hourglass-split' if payment.status == 'pending' 
+                                            else 'x-circle' if payment.status == 'failed' 
+                                            else 'question-circle' }}"></i>
+                                            {{ payment.status|title }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-info" title="View Details"
+                                                onclick="viewPayment({{ payment.id }})">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <a href="{{ url_for('payments.view_receipt', payment_id=payment.id) }}"
+                                                class="btn btn-outline-success" title="Download Receipt">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    function viewPayment(paymentId) {
+
+        window.location.href = `/payments/receipt/${paymentId}`;
+    }
+
+</script>
+{% endblock %}

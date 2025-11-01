@@ -1,0 +1,185 @@
+{% extends "base/layout.html" %}
+{% block title %}Edit Profile{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-person-gear"></i> Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.csrf_token }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ current_user.name }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone"
+                                        value="{{ current_user.phone or '' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if current_user.role == 'admin' %}
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.email.label }} {{ form.email(class="form-control") }}
+                        </div>
+                        {% endif %}
+
+                        {% if current_user.role == 'patient' %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="age" class="form-label">Age</label>
+                                    <input type="number" class="form-control" id="age" name="age"
+                                        value="{{ current_user.age or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select class="form-select" id="gender" name="gender">
+                                        <option value="">Select gender</option>
+                                        <option value="male" {% if current_user.gender=='male' %}selected{% endif %}>
+                                            Male</option>
+                                        <option value="female" {% if current_user.gender=='female' %}selected{% endif
+                                            %}>Female</option>
+                                        <option value="other" {% if current_user.gender=='other' %}selected{% endif %}>
+                                            Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="allergies" class="form-label">Allergies</label>
+                            <textarea class="form-control" id="allergies" name="allergies"
+                                rows="2">{{ current_user.allergies or '' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="conditions" class="form-label">Medical Conditions</label>
+                            <textarea class="form-control" id="conditions" name="conditions"
+                                rows="2">{{ current_user.conditions or '' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="emergency_contact" class="form-label">Emergency Contact</label>
+                            <input type="text" class="form-control" id="emergency_contact" name="emergency_contact"
+                                value="{{ current_user.emergency_contact or '' }}">
+                        </div>
+                        {% elif current_user.role == 'doctor' %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="specialization" class="form-label">Specialization</label>
+                                    <input type="text" class="form-control" id="specialization" name="specialization"
+                                        value="{{ current_user.specialization or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="license_number" class="form-label">License Number</label>
+                                    <input type="text" class="form-control" id="license_number" name="license_number"
+                                        value="{{ current_user.license_number or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="clinic_hospital" class="form-label">Clinic/Hospital Name</label>
+                                    <input type="text" class="form-control" id="clinic_hospital" name="clinic_hospital"
+                                        value="{{ current_user.clinic_hospital or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="consultation_fee" class="form-label">Consultation Fee (₹)</label>
+                                    <input type="number" class="form-control" id="consultation_fee"
+                                        name="consultation_fee" value="{{ current_user.consultation_fee or '' }}">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="working_hours" class="form-label">Working Hours</label>
+                                <input type="text" class="form-control" id="working_hours" name="working_hours"
+                                    value="{{ current_user.working_hours_start.strftime('%I:%M %p') }} - {{ current_user.working_hours_end.strftime('%I:%M %p') if current_user.working_hours_end else '' }}"
+                                    placeholder="e.g., 9:00 AM - 6:00 PM">
+                            </div>
+                            <div class="mb-3">
+                                {% if current_user.role == 'doctor' %}
+                                {% if current_user.stripe_account_id %}
+                                <div class="alert alert-success d-flex align-items-center" role="alert">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <strong>Stripe Connected:</strong> Your payout account is linked.
+                                </div>
+                                {% else %}
+                                <a href="{{ url_for('dashboard.onboard_stripe') }}" class="btn btn-success">
+                                    <i class="bi bi-link-45deg me-1"></i> Connect to Stripe
+                                </a>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="bank_account_number" class="form-label">Bank Account Number</label>
+                                    <input type="text" class="form-control" id="bank_account_number"
+                                        name="bank_account_number" value="{{ current_user.bank_account_number or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="ifsc_code" class="form-label">IFSC Code</label>
+                                    <input type="text" class="form-control" id="ifsc_code" name="ifsc_code"
+                                        value="{{ current_user.ifsc_code or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="account_holder_name" class="form-label">Account Holder Name</label>
+                                    <input type="text" class="form-control" id="account_holder_name"
+                                        name="account_holder_name" value="{{ current_user.account_holder_name or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="bank_name" class="form-label">Bank Name</label>
+                                    <input type="text" class="form-control" id="bank_name" name="bank_name"
+                                        value="{{ current_user.bank_name or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="payout_enabled" name="payout_enabled" {%
+                                if current_user.payout_enabled %}checked{% endif %}>
+                            <label class="form-check-label" for="payout_enabled">
+                                Enable Payouts to Bank Account
+                            </label>
+                        </div> -->
+
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('dashboard.patient_lookup' if current_user.role == 'patient' else 'dashboard.doctor_dashboard') }}"
+                                class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
