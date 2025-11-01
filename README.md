@@ -30,13 +30,7 @@ HealneX is a unified healthtech platform that merges teleconsultation, electroni
 - **Deployment Support:** Gunicorn, environment-driven configuration, CLI helpers (`flask init-db`, `flask seed-db`).
 
 ## System Architecture & Workflow
-```
-Browsers (patients | doctors | admins)
-    -> Flask Routing Layer (Blueprints: auth, dashboard, appointments, payments, uploads, referrals, chat, notifications, admin)
-        -> Service Helpers (OTP email, notifications, AI analysis, Stripe SDK)
-            -> SQLAlchemy ORM Models (User, Appointment, Payment, MedicalFile, Referral, Notification, Message, DoctorReferral, Setting)
-                -> SQLite (default) or external RDBMS
-```
+![System Architecture](architecture_diagram.png)
 1. **Authentication:** OTP-based login and dual registration flows ensure verified access.
 2. **Scheduling:** Patients search active doctors, select slots, and trigger payments or offline confirmations.
 3. **Consultation:** Doctors manage queues, mark visits complete, and award treatments; chat and video-call bootstrap provide synchronous touchpoints.
