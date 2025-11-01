@@ -127,10 +127,10 @@ Additional optional flags include `FLASK_CONFIG` (switch between development/pro
 ## Screenshots / UI Previews
 
 ![Hero Image](app/static/images/hero-healthcare.png)
-![Landing Page](app/static/images/home-page.png)
-![Patient Dashboard](app/static/images/patient-dashboard.png)
-![Doctor Dashboard](app/static/images/doctor-dashboard.png)
-![Admin Dashboard](app/static/images/admin-dashboard.png)
+![Landing Page](app/static/images/home-page.PNG)
+![Patient Dashboard](app/static/images/patient-dashboard.PNG)
+![Doctor Dashboard](app/static/images/doctor-dashboard.PNG)
+![Admin Dashboard](app/static/images/admin-dashboard.PNG)
 
 
 ## Demo / Video
