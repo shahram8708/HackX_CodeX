@@ -198,7 +198,8 @@ Use GPU builds of `torch`/`tensorflow` when available for faster AI analysis.
 | --- | --- | --- |
 | Shah Ram | Backend Lead & Platform Architect | Flask services, database schema, payments, admin analytics |
 | Nisarg Parmar | Full Stack & AI Engineer | Frontend design, AI report analysis, telehealth UX, deployment pipelines |
+| Milan Gohil | AI Engineer | Design, AI report analysis, deployment pipelines |
 
 ## License & Acknowledgments
 - **License:** Hackathon submission. License to be finalized; treat as all rights reserved unless stated otherwise.
-- **Acknowledgments:** Built using Flask, Bootstrap, Stripe, Hugging Face Transformers, PyTorch, TensorFlow, and PyMuPDF. Thanks to WIE HackX 2025 organizers for the problem statements and evaluation rubric.
+- **Acknowledgments:** Built using Flask, Bootstrap, Stripe, Hugging Face Transformers, PyTorch, TensorFlow, and PyMuPDF. Thanks to My Bharat Government organizers for the problem statements and evaluation rubric.
