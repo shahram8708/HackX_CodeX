@@ -197,8 +197,8 @@ Use GPU builds of `torch`/`tensorflow` when available for faster AI analysis.
 | Name | Role | Contribution |
 | --- | --- | --- |
 | Shah Ram | Backend Lead & Platform Architect | Flask services, database schema, payments, admin analytics |
-| Nisarg Parmar | Full Stack & AI Engineer | Frontend design, AI report analysis, telehealth UX, deployment pipelines |
-| Milan Gohil | AI Engineer | Design, AI report analysis, deployment pipelines |
+| Umang Rane | Full Stack & AI Engineer | Frontend design, AI report analysis, telehealth UX, deployment pipelines |
+| Krish Patel | AI Engineer | Design, AI report analysis, deployment pipelines |
 
 ## License & Acknowledgments
 - **License:** Hackathon submission. License to be finalized; treat as all rights reserved unless stated otherwise.
