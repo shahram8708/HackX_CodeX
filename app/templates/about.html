@@ -3,70 +3,93 @@
 
 {% block content %}
 
-<header class="bg-light py-4 border-bottom">
-  <div class="container d-flex flex-column flex-lg-row align-items-lg-center justify-content-between">
-    <h1 class="h3 mb-2 mb-lg-0 fw-semibold"><i class="bi bi-info-circle me-2"></i>About HealneX</h1>
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">About</li>
-      </ol>
-    </nav>
+<header class="py-4 py-md-5 bg-white border-bottom hx-i18n-admin">
+  <div class="container">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between">
+      <h1 class="h3 h2-md mb-2 mb-lg-0 fw-semibold d-flex align-items-center">
+        <span class="badge bg-primary bg-gradient rounded-3 me-2"><i class="bi bi-info-circle"></i></span>
+        About HealneX
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 small">
+          <li class="breadcrumb-item"><a href="{{ url_for('home') }}" class="text-decoration-none"><i class="bi bi-house-door me-1"></i>Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">About</li>
+        </ol>
+      </nav>
+    </div>
   </div>
+  <div class="container mt-3">
+    <div class="p-3 p-md-4 rounded-4 shadow-sm hx-section-card">
+      <div class="row align-items-center g-3 g-md-4">
+        <div class="col-12 col-lg-8">
+          <h2 class="h4 h3-md fw-bold mb-2 d-flex align-items-center"><i class="bi bi-heart-pulse text-primary me-2"></i>Our Mission</h2>
+          <p class="mb-0 text-muted lead-sm">
+            To connect patients and doctors seamlessly through secure, innovative, and human-centered digital healthcare.
+          </p>
+        </div>
+        <div class="col-12 col-lg-4 text-lg-end">
+          {% if not current_user.is_authenticated %}
+          <a href="{{ url_for('auth.register_patient') }}" class="btn btn-primary me-2 mb-2 mb-lg-0">
+            <i class="bi bi-person-plus me-2"></i>Join as Patient
+          </a>
+          <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-primary">
+            <i class="bi bi-stethoscope me-2"></i>Join as Doctor
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </header>
 
 
-<section class="py-5 bg-primary text-white text-center">
+<section class="py-5 py-md-6 hx-i18n-admin">
   <div class="container">
-    <h2 class="display-6 fw-bold">Our Mission</h2>
-    <p class="lead mx-auto" style="max-width: 720px;">
-      To connect patients and doctors seamlessly through secure, innovative, and human-centered digital healthcare.
-    </p>
-    {% if not current_user.is_authenticated %}
-    <a href="{{ url_for('auth.register_patient') }}" class="btn btn-light btn-lg me-2">Join as Patient</a>
-    <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-light btn-lg">Join as Doctor</a>
-    {% endif %}
+    <div class="row g-4 g-lg-4">
+      <div class="col-md-4">
+        <div class="h-100 border-0 rounded-4 shadow-sm p-4 text-center hx-section-card" style="transition: transform .2s ease, box-shadow .2s ease;">
+          <div class="display-5 text-primary mb-3"><i class="bi bi-lightbulb"></i></div>
+          <h5 class="fw-bold mb-2">Why We Started</h5>
+          <p class="text-muted mb-0">
+            We saw fragmented care journeys and built HealneX to simplify access, empower providers, and put patients first.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="h-100 border-0 rounded-4 shadow-sm p-4 text-center hx-section-card" style="transition: transform .2s ease, box-shadow .2s ease;">
+          <div class="display-5 text-success mb-3"><i class="bi bi-eye"></i></div>
+          <h5 class="fw-bold mb-2">Our Vision</h5>
+          <p class="text-muted mb-0">
+            An inclusive digital ecosystem where quality healthcare is available anytime, anywhere, for everyone.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="h-100 border-0 rounded-4 shadow-sm p-4 text-center hx-section-card" style="transition: transform .2s ease, box-shadow .2s ease;">
+          <div class="display-5 text-info mb-3"><i class="bi bi-people"></i></div>
+          <h5 class="fw-bold mb-2">Who We Serve</h5>
+          <p class="text-muted mb-0">
+            Patients seeking convenient care, doctors growing efficient practices, and communities striving for better health outcomes.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 
-<section class="py-5">
+<section class="py-4 mt-5 hx-i18n-admin">
   <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0">
-          <div class="card-body text-center">
-            <div class="display-4 text-primary mb-3"><i class="bi bi-lightbulb"></i></div>
-            <h5 class="fw-bold">Why We Started</h5>
-            <p class="text-muted">
-              We saw fragmented care journeys and built HealneX to simplify access, empower providers, and put
-              patients first.
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0">
-          <div class="card-body text-center">
-            <div class="display-4 text-success mb-3"><i class="bi bi-eye"></i></div>
-            <h5 class="fw-bold">Our Vision</h5>
-            <p class="text-muted">
-              An inclusive digital ecosystem where quality healthcare is available anytime, anywhere, for everyone.
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0">
-          <div class="card-body text-center">
-            <div class="display-4 text-info mb-3"><i class="bi bi-people"></i></div>
-            <h5 class="fw-bold">Who We Serve</h5>
-            <p class="text-muted">
-              Patients seeking convenient care, doctors growing efficient practices, and communities striving for better
-              health outcomes.
-            </p>
-          </div>
-        </div>
+    <div class="rounded-4 p-4 p-md-5 text-center bg-light border shadow-sm">
+      <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+        <span class="text-muted"><i class="bi bi-shield-lock text-primary me-2"></i>Secure by design</span>
+        <span class="vr d-none d-md-inline"></span>
+        <span class="text-muted"><i class="bi bi-phone text-primary me-2"></i>Mobile-first experience</span>
+        <span class="vr d-none d-md-inline"></span>
+        <span class="text-muted"><i class="bi bi-cloud-check text-primary me-2"></i>Reliable & scalable</span>
       </div>
     </div>
   </div>

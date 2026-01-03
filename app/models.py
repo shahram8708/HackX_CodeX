@@ -53,6 +53,8 @@ class User(UserMixin, db.Model):
     sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', backref='sender', lazy='dynamic')
     received_messages = db.relationship('Message', foreign_keys='Message.receiver_id', backref='receiver', lazy='dynamic')
     notifications = db.relationship('Notification', backref='user', lazy='dynamic')
+    ai_messages = db.relationship('ChatbotMessage', backref='user', lazy='dynamic')
+    automation_messages = db.relationship('AutomationMessage', backref='user', lazy='dynamic')
     payments = db.relationship('Payment', backref='user', lazy='dynamic')
     medical_files = db.relationship('MedicalFile', foreign_keys='MedicalFile.patient_id', backref='patient', lazy='dynamic')
     uploaded_files = db.relationship('MedicalFile', foreign_keys='MedicalFile.doctor_id', backref='doctor', lazy='dynamic')
@@ -213,6 +215,47 @@ class Message(db.Model):
             'content': self.content,
             'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
             'is_read': self.is_read
+        }
+
+
+class ChatbotMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    role = db.Column(db.String(20), nullable=False)  # 'user' or 'assistant'
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ChatbotMessage {self.id}: {self.role}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'role': self.role,
+            'content': self.content,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+
+class AutomationMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    session_id = db.Column(db.String(64), nullable=False, index=True)
+    role = db.Column(db.String(20), nullable=False)  # 'user' or 'assistant'
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<AutomationMessage {self.id}: {self.role}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'role': self.role,
+            'content': self.content,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
 
 class Payment(db.Model):

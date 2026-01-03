@@ -3,22 +3,59 @@
 {% block title %}Patient Lookup - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4><i class="bi bi-search"></i> Patient Lookup</h4>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/patient_lookup.css') }}">
+
+<section class="lookup-hero hx-i18n-admin py-4">
+    <div class="container">
+        <div class="row align-items-center g-3">
+            <div class="col-lg-8 d-flex align-items-center gap-3">
+                <div class="hero-icon shadow-sm">
+                    <i class="bi bi-search"></i>
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('dashboard.patient_lookup') }}">
-                        {{ form.csrf_token }}
-                        <div class="mb-3">
-                            <label for="patient_id" class="form-label">Patient Unique ID</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                <input type="text" class="form-control" id="patient_id" name="patient_id"
-                                    placeholder="Enter patient ID (e.g., HC-5F4A1B9D)" required>
+                <div>
+                    <p class="text-uppercase fw-semibold text-muted small mb-1">Patient access</p>
+                    <h2 class="hero-title mb-2">Patient lookup</h2>
+                    <p class="text-muted mb-0">Find patient records quickly with their unique ID and jump into their profile or care plan.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="quick-meta text-muted small d-flex align-items-center justify-content-lg-end gap-2">
+                    <i class="bi bi-shield-lock text-primary"></i>
+                    <span>Secure search—ID only</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="lookup-content hx-i18n-admin mt-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-8">
+                <div class="card lookup-card shadow-sm">
+                    <div class="card-header border-0 px-4 py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <div class="badge bg-light text-primary fw-semibold rounded-pill px-3 py-2">
+                                <i class="bi bi-search-heart me-1"></i> Quick search
+                            </div>
+                            <h4 class="mb-0 mt-2">Enter patient unique ID</h4>
+                            <p class="text-muted small mb-0">IDs look like HC-5F4A1B9D. No PHI required.</p>
+                        </div>
+                        <div class="text-muted small d-flex align-items-center gap-2">
+                            <i class="bi bi-clock-history text-primary"></i>
+                            <span>Fast lookups for care teams.</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST" action="{{ url_for('dashboard.patient_lookup') }}">
+                            {{ form.csrf_token }}
+                            <label for="patient_id" class="form-label d-flex align-items-center gap-2">
+                                <span class="badge rounded-pill bg-light text-primary"><i class="bi bi-person-badge"></i></span>
+                                <span>Patient Unique ID</span>
+                            </label>
+                            <div class="input-group lookup-input">
+                                <span class="input-group-text"><i class="bi bi-qr-code-scan"></i></span>
+                                <input type="text" class="form-control" id="patient_id" name="patient_id" placeholder="Enter patient ID (e.g., HC-5F4A1B9D)" required>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-search"></i> Search
                                 </button>
@@ -26,51 +63,89 @@
                             {% if form.patient_id.errors %}
                             <div class="invalid-feedback d-block">{{ form.patient_id.errors[0] }}</div>
                             {% endif %}
-                        </div>
-                    </form>
+                        </form>
 
-                    {% if patient %}
-                    <hr>
-                    <div class="card border-success">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0"><i class="bi bi-person-check"></i> Patient Found</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Name:</strong> {{ patient.name }}</p>
-                                    <p><strong>Email:</strong> {{ patient.email }}</p>
-                                    <p><strong>Phone:</strong> {{ patient.phone or 'N/A' }}</p>
-                                    <p><strong>Age:</strong> {{ patient.age or 'N/A' }}</p>
+                        {% if patient %}
+                        <hr class="my-4">
+                        <div class="card result-card border-success">
+                            <div class="card-header bg-success text-white d-flex align-items-center gap-2">
+                                <i class="bi bi-person-check"></i>
+                                <h5 class="mb-0">Patient found</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <p class="mb-2"><span class="text-muted small">Name</span><br><span class="fw-semibold">{{ patient.name }}</span></p>
+                                        <p class="mb-2"><span class="text-muted small">Email</span><br><span class="fw-semibold">{{ patient.email }}</span></p>
+                                        <p class="mb-2"><span class="text-muted small">Phone</span><br><span class="fw-semibold">{{ patient.phone or 'N/A' }}</span></p>
+                                        <p class="mb-0"><span class="text-muted small">Age</span><br><span class="fw-semibold">{{ patient.age or 'N/A' }}</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-2"><span class="text-muted small">Gender</span><br><span class="fw-semibold">{{ patient.gender or 'N/A' }}</span></p>
+                                        <p class="mb-2"><span class="text-muted small">Allergies</span><br><span class="fw-semibold">{{ patient.allergies or 'None reported' }}</span></p>
+                                        <p class="mb-2"><span class="text-muted small">Conditions</span><br><span class="fw-semibold">{{ patient.conditions or 'None reported' }}</span></p>
+                                        <p class="mb-0"><span class="text-muted small">Emergency Contact</span><br><span class="fw-semibold">{{ patient.emergency_contact or 'N/A' }}</span></p>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <p><strong>Gender:</strong> {{ patient.gender or 'N/A' }}</p>
-                                    <p><strong>Allergies:</strong> {{ patient.allergies or 'None reported' }}</p>
-                                    <p><strong>Conditions:</strong> {{ patient.conditions or 'None reported' }}</p>
-                                    <p><strong>Emergency Contact:</strong> {{ patient.emergency_contact or 'N/A' }}</p>
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+                                    <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient.unique_patient_id) }}" class="btn btn-primary">
+                                        <i class="bi bi-eye"></i> View Full Profile
+                                    </a>
+                                    <a href="{{ url_for('dashboard.add_treatment', patient_id=patient.unique_patient_id) }}" class="btn btn-success">
+                                        <i class="bi bi-plus-circle"></i> Add Treatment
+                                    </a>
                                 </div>
                             </div>
-                            <div class="d-flex gap-2">
-                                <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient.unique_patient_id) }}"
-                                    class="btn btn-primary">
-                                    <i class="bi bi-eye"></i> View Full Profile
-                                </a>
-                                <a href="{{ url_for('dashboard.add_treatment', patient_id=patient.unique_patient_id) }}"
-                                    class="btn btn-success">
-                                    <i class="bi bi-plus-circle"></i> Add Treatment
-                                </a>
+                        </div>
+                        {% elif searched %}
+                        <div class="alert alert-warning d-flex align-items-center gap-2 mt-4">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <div>No patient found with ID: <strong>{{ searched_id }}</strong></div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card info-card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-light text-primary rounded-pill px-3">Tips</span>
+                            <i class="bi bi-stars text-primary"></i>
+                        </div>
+                        <ul class="list-unstyled mb-0 small text-muted d-grid gap-2">
+                            <li class="d-flex gap-2"><i class="bi bi-lightbulb text-warning"></i><span>Use the exact ID format (e.g., HC-XXXXXXX).</span></li>
+                            <li class="d-flex gap-2"><i class="bi bi-clipboard-check text-success"></i><span>IDs are case-sensitive; copy-paste to avoid typos.</span></li>
+                            <li class="d-flex gap-2"><i class="bi bi-shield-lock text-info"></i><span>No sensitive data is required for search.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card info-card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-dark text-white rounded-pill px-3">Need help?</span>
+                            <i class="bi bi-headset text-warning"></i>
+                        </div>
+                        <div class="d-grid gap-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-muted small">Support</div>
+                                <span class="fw-semibold text-primary">help@healnex.in</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-muted small">Hours</div>
+                                <span class="fw-semibold text-success">24/7</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-muted small">Status</div>
+                                <span class="badge bg-light text-success rounded-pill">Online</span>
                             </div>
                         </div>
                     </div>
-                    {% elif searched %}
-                    <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle"></i> No patient found with ID: <strong>{{ searched_id
-                            }}</strong>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

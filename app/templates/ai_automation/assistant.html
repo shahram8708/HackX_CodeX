@@ -1,0 +1,157 @@
+{% extends 'base/layout.html' %}
+{% block title %}Automation Assistant{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h1 class="h4 mb-1">Automation Assistant</h1>
+                    <p class="text-muted mb-0">Run structured actions; replies stay brief.</p>
+                </div>
+                <span class="badge bg-secondary" id="auto-language">Lang: auto</span>
+            </div>
+
+            <div class="card shadow-sm mb-3" id="auto-panel">
+                <div class="card-body" id="auto-messages" style="min-height: 320px; max-height: 540px; overflow-y: auto;"></div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="mb-2 small text-muted" id="auto-status">Ready</div>
+                    <div class="mb-3" id="auto-tools" hidden>
+                        <span class="badge bg-info text-dark">Tool call</span>
+                    </div>
+                    <textarea id="auto-input" class="form-control mb-2" rows="3" maxlength="400" placeholder="Describe the task or appointment action"></textarea>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button id="auto-clear" class="btn btn-outline-secondary btn-sm">Clear history</button>
+                        <button id="auto-send" class="btn btn-primary">
+                            <span class="spinner-border spinner-border-sm me-1 d-none" id="auto-spinner" role="status"></span>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+(() => {
+    const messagesBox = document.getElementById('auto-messages');
+    const input = document.getElementById('auto-input');
+    const sendBtn = document.getElementById('auto-send');
+    const spinner = document.getElementById('auto-spinner');
+    const statusEl = document.getElementById('auto-status');
+    const languageEl = document.getElementById('auto-language');
+    const toolsBadge = document.getElementById('auto-tools');
+    const clearBtn = document.getElementById('auto-clear');
+    const sessionId = localStorage.getItem('hxAutoSession') || `auto-${Date.now()}`;
+    localStorage.setItem('hxAutoSession', sessionId);
+    let messages = [];
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    const setStatus = (text) => statusEl && (statusEl.textContent = text);
+    const setSending = (state) => {
+        sendBtn.disabled = state;
+        spinner.classList.toggle('d-none', !state);
+    };
+
+    const renderMessages = (list) => {
+        messagesBox.innerHTML = '';
+        if (!list || !list.length) {
+            messagesBox.innerHTML = '<p class="text-muted">No automation messages yet.</p>';
+            return;
+        }
+        list.forEach((m) => {
+            const bubble = document.createElement('div');
+            bubble.className = m.role === 'assistant' ? 'mb-3 p-3 bg-light rounded' : 'mb-3 p-3 border rounded';
+            bubble.innerHTML = `<div class="fw-semibold mb-1">${m.role === 'assistant' ? 'Assistant' : 'You'}</div><div>${(m.content || '').replace(/</g, '&lt;')}</div>`;
+            messagesBox.appendChild(bubble);
+        });
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    };
+
+    const loadHistory = async () => {
+        try {
+            const res = await fetch(`/ai-automation/history?session_id=${encodeURIComponent(sessionId)}`);
+            if (!res.ok) return;
+            const data = await res.json();
+            messages = data || [];
+            renderMessages(messages);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const clearHistory = async () => {
+        try {
+            const res = await fetch(`/ai-automation/history?session_id=${encodeURIComponent(sessionId)}`, {
+                method: 'DELETE',
+                headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {}
+            });
+            if (!res.ok) throw new Error('Failed');
+            messages = [];
+            renderMessages(messages);
+            setStatus('History cleared');
+        } catch (err) {
+            console.error(err);
+            setStatus('Could not clear history');
+        }
+    };
+
+    const sendMessage = async () => {
+        const text = (input.value || '').trim();
+        if (!text) return;
+        messages.push({ role: 'user', content: text });
+        renderMessages(messages);
+        setSending(true);
+        setStatus('Working...');
+        toolsBadge.hidden = true;
+        try {
+            const res = await fetch('/ai-automation/assistant', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
+                },
+                body: JSON.stringify({
+                    messages,
+                    session_id: sessionId,
+                    language: navigator.language || 'en'
+                })
+            });
+            const data = await res.json();
+            if (!res.ok || data.error) throw new Error(data.error || 'Failed');
+            languageEl.textContent = `Lang: ${data.language || 'auto'}`;
+            toolsBadge.hidden = !(data.tool_results && data.tool_results.length);
+            messages = data.messages || messages;
+            if (!messages.find(m => m.role === 'assistant' && m.content === data.reply)) {
+                messages.push({ role: 'assistant', content: data.reply });
+            }
+            renderMessages(messages);
+            setStatus('Ready');
+        } catch (err) {
+            console.error(err);
+            setStatus('Error');
+        } finally {
+            setSending(false);
+            input.value = '';
+        }
+    };
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    clearBtn.addEventListener('click', clearHistory);
+
+    loadHistory();
+})();
+</script>
+{% endblock %}

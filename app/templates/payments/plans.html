@@ -3,241 +3,168 @@
 {% block title %}Subscription Plans - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/plans.css') }}">
 
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h1 class="display-4 fw-bold text-primary mb-3">Choose Your Plan</h1>
-            <p class="lead text-muted">Unlock premium features with our flexible subscription plans</p>
-            <form id="csrf-helper-form" style="display:none;">
-                {{ form.csrf_token }}
-            </form>
-
-
-            <div class="d-flex justify-content-center align-items-center mb-4">
-                <span class="me-3">Monthly</span>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="billing-toggle" onchange="toggleBilling()">
-                    <label class="form-check-label" for="billing-toggle"></label>
+<section class="plans-page hx-i18n-admin py-4 py-lg-5">
+    <div class="container">
+        <div class="hero-card shadow-sm mb-5">
+            <div class="row align-items-center g-3">
+                <div class="col-lg-8 d-flex align-items-start gap-3">
+                    <div class="hero-icon"><i class="bi bi-layers-fill"></i></div>
+                    <div>
+                        <h1 class="mb-1">Choose Your Plan</h1>
+                        <p class="text-muted mb-2">Unlock premium features with flexible billing that fits your care journey.</p>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="badge bg-success-subtle text-success"><i class="bi bi-shield-lock me-1"></i>Secure billing</span>
+                            <span class="badge bg-primary-subtle text-primary"><i class="bi bi-lightning me-1"></i>Instant activation</span>
+                        </div>
+                    </div>
                 </div>
-                <span class="ms-3">
-                    Annually
-                    <span class="badge bg-success ms-1">Save 20%</span>
-                </span>
+                <div class="col-lg-4 text-lg-end">
+                    <form id="csrf-helper-form" style="display:none;">
+                        {{ form.csrf_token }}
+                    </form>
+                    <div class="billing-toggle d-inline-flex align-items-center gap-3">
+                        <span class="text-muted">Monthly</span>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="billing-toggle" onchange="toggleBilling()">
+                        </div>
+                        <div class="d-inline-flex align-items-center gap-2">
+                            <span class="fw-semibold">Annually</span>
+                            <span class="badge bg-success-subtle text-success">Save 20%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-
-    <div class="row justify-content-center">
-
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-heart text-primary" style="font-size: 3rem;"></i>
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="plan-card h-100">
+                    <div class="plan-header">
+                        <div class="plan-icon text-primary bg-primary-soft"><i class="bi bi-heart"></i></div>
+                        <div>
+                            <h3 class="mb-1">Basic</h3>
+                            <p class="text-muted mb-0">Perfect for getting started</p>
+                        </div>
                     </div>
-                    <h3 class="card-title">Basic</h3>
-                    <p class="text-muted">Perfect for getting started</p>
-
-                    <div class="mb-4">
-                        <h2 class="display-4 fw-bold text-primary">
-                            ₹<span class="monthly-price">99</span><span class="annual-price"
-                                style="display: none;">999</span>
-                        </h2>
-                        <span class="text-muted">
-                            per <span class="billing-period">month</span>
-                        </span>
+                    <div class="plan-price">
+                        <div class="d-flex align-items-end gap-2">
+                            <h2 class="mb-0 text-primary">₹<span class="monthly-price">99</span><span class="annual-price d-none">999</span></h2>
+                            <span class="text-muted">per <span class="billing-period">month</span></span>
+                        </div>
+                        <span class="badge bg-secondary-subtle text-secondary">Core essentials</span>
                     </div>
-
-                    <ul class="list-unstyled mb-4">
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Up to 3 consultations per month
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Basic health tracking
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Email support
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Appointment scheduling
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Priority support
-                        </li>
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Teleconsultations
+                    <ul class="plan-features">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Up to 3 consultations per month</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Basic health tracking</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Email support</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Appointment scheduling</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Priority support</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Teleconsultations</li>
                     </ul>
-
                     <div class="d-grid">
                         <button class="btn btn-outline-primary btn-lg" onclick="selectPlan('basic', 'monthly')">
-                            Choose Basic
+                            <i class="bi bi-check2-circle me-2"></i>Choose Basic
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-primary shadow h-100 position-relative">
-
-                <div class="position-absolute top-0 start-50 translate-middle">
-                    <span class="badge bg-primary px-3 py-2">Most Popular</span>
-                </div>
-
-                <div class="card-body text-center p-4 mt-3">
-                    <div class="mb-3">
-                        <i class="bi bi-star-fill text-warning" style="font-size: 3rem;"></i>
+            <div class="col-lg-4 col-md-6">
+                <div class="plan-card featured h-100 position-relative">
+                    <span class="most-popular badge bg-primary text-white position-absolute top-0 start-50 translate-middle">Most Popular</span>
+                    <div class="plan-header">
+                        <div class="plan-icon text-warning bg-warning-soft"><i class="bi bi-star-fill"></i></div>
+                        <div>
+                            <h3 class="mb-1">Premium</h3>
+                            <p class="text-muted mb-0">Best for regular healthcare needs</p>
+                        </div>
                     </div>
-                    <h3 class="card-title">Premium</h3>
-                    <p class="text-muted">Best for regular healthcare needs</p>
-
-                    <div class="mb-4">
-                        <h2 class="display-4 fw-bold text-primary">
-                            ₹<span class="monthly-price">299</span><span class="annual-price"
-                                style="display: none;">2999</span>
-                        </h2>
-                        <span class="text-muted">
-                            per <span class="billing-period">month</span>
-                        </span>
+                    <div class="plan-price">
+                        <div class="d-flex align-items-end gap-2">
+                            <h2 class="mb-0 text-primary">₹<span class="monthly-price">299</span><span class="annual-price d-none">2999</span></h2>
+                            <span class="text-muted">per <span class="billing-period">month</span></span>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary">Value packed</span>
                     </div>
-
-                    <ul class="list-unstyled mb-4">
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Unlimited consultations
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Advanced health tracking
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Teleconsultations included
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Priority support
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Medical records storage
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Prescription management
-                        </li>
+                    <ul class="plan-features">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Unlimited consultations</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Advanced health tracking</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Teleconsultations included</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Priority support</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Medical records storage</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Prescription management</li>
                     </ul>
-
                     <div class="d-grid">
                         <button class="btn btn-primary btn-lg" onclick="selectPlan('premium', 'monthly')">
-                            Choose Premium
+                            <i class="bi bi-magic me-2"></i>Choose Premium
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-building text-secondary" style="font-size: 3rem;"></i>
+            <div class="col-lg-4 col-md-6">
+                <div class="plan-card h-100">
+                    <div class="plan-header">
+                        <div class="plan-icon text-secondary bg-secondary-soft"><i class="bi bi-building"></i></div>
+                        <div>
+                            <h3 class="mb-1">Enterprise</h3>
+                            <p class="text-muted mb-0">For families and organizations</p>
+                        </div>
                     </div>
-                    <h3 class="card-title">Enterprise</h3>
-                    <p class="text-muted">For families and organizations</p>
-
-                    <div class="mb-4">
-                        <h2 class="display-4 fw-bold text-primary">
-                            ₹<span class="monthly-price">999</span><span class="annual-price"
-                                style="display: none;">9999</span>
-                        </h2>
-                        <span class="text-muted">
-                            per <span class="billing-period">month</span>
-                        </span>
+                    <div class="plan-price">
+                        <div class="d-flex align-items-end gap-2">
+                            <h2 class="mb-0 text-primary">₹<span class="monthly-price">999</span><span class="annual-price d-none">9999</span></h2>
+                            <span class="text-muted">per <span class="billing-period">month</span></span>
+                        </div>
+                        <span class="badge bg-secondary-subtle text-secondary">Team ready</span>
                     </div>
-
-                    <ul class="list-unstyled mb-4">
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Everything in Premium
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            24/7 dedicated support
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Custom health plans
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            Admin dashboard
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            API access
-                        </li>
+                    <ul class="plan-features">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Everything in Premium</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>24/7 dedicated support</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Custom health plans</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Admin dashboard</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>API access</li>
                     </ul>
-
                     <div class="d-grid">
                         <button class="btn btn-outline-primary btn-lg" onclick="selectPlan('enterprise', 'monthly')">
-                            Choose Enterprise
+                            <i class="bi bi-people me-2"></i>Choose Enterprise
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    {% if current_subscription %}
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="alert alert-info border-0" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-info-circle me-3" style="font-size: 1.5rem;"></i>
-                    <div class="flex-grow-1">
-                        <h6 class="alert-heading mb-1">Current Subscription</h6>
-                        <p class="mb-0">
-                            You are currently subscribed to the
-                            <strong>{{ current_user.subscription_tier|capitalize }}</strong> plan
-                            on a <strong>{{ current_user.subscription_plan|capitalize }}</strong> billing cycle.
-                            {% if current_user.subscription_active %}
-                            <br>Status: <span class="text-success fw-semibold">Active</span>
-                            {% else %}
-                            <br>Status: <span class="text-danger fw-semibold">Inactive</span>
-                            {% endif %}
-                            {% if current_user.subscription_expiry %}
-                            <br>Expires on: <strong>{{ current_user.subscription_expiry.strftime('%B %d, %Y')
-                                }}</strong>
-                            {% endif %}
-                        </p>
-                    </div>
+        {% if current_subscription %}
+        <div class="alert-card shadow-sm mt-4">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3">
+                <div class="alert-icon text-info"><i class="bi bi-info-circle"></i></div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">Current Subscription</h6>
+                    <p class="mb-0 text-muted">You are currently subscribed to the <strong>{{ current_user.subscription_tier|capitalize }}</strong> plan on a <strong>{{ current_user.subscription_plan|capitalize }}</strong> billing cycle.
+                        {% if current_user.subscription_active %}<br>Status: <span class="text-success fw-semibold">Active</span>{% else %}<br>Status: <span class="text-danger fw-semibold">Inactive</span>{% endif %}
+                        {% if current_user.subscription_expiry %}<br>Expires on: <strong>{{ current_user.subscription_expiry.strftime('%B %d, %Y') }}</strong>{% endif %}</p>
+                </div>
+                <div>
                     <a href="{{ url_for('payments.subscription_plans') }}" class="btn btn-outline-info">
-                        Manage Subscription
+                        <i class="bi bi-gear me-1"></i>Manage Subscription
                     </a>
                 </div>
             </div>
         </div>
-    </div>
-    {% endif %}
+        {% endif %}
 
-
-    <div class="row mt-5">
-        <div class="col-12">
-            <h3 class="text-center mb-4">Compare Features</h3>
+        <div class="comparison-card hx-card shadow-sm mt-5">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="compare-icon"><i class="bi bi-columns-gap"></i></div>
+                <div>
+                    <h3 class="mb-0">Compare Features</h3>
+                    <small class="text-muted">See what’s included at every level.</small>
+                </div>
+            </div>
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered align-middle mb-0">
                     <thead class="table-light">
                         <tr>
                             <th>Features</th>
@@ -281,39 +208,38 @@
                 </table>
             </div>
         </div>
-    </div>
 
-
-    <div class="row mt-5">
-        <div class="col-12">
-            <h3 class="text-center mb-4">Frequently Asked Questions</h3>
+        <div class="mt-5">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="faq-icon"><i class="bi bi-question-circle"></i></div>
+                <div>
+                    <h3 class="mb-0">Frequently Asked Questions</h3>
+                    <small class="text-muted">Quick answers to common questions.</small>
+                </div>
+            </div>
             <div class="accordion" id="faqAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="faq1">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
                             Can I change my plan later?
                         </button>
                     </h2>
                     <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Yes, you can upgrade or downgrade your plan at any time. Changes will be prorated and take
-                            effect immediately.
+                            Yes, you can upgrade or downgrade your plan at any time. Changes will be prorated and take effect immediately.
                         </div>
                     </div>
                 </div>
 
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="faq2">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
                             What happens if I cancel my subscription?
                         </button>
                     </h2>
                     <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            You can cancel anytime. Your subscription will remain active until the end of your billing
-                            period,
+                            You can cancel anytime. Your subscription will remain active until the end of your billing period,
                             after which you'll be moved to our free tier with basic features.
                         </div>
                     </div>
@@ -321,22 +247,20 @@
 
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="faq3">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
                             Are there any setup fees?
                         </button>
                     </h2>
                     <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            No, there are no setup fees or hidden charges. You only pay the subscription fee for your
-                            chosen plan.
+                            No, there are no setup fees or hidden charges. You only pay the subscription fee for your chosen plan.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <script>
     let currentBilling = 'monthly';

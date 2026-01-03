@@ -1,0 +1,127 @@
+:root {
+    --hx-primary: #2563eb;
+    --hx-deep: #0f172a;
+    --hx-soft: #f8fafc;
+    --hx-border: rgba(15, 23, 42, 0.08);
+    --hx-radius: 18px;
+    --hx-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+}
+
+.tl-hero {
+    background: radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.12), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.12), transparent 26%),
+        linear-gradient(120deg, #f8fbff 0%, #eef2ff 40%, #f8fafc 100%);
+    border-bottom: 1px solid var(--hx-border);
+}
+
+.hero-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: var(--hx-primary);
+    font-size: 1.4rem;
+    box-shadow: var(--hx-shadow);
+}
+
+.hero-title {
+    font-weight: 700;
+    color: var(--hx-deep);
+}
+
+.tl-breadcrumb {
+    margin-bottom: 0;
+    background: transparent;
+    padding: 0;
+}
+
+.tl-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    color: #94a3b8;
+}
+
+.tl-content {
+    background: #fff;
+}
+
+.record-card,
+.empty-card {
+    border: 1px solid var(--hx-border);
+    border-radius: var(--hx-radius);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.record-card:hover,
+.empty-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--hx-shadow);
+}
+
+.record-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--hx-primary);
+    font-size: 1.4rem;
+}
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    background: rgba(148, 163, 184, 0.15);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 2rem;
+}
+
+.card-footer {
+    border-top: none;
+}
+
+.btn-primary,
+.btn-outline-primary,
+.btn-success {
+    border-radius: 12px;
+}
+
+.btn-primary {
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
+}
+
+.btn-success {
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.16);
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-outline-primary:hover {
+    transform: translateY(-1px);
+}
+
+.badge {
+    letter-spacing: 0.3px;
+}
+
+.pagination .page-link {
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 1.35rem;
+    }
+
+    .record-card,
+    .empty-card {
+        border-radius: 14px;
+    }
+}

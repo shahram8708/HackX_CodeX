@@ -361,7 +361,6 @@ def complete_appointment(appointment_id):
                     flash('Doctor payout not possible. Please complete Stripe onboarding from Edit Profile.', 'warning')
                     return redirect(url_for('appointments.view_appointment', appointment_id=appointment_id))
 
-                # Check if the Stripe account has transfers capability enabled
                 account = stripe.Account.retrieve(doctor.stripe_account_id)
                 if not account.capabilities.get('transfers') == 'active':
                     flash('Doctor Stripe account is not fully onboarded for payouts. Please complete onboarding.', 'warning')

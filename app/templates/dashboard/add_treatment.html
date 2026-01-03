@@ -1,55 +1,174 @@
 {% extends "base/layout.html" %}
 {% block title %}Add Treatment - {{ patient.name }}{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4><i class="bi bi-plus-circle"></i> Add Treatment for {{ patient.name }}</h4>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/add_treatment.css') }}">
+
+<section class="treatment-hero hx-i18n-admin py-4">
+    <div class="container">
+        <div class="row g-3 align-items-center">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="hero-icon shadow-sm">
+                        <i class="bi bi-clipboard2-plus"></i>
+                    </div>
+                    <div>
+                        <p class="text-uppercase fw-semibold text-muted small mb-1">Treatment Entry</p>
+                        <h2 class="hero-title mb-2">Add treatment for {{ patient.name }}</h2>
+                        <p class="text-muted mb-0">Capture clear, concise care notes and keep the care team aligned.</p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data">
-                        {{ form.csrf_token }}
-                        <div class="mb-3">
-                            <label for="treatment_type" class="form-label">Treatment Type</label>
-                            <select class="form-select" id="treatment_type" name="treatment_type" required>
-                                <option value="">Select treatment type</option>
-                                <option value="prescription">Prescription</option>
-                                <option value="diagnosis">Diagnosis</option>
-                                <option value="lab_order">Lab Order</option>
-                                <option value="consultation">Consultation Notes</option>
-                            </select>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a class="btn btn-link back-link px-0" href="{{ url_for('dashboard.view_patient_profile', patient_id=patient.unique_patient_id) }}">
+                    <i class="bi bi-arrow-left"></i> Back to patient profile
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="treatment-content hx-i18n-admin mt-5">
+    <div class="container">
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-8">
+                <div class="card treatment-card shadow-sm">
+                    <div class="card-header border-0 px-4 py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <div class="badge bg-light text-primary fw-semibold rounded-pill px-3 py-2">
+                                <i class="bi bi-shield-check me-1"></i> Securely saved to patient record
+                            </div>
+                            <h4 class="mb-0 mt-2">Clinical details</h4>
+                            <p class="text-muted small mb-0">Include actionable notes, medications, and any supporting files.</p>
                         </div>
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" required>
+                        <div class="text-muted small d-flex align-items-center gap-2">
+                            <i class="bi bi-activity text-primary"></i>
+                            <span>Auto-syncs with the patient timeline</span>
                         </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="4"
-                                required></textarea>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST" enctype="multipart/form-data">
+                            {{ form.csrf_token }}
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="treatment_type" class="form-label d-flex align-items-center gap-2">
+                                        <span class="badge rounded-pill bg-light text-primary"><i class="bi bi-diagram-3"></i></span>
+                                        <span>Treatment Type</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="bi bi-diagram-2 field-icon"></i>
+                                        <select class="form-select" id="treatment_type" name="treatment_type" required>
+                                            <option value="">Select treatment type</option>
+                                            <option value="prescription">Prescription</option>
+                                            <option value="diagnosis">Diagnosis</option>
+                                            <option value="lab_order">Lab Order</option>
+                                            <option value="consultation">Consultation Notes</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-text">Choose the category that best describes the update.</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="title" class="form-label d-flex align-items-center gap-2">
+                                        <span class="badge rounded-pill bg-light text-primary"><i class="bi bi-type"></i></span>
+                                        <span>Title</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="bi bi-pencil-square field-icon"></i>
+                                        <input type="text" class="form-control" id="title" name="title" placeholder="e.g., Follow-up plan" required>
+                                    </div>
+                                    <div class="form-text">Give this update a clear, concise headline.</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <label for="description" class="form-label d-flex align-items-center gap-2">
+                                    <span class="badge rounded-pill bg-light text-primary"><i class="bi bi-journal-text"></i></span>
+                                    <span>Description</span>
+                                </label>
+                                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Key findings, instructions, and next steps" required></textarea>
+                                <div class="form-text">Keep the summary patient-friendly and action-focused.</div>
+                            </div>
+
+                            <div class="mt-3">
+                                <label for="medications" class="form-label d-flex align-items-center gap-2">
+                                    <span class="badge rounded-pill bg-light text-primary"><i class="bi bi-capsule"></i></span>
+                                    <span>Medications (if applicable)</span>
+                                </label>
+                                <textarea class="form-control" id="medications" name="medications" rows="3" placeholder="Medicine name, dosage, frequency..."></textarea>
+                                <div class="form-text">Add any prescriptions or adjustments for quick reference.</div>
+                            </div>
+
+                            <div class="mt-3">
+                                <label for="file" class="form-label d-flex align-items-center gap-2">
+                                    <span class="badge rounded-pill bg-light text-primary"><i class="bi bi-paperclip"></i></span>
+                                    <span>Attach File (Optional)</span>
+                                </label>
+                                <div class="input-with-icon">
+                                    <i class="bi bi-cloud-upload field-icon"></i>
+                                    <input type="file" class="form-control" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png">
+                                </div>
+                                <div class="form-text">Supported: PDF, JPG, PNG. Keep sensitive data concise.</div>
+                            </div>
+
+                            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mt-4">
+                                <div class="text-muted small d-flex align-items-center gap-2">
+                                    <i class="bi bi-lock"></i>
+                                    <span>Data is encrypted and linked to the patient record.</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient.unique_patient_id) }}" class="btn btn-outline-secondary px-4">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="bi bi-check-circle"></i> Save Treatment
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card tip-card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-light text-primary rounded-pill px-3">Guidance</span>
+                            <i class="bi bi-stars text-primary"></i>
                         </div>
-                        <div class="mb-3">
-                            <label for="medications" class="form-label">Medications (if applicable)</label>
-                            <textarea class="form-control" id="medications" name="medications" rows="3"
-                                placeholder="Medicine name, dosage, frequency..."></textarea>
+                        <ul class="list-unstyled mb-0 small text-muted d-grid gap-2">
+                            <li class="d-flex gap-2"><i class="bi bi-lightbulb text-warning"></i><span>Use short paragraphs so patients can follow easily.</span></li>
+                            <li class="d-flex gap-2"><i class="bi bi-clipboard-check text-success"></i><span>Call out follow-up dates or labs in the description.</span></li>
+                            <li class="d-flex gap-2"><i class="bi bi-shield-lock text-info"></i><span>Remove personal identifiers from attachments when possible.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card tip-card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-dark text-white rounded-pill px-3">Quick checks</span>
+                            <i class="bi bi-thermometer-half text-danger"></i>
                         </div>
-                        <div class="mb-3">
-                            <label for="file" class="form-label">Attach File (Optional)</label>
-                            <input type="file" class="form-control" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png">
+                        <div class="d-grid gap-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-muted small">Vitals or key symptoms noted?</div>
+                                <i class="bi bi-activity text-primary"></i>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-muted small">Clear next steps included?</div>
+                                <i class="bi bi-check2-circle text-success"></i>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-muted small">Attachments labeled clearly?</div>
+                                <i class="bi bi-folder2-open text-info"></i>
+                            </div>
                         </div>
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient.unique_patient_id) }}"
-                                class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Save Treatment
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

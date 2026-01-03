@@ -2,58 +2,76 @@
 {% block title %}System Reports - HealneX Admin{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_reports.css') }}">
+
+<div class="container-fluid hx-admin-reports py-4">
+    <div class="row g-4 mb-3">
         <div class="col-12">
-            <div class="card shadow-sm mb-4 border-0">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">
-                        <i class="bi bi-bar-chart-line-fill me-2"></i> System Reports & Analytics
-                    </h4>
-                    <button type="button" class="btn btn-outline-light btn-sm" onclick="location.reload()">
-                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
-                    </button>
-                </div>
-
-                <div class="card-body">
-
-                    <form class="row g-3 align-items-end" id="analyticsFilterForm">
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold">Date Range</label>
-                            <select class="form-select" id="dateRangeSelect" name="date_range">
-                                <option value="7">Last 7 days</option>
-                                <option value="30" selected>Last 30 days</option>
-                                <option value="90">Last 3 months</option>
-                                <option value="365">Last year</option>
-                                <option value="custom">Custom Range</option>
-                            </select>
+            <div class="card hx-hero-card shadow-lg border-0 overflow-hidden">
+                <div class="card-body p-4 p-lg-5 d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="hx-hero-pill"><i class="bi bi-bar-chart-line-fill me-2"></i>System Reports</span>
+                            <span class="badge bg-light text-dark fw-semibold">Live analytics</span>
                         </div>
-
-                        <div class="col-md-3 custom-date d-none" id="customStart">
-                            <label class="form-label fw-semibold">Start Date</label>
-                            <input type="date" class="form-control" id="startDate" name="start_date">
-                        </div>
-
-                        <div class="col-md-3 custom-date d-none" id="customEnd">
-                            <label class="form-label fw-semibold">End Date</label>
-                            <input type="date" class="form-control" id="endDate" name="end_date">
-                        </div>
-
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-funnel-fill me-1"></i> Apply Filter
-                            </button>
-                        </div>
-                    </form>
+                        <h1 class="text-white fw-bold mb-2">Monitor growth, reliability, and engagement.</h1>
+                        <p class="text-white-50 mb-0">Filter by date range, visualize trends, and keep operations healthy.</p>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="badge bg-white text-dark px-3 py-2 shadow-sm"><i class="bi bi-people text-primary me-1"></i>{{ total_users }} users</span>
+                        <span class="badge bg-white text-dark px-3 py-2 shadow-sm"><i class="bi bi-currency-rupee text-success me-1"></i>₹{{ total_revenue }} revenue</span>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="card hx-filter-card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="hx-dot bg-primary"></span>
+                    <div>
+                        <p class="text-muted small mb-0">Filters</p>
+                        <h5 class="mb-0">Choose a timeframe to refresh analytics</h5>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm shadow-sm" onclick="location.reload()">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                </button>
+            </div>
+            <form class="row g-3 align-items-end" id="analyticsFilterForm">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Date Range</label>
+                    <select class="form-select" id="dateRangeSelect" name="date_range">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 3 months</option>
+                        <option value="365">Last year</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                </div>
+                <div class="col-md-3 custom-date d-none" id="customStart">
+                    <label class="form-label fw-semibold">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="start_date">
+                </div>
+                <div class="col-md-3 custom-date d-none" id="customEnd">
+                    <label class="form-label fw-semibold">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="end_date">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                        <i class="bi bi-funnel-fill me-1"></i> Apply Filter
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <div class="row g-4 mb-4">
 
         <div class="col-md-6 col-xl-3">
-            <div class="card shadow-sm border-0 h-100 bg-gradient bg-primary text-white">
+                    <div class="container-fluid hx-reports hx-i18n-admin py-4">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <h3 class="fw-bold mb-1">{{ total_users }}</h3>
@@ -368,9 +386,18 @@
         </div>
     </div>
 
+    <div class="row mt-4">
+        <div class="col-12 d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-secondary btn-sm shadow-sm" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh Data
+            </button>
+        </div>
+    </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 

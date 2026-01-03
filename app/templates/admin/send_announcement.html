@@ -2,91 +2,102 @@
 {% block title %}Send Announcement - HealneX Admin{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-10 col-xl-9">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_send_announcement.css') }}">
 
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-megaphone me-2"></i>Send System Announcement
-                    </h5>
+<div class="container-fluid hx-send-announcement hx-i18n-admin py-4">
+    <div class="row g-4 mb-3 justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+            <div class="card hx-hero-card shadow-lg border-0 overflow-hidden mb-4">
+                <div class="card-body p-4 p-lg-5 d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="hx-hero-pill"><i class="bi bi-megaphone me-2"></i>System Announcements</span>
+                            <span class="badge bg-light text-dark fw-semibold">Reach everyone</span>
+                        </div>
+                        <h1 class="text-white fw-bold mb-2">Broadcast updates with confidence.</h1>
+                        <p class="text-white-50 mb-0">Choose recipients, set urgency, and preview before sending.</p>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="badge bg-white text-dark px-3 py-2 shadow-sm"><i class="bi bi-envelope-paper text-primary me-1"></i>Multi-channel ready</span>
+                        <span class="badge bg-white text-dark px-3 py-2 shadow-sm"><i class="bi bi-shield-check text-success me-1"></i>Secure delivery</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4 hx-form-card">
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2">
+                    <span class="hx-dot bg-primary"></span>
+                    <div>
+                        <p class="text-muted small mb-0">Compose</p>
+                        <h5 class="mb-0">Send System Announcement</h5>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <form method="POST" id="announcementForm">
+                    <form method="POST" id="announcementForm" class="row g-4">
                         {{ form.hidden_tag() }}
 
-
-                        <div class="mb-4">
+                        <div class="col-12">
                             <label class="form-label fw-semibold">Send To:</label>
-                            <div class="row">
+                            <div class="row g-3">
                                 {% for field in [form.send_to_all, form.send_to_patients, form.send_to_doctors] %}
                                 <div class="col-md-4">
-                                    <div class="form-check">
+                                    <div class="form-check hx-check">
                                         {{ field(class="form-check-input") }}
-                                        {{ field.label(class="form-check-label") }}
+                                        {{ field.label(class="form-check-label fw-semibold") }}
                                     </div>
                                 </div>
                                 {% endfor %}
                             </div>
                         </div>
 
-
-                        <div class="mb-3">
+                        <div class="col-md-6">
                             {{ form.announcement_type.label(class="form-label fw-semibold") }}
-                            {{ form.announcement_type(class="form-select" + (" is-invalid" if
-                            form.announcement_type.errors else "")) }}
+                            {{ form.announcement_type(class="form-select" + (" is-invalid" if form.announcement_type.errors else "")) }}
                             {% if form.announcement_type.errors %}
                             <div class="invalid-feedback">{{ form.announcement_type.errors[0] }}</div>
                             {% endif %}
                             <small class="form-text text-muted">Defines the priority and badge style.</small>
                         </div>
 
-
-                        <div class="form-floating mb-3">
-                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""),
-                            placeholder="Title") }}
-                            {{ form.title.label(class="form-label") }}
-                            {% if form.title.errors %}
-                            <div class="invalid-feedback">{{ form.title.errors[0] }}</div>
-                            {% endif %}
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), placeholder="Title") }}
+                                {{ form.title.label(class="form-label") }}
+                                {% if form.title.errors %}
+                                <div class="invalid-feedback">{{ form.title.errors[0] }}</div>
+                                {% endif %}
+                            </div>
                         </div>
 
-
-                        <div class="mb-3">
+                        <div class="col-12">
                             {{ form.message.label(class="form-label fw-semibold") }}
-                            {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""),
-                            rows="5", placeholder="Type your message...") }}
+                            {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""), rows="5", placeholder="Type your message...") }}
                             {% if form.message.errors %}
                             <div class="invalid-feedback">{{ form.message.errors[0] }}</div>
                             {% endif %}
                             <div class="form-text"><span id="charCount">0</span> characters</div>
                         </div>
 
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    {{ form.send_email(class="form-check-input") }}
-                                    {{ form.send_email.label(class="form-check-label") }}
-                                    <small class="form-text text-muted">Send as an email notification</small>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="form-check hx-check">
+                                {{ form.send_email(class="form-check-input") }}
+                                {{ form.send_email.label(class="form-check-label fw-semibold") }}
+                                <small class="form-text text-muted">Send as an email notification</small>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    {{ form.urgent(class="form-check-input") }}
-                                    {{ form.urgent.label(class="form-check-label") }}
-                                    <small class="form-text text-muted">Mark as high-priority</small>
-                                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check hx-check">
+                                {{ form.urgent(class="form-check-input") }}
+                                {{ form.urgent.label(class="form-check-label fw-semibold") }}
+                                <small class="form-text text-muted">Mark as high-priority</small>
                             </div>
                         </div>
 
-
-                        <div class="d-flex justify-content-between">
+                        <div class="col-12 d-flex justify-content-between flex-wrap gap-2">
                             <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left me-1"></i>Back
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="sendBtn">
                                 <i class="bi bi-send me-1"></i>Send Announcement
                             </button>
                         </div>
@@ -94,31 +105,28 @@
                 </div>
             </div>
 
-
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
-                        <i class="bi bi-clock-history me-2"></i>Recent Announcements
-                    </h5>
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2">
+                    <span class="hx-dot bg-secondary"></span>
+                    <div>
+                        <p class="text-muted small mb-0">History</p>
+                        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Announcements</h5>
+                    </div>
                 </div>
                 <div class="card-body">
                     {% if recent_announcements %}
                     <div class="list-group list-group-flush">
                         {% for a in recent_announcements %}
                         <div class="list-group-item px-0 border-bottom">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1 pe-3">
-                                    <h6 class="mb-1">{{ a.title }}</h6>
-                                    <p class="text-muted mb-1">{{ a.message[:100] }}{% if a.message|length > 100 %}...{%
-                                        endif %}</p>
+                                    <h6 class="mb-1 fw-semibold">{{ a.title }}</h6>
+                                    <p class="text-muted mb-1">{{ a.message[:100] }}{% if a.message|length > 100 %}...{% endif %}</p>
                                     <small class="text-muted">Sent on {{ a.created_at.strftime('%Y-%m-%d %H:%M') }} to
                                         <strong>{{ a.recipient_count }}</strong> users</small>
                                 </div>
                                 <div class="text-end">
-                                    <span
-                                        class="badge bg-{{ 'danger' if a.urgent else 'warning' if a.announcement_type == 'urgent' else 'primary' if a.announcement_type == 'important' else 'secondary' }}">
-                                        {{ a.announcement_type.title() }}
-                                    </span>
+                                    <span class="badge bg-{{ 'danger' if a.urgent else 'warning' if a.announcement_type == 'urgent' else 'primary' if a.announcement_type == 'important' else 'secondary' }}">{{ a.announcement_type.title() }}</span>
                                     {% if a.urgent %}
                                     <br><span class="badge bg-danger mt-1">Urgent</span>
                                     {% endif %}
@@ -139,7 +147,6 @@
     </div>
 </div>
 
-
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow-lg border-0">
@@ -147,8 +154,7 @@
                 <h5 class="modal-title" id="confirmModalLabel">
                     <i class="bi bi-question-circle-fill me-2"></i>Confirm Announcement
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p class="mb-3">Are you sure you want to send this announcement?</p>
@@ -173,6 +179,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('announcementForm');

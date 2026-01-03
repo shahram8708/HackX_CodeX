@@ -3,71 +3,115 @@
 {% block title %}Login - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-heart-pulse display-4 text-primary"></i>
-                        <h2 class="fw-bold">Welcome Back</h2>
-                        <p class="text-muted">Sign in to your HealneX account</p>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+<section class="login-hero hx-i18n-admin py-5">
+    <div class="container position-relative">
+        <div class="login-decor login-decor-1"></div>
+        <div class="login-decor login-decor-2"></div>
+
+        <div class="row justify-content-center g-4">
+            <div class="col-xl-9 col-xxl-8">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="welcome-card shadow-lg h-100 hover-raise">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="badge-circle">
+                                    <i class="bi bi-heart-pulse"></i>
+                                </div>
+                                <div>
+                                    <div class="text-uppercase small text-muted fw-semibold">HealneX</div>
+                                    <h3 class="mb-0">Welcome Back</h3>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-4">Access your dashboard, manage appointments, and stay on top of your care in a few seconds.</p>
+
+                            <div class="highlight-panel">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="text-primary fs-4"><i class="bi bi-shield-check"></i></div>
+                                    <div>
+                                        <div class="fw-semibold">Secure login</div>
+                                        <small class="text-muted">Protected with OTP-ready flows and encrypted sessions.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ul class="list-unstyled mb-0 mt-4 text-muted small">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Faster load for returning users</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Manage visits, records, and payments</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>24/7 support if you need help</li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
+                    <div class="col-lg-6">
+                        <div class="login-card shadow-lg">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-2">
+                                    <div>
+                                        <div class="badge soft-primary text-primary mb-2"><i class="bi bi-lock-fill me-1"></i>Secure access</div>
+                                        <h2 class="fw-bold mb-1">Sign in</h2>
+                                        <small class="text-muted">Enter your credentials to continue</small>
+                                    </div>
+                                    <div class="chip-status"><i class="bi bi-clock-history me-1"></i>Session auto-lock</div>
+                                </div>
 
-                        <div class="mb-3">
-                            {{ form.email.label(class="form-label") }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                {{ form.email(class="form-control", placeholder="Enter your email") }}
+                                <form method="POST" class="login-form">
+                                    {{ form.hidden_tag() }}
+
+                                    <div class="mb-3">
+                                        {{ form.email.label(class="form-label fw-semibold") }}
+                                        <div class="input-group input-elevated">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            {{ form.email(class="form-control", placeholder="Enter your email") }}
+                                        </div>
+                                        {% if form.email.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.email.errors %}
+                                            <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ form.password.label(class="form-label fw-semibold") }}
+                                        <div class="input-group input-elevated">
+                                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                            {{ form.password(class="form-control", placeholder="Enter your password") }}
+                                        </div>
+                                        {% if form.password.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.password.errors %}
+                                            <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="d-grid mb-3">
+                                        {{ form.submit(class="btn btn-primary btn-lg submit-btn shadow-sm") }}
+                                    </div>
+                                </form>
+
+                                <div class="divider my-3"><span>New here?</span></div>
+
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('auth.register_patient') }}" class="btn btn-outline-success btn-hover">
+                                        <i class="bi bi-person-plus me-2"></i>Register as Patient
+                                    </a>
+                                    <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-info btn-hover">
+                                        <i class="bi bi-person-badge me-2"></i>Register as Doctor
+                                    </a>
+                                </div>
                             </div>
-                            {% if form.email.errors %}
-                            <div class="text-danger small">
-                                {% for error in form.email.errors %}
-                                <div>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.password.label(class="form-label") }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                {{ form.password(class="form-control", placeholder="Enter your password") }}
-                            </div>
-                            {% if form.password.errors %}
-                            <div class="text-danger small">
-                                {% for error in form.password.errors %}
-                                <div>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-grid mb-3">
-                            {{ form.submit(class="btn btn-primary btn-lg") }}
-                        </div>
-                    </form>
-
-                    <hr>
-
-                    <div class="text-center">
-                        <p class="mb-2">Don't have an account?</p>
-                        <div class="d-grid gap-2">
-                            <a href="{{ url_for('auth.register_patient') }}" class="btn btn-outline-success">
-                                <i class="bi bi-person-plus me-2"></i>Register as Patient
-                            </a>
-                            <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-info">
-                                <i class="bi bi-person-badge me-2"></i>Register as Doctor
-                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 {% endblock %}

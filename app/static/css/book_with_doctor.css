@@ -1,0 +1,78 @@
+/* Book with doctor page styling */
+.book-doctor-shell {
+  background: radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.08), transparent 32%),
+    radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.08), transparent 30%),
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 55%);
+}
+
+.hero-card {
+  border-radius: 18px;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  pointer-events: none;
+}
+
+.form-card {
+  border-radius: 18px;
+}
+
+.avatar-display {
+  width: 70px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  font-size: 1.6rem;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+}
+
+.info-chip {
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  padding: 6px 10px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-circle {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+.card.bg-light {
+  border-radius: 14px;
+}
+
+.btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.12);
+}
+
+.bg-primary-subtle {
+  background-color: #e7efff;
+}
+
+@media (max-width: 767px) {
+  .hero-card::after {
+    inset: 8px;
+  }
+}

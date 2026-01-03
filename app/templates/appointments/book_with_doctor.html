@@ -3,186 +3,178 @@
 {% block title %}Book Appointment with {{ doctor.name }} - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title mb-0">
-                        <i class="bi bi-calendar-plus"></i> Book Appointment
-                    </h4>
-                </div>
-                <div class="card-body">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/book_with_doctor.css') }}">
 
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div
-                                    class="avatar-lg bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2">
-                                    <i class="bi bi-person-badge fs-2 text-white"></i>
-                                </div>
+<section class="book-doctor-shell hx-i18n-admin py-4 py-lg-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card border-0 shadow-sm hero-card mb-4">
+                    <div class="card-body p-4 p-lg-5 d-flex flex-column flex-lg-row align-items-start gap-4">
+                        <div class="avatar-display bg-primary text-white"><i class="bi bi-person-badge"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="d-inline-flex align-items-center gap-2 text-uppercase text-muted small mb-2">
+                                <span class="badge bg-light text-primary rounded-pill px-3 py-2">
+                                    <i class="bi bi-calendar-event me-1"></i> Dedicated booking
+                                </span>
+                            </div>
+                            <h3 class="mb-1">Book with Dr. {{ doctor.name }}</h3>
+                            <p class="text-muted mb-2">{{ doctor.specialization }}</p>
+                            <div class="d-flex flex-wrap gap-3 text-muted small">
+                                <span class="info-chip"><i class="bi bi-building me-1"></i>{{ doctor.clinic_hospital or 'N/A' }}</span>
+                                <span class="info-chip"><i class="bi bi-currency-rupee me-1"></i>₹{{ doctor.consultation_fee }}</span>
+                                <span class="info-chip"><i class="bi bi-clock me-1"></i>{{ doctor.working_hours_start.strftime('%I:%M %p') }} - {{ doctor.working_hours_end.strftime('%I:%M %p') }}</span>
                             </div>
                         </div>
-                        <div class="col-md-9">
-                            <h5>{{ doctor.name }}</h5>
-                            <p class="text-muted mb-1">
-                                <i class="bi bi-hospital"></i> {{ doctor.specialization }}
-                            </p>
-                            <p class="text-muted mb-1">
-                                <i class="bi bi-building"></i> {{ doctor.clinic_hospital or 'N/A' }}
-                            </p>
-                            <p class="text-muted mb-1">
-                                <i class="bi bi-currency-rupee"></i> Consultation Fee: ₹{{ doctor.consultation_fee }}
-                            </p>
-                            <p class="text-muted">
-                                <i class="bi bi-clock"></i> Working Hours: {{ doctor.working_hours_start.strftime('%I:%M
-                                %p') }} - {{ doctor.working_hours_end.strftime('%I:%M %p') }}
-                            </p>
+                        <div class="text-end w-100 w-lg-auto">
+                            <a href="{{ url_for('dashboard.patient_lookup') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    <hr>
+                <div class="card border-0 shadow-sm form-card">
+                    <div class="card-body p-4 p-lg-5">
+                        <form method="POST" id="bookingForm"
+                            action="{{ url_for('appointments.book_appointment_with_doctor', doctor_id=doctor.id) }}">
+                            {{ form.csrf_token }}
 
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="appointment_type" class="form-label">Appointment Type *</label>
+                                        {{ form.appointment_type(class="form-select", id="appointment_type") }}
 
-                    <form method="POST" id="bookingForm"
-                        action="{{ url_for('appointments.book_appointment_with_doctor', doctor_id=doctor.id) }}">
-                        {{ form.csrf_token }}
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="appointment_type" class="form-label">Appointment Type *</label>
-                                    {{ form.appointment_type(class="form-select", id="appointment_type") }}
-
-                                    {% if form.appointment_type.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.appointment_type.errors[0] }}
+                                        {% if form.appointment_type.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.appointment_type.errors[0] }}
+                                        </div>
+                                        {% endif %}
                                     </div>
-                                    {% endif %}
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="priority" class="form-label">Priority</label>
-                                    <select class="form-select" id="priority" name="priority">
-                                        <option value="normal">Normal</option>
-                                        <option value="urgent">Urgent</option>
-                                        <option value="emergency">Emergency</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="appointment_date" class="form-label">Preferred Date *</label>
-                                    <input type="date" class="form-control" id="appointment_date"
-                                        name="appointment_date" min="{{ today }}" max="{{ max_date }}" required>
-                                    {% if form.appointment_date.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.appointment_date.errors[0] }}
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="priority" class="form-label">Priority</label>
+                                        <select class="form-select" id="priority" name="priority">
+                                            <option value="normal">Normal</option>
+                                            <option value="urgent">Urgent</option>
+                                            <option value="emergency">Emergency</option>
+                                        </select>
                                     </div>
-                                    {% endif %}
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="appointment_time" class="form-label">Preferred Time *</label>
-                                    <div id="time-slots" class="d-flex flex-wrap gap-2"></div>
-                                    {{ form.doctor_id(type="hidden") }}
-                                    {{ form.appointment_time(type="hidden", id="appointment_time") }}
-                                    {% if form.appointment_time.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.appointment_time.errors[0] }}
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="appointment_date" class="form-label">Preferred Date *</label>
+                                        <input type="date" class="form-control" id="appointment_date"
+                                            name="appointment_date" min="{{ today }}" max="{{ max_date }}" required>
+                                        {% if form.appointment_date.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.appointment_date.errors[0] }}
+                                        </div>
+                                        {% endif %}
                                     </div>
-                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="appointment_time" class="form-label">Preferred Time *</label>
+                                        <div id="time-slots" class="d-flex flex-wrap gap-2"></div>
+                                        {{ form.doctor_id(type="hidden") }}
+                                        {{ form.appointment_time(type="hidden", id="appointment_time") }}
+                                        {% if form.appointment_time.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.appointment_time.errors[0] }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="symptoms" class="form-label">Symptoms/Reason for Visit</label>
-                            {{ form.reason(class="form-control", id="symptoms", placeholder="Describe symptoms...") }}
-                        </div>
+                            <div class="mb-3">
+                                <label for="symptoms" class="form-label">Symptoms/Reason for Visit</label>
+                                {{ form.reason(class="form-control", id="symptoms", placeholder="Describe symptoms...") }}
+                            </div>
 
-                        <div class="mb-3">
-                            {{ form.payment_method.label(class="form-label") }}
-                            {{ form.payment_method(class="form-select") }}
-                        </div>
-                        <script>
-                            document.querySelector('select[name="appointment_type"]').addEventListener('change', function () {
-                                const paymentSelect = document.querySelector('select[name="payment_method"]');
-                                const selectedType = this.value;
+                            <div class="mb-3">
+                                {{ form.payment_method.label(class="form-label") }}
+                                {{ form.payment_method(class="form-select") }}
+                            </div>
+                            <script>
+                                document.querySelector('select[name="appointment_type"]').addEventListener('change', function () {
+                                    const paymentSelect = document.querySelector('select[name="payment_method"]');
+                                    const selectedType = this.value;
 
-                                paymentSelect.innerHTML = '';
+                                    paymentSelect.innerHTML = '';
 
-                                if (selectedType === 'in-person') {
-                                    paymentSelect.innerHTML += '<option value="online">Online</option>';
-                                    paymentSelect.innerHTML += '<option value="offline">Offline</option>';
-                                } else if (selectedType === 'teleconsultation') {
-                                    paymentSelect.innerHTML += '<option value="online">Online</option>';
-                                }
-                            });
+                                    if (selectedType === 'in-person') {
+                                        paymentSelect.innerHTML += '<option value="online">Online</option>';
+                                        paymentSelect.innerHTML += '<option value="offline">Offline</option>';
+                                    } else if (selectedType === 'teleconsultation') {
+                                        paymentSelect.innerHTML += '<option value="online">Online</option>';
+                                    }
+                                });
 
-                        </script>
+                            </script>
 
-                        <div class="card bg-light mb-3">
-                            <div class="card-body">
-                                <h6 class="card-title">
-                                    <i class="bi bi-credit-card"></i> Payment Summary
-                                </h6>
-                                <div class="d-flex justify-content-between">
-                                    <span>Consultation Fee:</span>
-                                    <span class="fw-bold">₹{{ doctor.consultation_fee }}</span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Platform Fee (Stripe ₹2.99 + Service ₹1.50):</span>
-                                    <span class="fw-bold">₹{{ '%.2f' % (2.99 + 1.50) }}</span>
-                                </div>
-                                <hr>
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-bold">Total Amount:</span>
-                                    <span class="fw-bold fs-5 text-primary">₹{{ '%.2f' % (doctor.consultation_fee + 2.99
-                                        + 1.50) }}</span>
-
+                            <div class="card bg-light border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title d-flex align-items-center gap-2">
+                                        <span class="icon-circle bg-primary-subtle text-primary"><i class="bi bi-credit-card"></i></span>
+                                        <span>Payment Summary</span>
+                                    </h6>
+                                    <div class="d-flex justify-content-between small mb-1">
+                                        <span>Consultation Fee:</span>
+                                        <span class="fw-bold">₹{{ doctor.consultation_fee }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small mb-2">
+                                        <span>Platform Fee (Stripe ₹2.99 + Service ₹1.50):</span>
+                                        <span class="fw-bold">₹{{ '%.2f' % (2.99 + 1.50) }}</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">Total Amount:</span>
+                                        <span class="fw-bold fs-5 text-primary">₹{{ '%.2f' % (doctor.consultation_fee + 2.99 + 1.50) }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="terms_agreed" name="terms_agreed"
-                                    required>
-                                <label class="form-check-label" for="terms_agreed">
-                                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms
-                                        and Conditions</a>
-                                    and <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy
-                                        Policy</a>
-                                </label>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms_agreed" name="terms_agreed"
+                                        required>
+                                    <label class="form-check-label" for="terms_agreed">
+                                        I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms
+                                            and Conditions</a>
+                                        and <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy
+                                            Policy</a>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ url_for('dashboard.patient_lookup') }}" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Back to Dashboard
-                            </a>
-                            <button type="submit" class="btn btn-primary" id="bookBtn">
-                                <i class="bi bi-calendar-check"></i> Book
-                            </button>
-                        </div>
-                    </form>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <a href="{{ url_for('dashboard.patient_lookup') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="bookBtn">
+                                    <i class="bi bi-calendar-check"></i> Book
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 
 <div class="modal fade" id="termsModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-light border-0">
                 <h5 class="modal-title">Terms and Conditions</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -196,8 +188,8 @@
                     <li>Follow the doctor's prescribed treatment plan</li>
                 </ul>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -207,7 +199,7 @@
 <div class="modal fade" id="privacyModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-light border-0">
                 <h5 class="modal-title">Privacy Policy</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -221,13 +213,14 @@
                 </ul>
                 <p>We never share your medical information without your consent.</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 <script>
     function selectTimeSlot(button) {
         document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('btn-primary'));

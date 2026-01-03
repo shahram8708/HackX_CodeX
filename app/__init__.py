@@ -63,6 +63,12 @@ def create_app(config_name=None):
     
     from app.notifications import bp as notifications_bp
     app.register_blueprint(notifications_bp, url_prefix='/notifications')
+
+    from app.ai_assistant import bp as ai_assistant_bp
+    app.register_blueprint(ai_assistant_bp, url_prefix='/ai-assistant')
+
+    from app.ai_automation import bp as ai_automation_bp
+    app.register_blueprint(ai_automation_bp, url_prefix='/ai-automation')
     
     
     @app.errorhandler(404)

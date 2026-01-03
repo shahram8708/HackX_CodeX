@@ -3,262 +3,354 @@
 {% block title %}Register - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-heart-pulse display-4 text-primary"></i>
-                        <h2 class="fw-bold">Join HealneX</h2>
-                        <p class="text-muted">
-                            {% if user_type == 'patient' %}
-                            Register as a Patient
-                            {% else %}
-                            Register as a Doctor
-                            {% endif %}
-                        </p>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+
+<section class="auth-hero hx-i18n-admin py-5">
+    <div class="container position-relative">
+        <div class="decor-circle decor-circle-1"></div>
+        <div class="decor-circle decor-circle-2"></div>
+
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+                <div class="row g-4 align-items-stretch">
+                    <div class="col-lg-5">
+                        <div class="info-card h-100 hover-lift shadow-lg">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-circle soft-primary">
+                                        <i class="bi bi-heart-pulse"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-uppercase small text-muted fw-semibold">HealneX</div>
+                                        <h4 class="mb-0">Trusted Care Network</h4>
+                                    </div>
+                                </div>
+                                <span class="role-pill">{% if user_type == 'patient' %}Patient{% else %}Doctor{% endif %}</span>
+                            </div>
+
+                            <p class="text-muted mb-4">
+                                {% if user_type == 'patient' %}
+                                Create your secure account to manage visits, records, and support in one place.
+                                {% else %}
+                                Join a community of verified specialists delivering exceptional digital care.
+                                {% endif %}
+                            </p>
+
+                            <ul class="feature-list list-unstyled mb-4">
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Encrypted records and OTP verification</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Smart scheduling with reminders</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Responsive support from our team</li>
+                            </ul>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-6">
+                                    <div class="stat-tile">
+                                        <div class="stat-label">Avg. setup time</div>
+                                        <div class="stat-value">2 mins</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-tile">
+                                        <div class="stat-label">Response SLA</div>
+                                        <div class="stat-value">24/7</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="journey-card">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div class="fw-semibold">Simple 3-step journey</div>
+                                    <i class="bi bi-arrow-right-short fs-4 text-primary"></i>
+                                </div>
+                                <div class="journey-steps">
+                                    <div class="journey-step"><span>1</span>Account</div>
+                                    <div class="journey-step"><span>2</span>Details</div>
+                                    <div class="journey-step"><span>3</span>Ready</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form.name.label(class="form-label") }}
-                                {{ form.name(class="form-control") }}
-                                {% if form.name.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.name.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
+                    <div class="col-lg-7">
+                        <div class="auth-card shadow-lg h-100">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-3">
+                                    <div>
+                                        <div class="badge bg-soft-primary text-primary mb-2"><i class="bi bi-shield-check me-2"></i>Secure onboarding</div>
+                                        <h2 class="fw-bold mb-1">Join HealneX</h2>
+                                        <div class="text-muted small">Complete your details to unlock personalized care.</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="mini-chip text-success"><i class="bi bi-lock-fill me-1"></i>Data encrypted</div>
+                                        <div class="mini-chip text-info"><i class="bi bi-phone-vibrate me-1"></i>OTP enabled</div>
+                                    </div>
                                 </div>
-                                {% endif %}
-                            </div>
 
-                            <div class="col-md-6 mb-3">
-                                {{ form.email.label(class="form-label") }}
-                                {{ form.email(class="form-control") }}
-                                {% if form.email.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.email.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
+                                <form method="POST" class="register-form">
+                                    {{ form.hidden_tag() }}
+
+                                    <div class="form-section">
+                                        <div class="section-heading">
+                                            <div class="heading-icon"><i class="bi bi-person-badge"></i></div>
+                                            <div>
+                                                <div class="fw-semibold">Account basics</div>
+                                                <small class="text-muted">Your login and primary contact details</small>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                {{ form.name.label(class="form-label fw-semibold") }}
+                                                {{ form.name(class="form-control input-elevated") }}
+                                                {% if form.name.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.name.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form.email.label(class="form-label fw-semibold") }}
+                                                {{ form.email(class="form-control input-elevated") }}
+                                                {% if form.email.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.email.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                {{ form.password.label(class="form-label fw-semibold") }}
+                                                {{ form.password(class="form-control input-elevated") }}
+                                                {% if form.password.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.password.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form.password2.label(class="form-label fw-semibold") }}
+                                                {{ form.password2(class="form-control input-elevated") }}
+                                                {% if form.password2.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.password2.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if user_type == 'patient' %}
+                                    <div class="form-section">
+                                        <div class="section-heading">
+                                            <div class="heading-icon"><i class="bi bi-heart"></i></div>
+                                            <div>
+                                                <div class="fw-semibold">Patient profile</div>
+                                                <small class="text-muted">Helps us personalize your care journey</small>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                {{ form.age.label(class="form-label fw-semibold") }}
+                                                {{ form.age(class="form-control input-elevated") }}
+                                                {% if form.age.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.age.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                {{ form.gender.label(class="form-label fw-semibold") }}
+                                                {{ form.gender(class="form-select input-elevated") }}
+                                                {% if form.gender.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.gender.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                {{ form.phone.label(class="form-label fw-semibold") }}
+                                                {{ form.phone(class="form-control input-elevated") }}
+                                                {% if form.phone.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.phone.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form.emergency_contact.label(class="form-label fw-semibold") }}
+                                            {{ form.emergency_contact(class="form-control input-elevated") }}
+                                            {% if form.emergency_contact.errors %}
+                                            <div class="text-danger small">
+                                                {% for error in form.emergency_contact.errors %}
+                                                <div>{{ error }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                {{ form.allergies.label(class="form-label fw-semibold") }}
+                                                {{ form.allergies(class="form-control input-elevated", rows="3") }}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form.conditions.label(class="form-label fw-semibold") }}
+                                                {{ form.conditions(class="form-control input-elevated", rows="3") }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form.referral_code.label(class="form-label fw-semibold") }}
+                                            {{ form.referral_code(class="form-control input-elevated", placeholder="Enter referral code (optional)") }}
+                                            <div class="form-text">Add a referral to unlock bonus points.</div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="form-section">
+                                        <div class="section-heading">
+                                            <div class="heading-icon"><i class="bi bi-briefcase-medical"></i></div>
+                                            <div>
+                                                <div class="fw-semibold">Professional details</div>
+                                                <small class="text-muted">Share your practice information</small>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                {{ form.specialization.label(class="form-label fw-semibold") }}
+                                                {{ form.specialization(class="form-control input-elevated") }}
+                                                {% if form.specialization.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.specialization.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form.license_number.label(class="form-label fw-semibold") }}
+                                                {{ form.license_number(class="form-control input-elevated") }}
+                                                {% if form.license_number.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.license_number.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 mb-3">
+                                                {{ form.clinic_hospital.label(class="form-label fw-semibold") }}
+                                                {{ form.clinic_hospital(class="form-control input-elevated") }}
+                                                {% if form.clinic_hospital.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.clinic_hospital.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                {{ form.consultation_fee.label(class="form-label fw-semibold") }}
+                                                <div class="input-group input-elevated">
+                                                    <span class="input-group-text">₹</span>
+                                                    {{ form.consultation_fee(class="form-control") }}
+                                                </div>
+                                                {% if form.consultation_fee.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.consultation_fee.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                {{ form.phone.label(class="form-label fw-semibold") }}
+                                                {{ form.phone(class="form-control input-elevated") }}
+                                                {% if form.phone.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.phone.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                {{ form.working_hours_start.label(class="form-label fw-semibold") }}
+                                                {{ form.working_hours_start(class="form-control input-elevated") }}
+                                                {% if form.working_hours_start.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.working_hours_start.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                {{ form.working_hours_end.label(class="form-label fw-semibold") }}
+                                                {{ form.working_hours_end(class="form-control input-elevated") }}
+                                                {% if form.working_hours_end.errors %}
+                                                <div class="text-danger small">
+                                                    {% for error in form.working_hours_end.errors %}
+                                                    <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form.working_days.label(class="form-label fw-semibold") }}
+                                            {{ form.working_days(class="form-select input-elevated") }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="d-flex align-items-start gap-3 p-3 rounded-3 bg-light mb-3">
+                                        <div class="text-primary"><i class="bi bi-info-circle"></i></div>
+                                        <div class="small text-muted">By signing up you agree to our platform policies. You can update your profile anytime from your dashboard.</div>
+                                    </div>
+
+                                    <div class="d-grid mb-3">
+                                        {{ form.submit(class="btn btn-primary btn-lg submit-btn shadow-sm") }}
+                                    </div>
+                                </form>
+
+                                <div class="text-center mt-4">
+                                    <span class="text-muted">Already have an account?</span>
+                                    <a class="fw-semibold" href="{{ url_for('auth.login') }}">Sign In</a>
                                 </div>
-                                {% endif %}
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form.password.label(class="form-label") }}
-                                {{ form.password(class="form-control") }}
-                                {% if form.password.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.password.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                {{ form.password2.label(class="form-label") }}
-                                {{ form.password2(class="form-control") }}
-                                {% if form.password2.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.password2.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        {% if user_type == 'patient' %}
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                {{ form.age.label(class="form-label") }}
-                                {{ form.age(class="form-control") }}
-                                {% if form.age.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.age.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                {{ form.gender.label(class="form-label") }}
-                                {{ form.gender(class="form-select") }}
-                                {% if form.gender.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.gender.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                {{ form.phone.label(class="form-label") }}
-                                {{ form.phone(class="form-control") }}
-                                {% if form.phone.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.phone.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.emergency_contact.label(class="form-label") }}
-                            {{ form.emergency_contact(class="form-control") }}
-                            {% if form.emergency_contact.errors %}
-                            <div class="text-danger small">
-                                {% for error in form.emergency_contact.errors %}
-                                <div>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form.allergies.label(class="form-label") }}
-                                {{ form.allergies(class="form-control", rows="3") }}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                {{ form.conditions.label(class="form-label") }}
-                                {{ form.conditions(class="form-control", rows="3") }}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.referral_code.label(class="form-label") }}
-                            {{ form.referral_code(class="form-control", placeholder="Enter referral code (optional)") }}
-                            <div class="form-text">Get bonus points if you have a referral code!</div>
-                        </div>
-
-                        {% else %}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form.specialization.label(class="form-label") }}
-                                {{ form.specialization(class="form-control") }}
-                                {% if form.specialization.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.specialization.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                {{ form.license_number.label(class="form-label") }}
-                                {{ form.license_number(class="form-control") }}
-                                {% if form.license_number.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.license_number.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-8 mb-3">
-                                {{ form.clinic_hospital.label(class="form-label") }}
-                                {{ form.clinic_hospital(class="form-control") }}
-                                {% if form.clinic_hospital.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.clinic_hospital.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                {{ form.consultation_fee.label(class="form-label") }}
-                                <div class="input-group">
-                                    <span class="input-group-text">₹</span>
-                                    {{ form.consultation_fee(class="form-control") }}
-                                </div>
-                                {% if form.consultation_fee.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.consultation_fee.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                {{ form.phone.label(class="form-label") }}
-                                {{ form.phone(class="form-control") }}
-                                {% if form.phone.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.phone.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                {{ form.working_hours_start.label(class="form-label") }}
-                                {{ form.working_hours_start(class="form-control") }}
-                                {% if form.working_hours_start.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.working_hours_start.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                {{ form.working_hours_end.label(class="form-label") }}
-                                {{ form.working_hours_end(class="form-control") }}
-                                {% if form.working_hours_end.errors %}
-                                <div class="text-danger small">
-                                    {% for error in form.working_hours_end.errors %}
-                                    <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.working_days.label(class="form-label") }}
-                            {{ form.working_days(class="form-select") }}
-                        </div>
-                        {% endif %}
-
-                        <div class="d-grid mb-3">
-                            {{ form.submit(class="btn btn-primary btn-lg") }}
-                        </div>
-                    </form>
-
-                    <hr>
-
-                    <div class="text-center">
-                        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign In</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 <script>
     window.addEventListener('DOMContentLoaded', function () {
         const urlParams = new URLSearchParams(window.location.search);

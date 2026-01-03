@@ -1,137 +1,120 @@
 {% extends "base/layout.html" %}
 {% block title %}User Management - HealneX{% endblock %}
 {% block content %}
-<div class="container-fluid">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_users.css') }}">
 
-    <div class="row mb-4">
+<div class="container-fluid hx-admin-users hx-i18n-admin py-4">
+    <div class="row g-4 mb-1">
         <div class="col-12">
-            <div
-                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
-                <div>
-                    <h2 class="mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-people-fill text-primary fs-3"></i>
-                        <span>User Management</span>
-                    </h2>
-                    <p class="text-muted mb-0">Manage doctors, patients, and admin accounts from a single dashboard</p>
+            <div class="card hx-hero-card shadow-lg border-0">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-start align-items-lg-center">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="hx-hero-pill"><i class="bi bi-people-fill me-2"></i>User Management</span>
+                                <span class="badge bg-light text-dark fw-semibold">Central Control</span>
+                            </div>
+                            <h1 class="text-white fw-bold mb-2">Manage your users with confidence.</h1>
+                            <p class="text-white-50 mb-0">Track doctors, patients, and admins with quick filters and actionable insights.</p>
+                        </div>
+                        <button type="button" class="btn btn-light btn-lg shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <i class="bi bi-person-plus-fill me-2"></i> Add New User
+                        </button>
+                    </div>
                 </div>
-                <button type="button"
-                    class="btn btn-primary rounded-pill shadow-sm transition d-flex align-items-center"
-                    data-bs-toggle="modal" data-bs-target="#addUserModal">
-                    <i class="bi bi-person-plus-fill me-2"></i> Add New User
-                </button>
             </div>
         </div>
     </div>
-
 
     <div class="row g-3 mb-4">
-
         <div class="col-md-3 col-sm-6">
-            <div class="card border-0 shadow-sm bg-primary text-white rounded-3 hover-shadow transition text-center">
-                <div class="card-body">
-                    <i class="bi bi-person-badge fs-2 mb-2 d-block"></i>
+            <div class="card hx-stat-card shadow-sm h-100">
+                <div class="hx-stat-accent bg-primary"></div>
+                <div class="card-body text-center">
+                    <div class="hx-stat-icon bg-primary-subtle text-primary mb-2"><i class="bi bi-person-badge"></i></div>
                     <h3 class="fw-bold mb-1">{{ total_doctors }}</h3>
-                    <p class="small opacity-75 mb-0">Doctors</p>
+                    <p class="text-muted mb-0 small">Doctors</p>
                 </div>
             </div>
         </div>
-
-
         <div class="col-md-3 col-sm-6">
-            <div class="card border-0 shadow-sm bg-success text-white rounded-3 hover-shadow transition text-center">
-                <div class="card-body">
-                    <i class="bi bi-heart-pulse fs-2 mb-2 d-block"></i>
+            <div class="card hx-stat-card shadow-sm h-100">
+                <div class="hx-stat-accent bg-success"></div>
+                <div class="card-body text-center">
+                    <div class="hx-stat-icon bg-success-subtle text-success mb-2"><i class="bi bi-heart-pulse"></i></div>
                     <h3 class="fw-bold mb-1">{{ total_patients }}</h3>
-                    <p class="small opacity-75 mb-0">Patients</p>
+                    <p class="text-muted mb-0 small">Patients</p>
                 </div>
             </div>
         </div>
-
-
         <div class="col-md-3 col-sm-6">
-            <div class="card border-0 shadow-sm bg-warning text-white rounded-3 hover-shadow transition text-center">
-                <div class="card-body">
-                    <i class="bi bi-person-check fs-2 mb-2 d-block"></i>
+            <div class="card hx-stat-card shadow-sm h-100">
+                <div class="hx-stat-accent bg-warning"></div>
+                <div class="card-body text-center">
+                    <div class="hx-stat-icon bg-warning-subtle text-warning mb-2"><i class="bi bi-person-check"></i></div>
                     <h3 class="fw-bold mb-1">{{ active_users }}</h3>
-                    <p class="small opacity-75 mb-0">Active Users</p>
+                    <p class="text-muted mb-0 small">Active Users</p>
                 </div>
             </div>
         </div>
-
-
         <div class="col-md-3 col-sm-6">
-            <div class="card border-0 shadow-sm bg-info text-white rounded-3 hover-shadow transition text-center">
-                <div class="card-body">
-                    <i class="bi bi-person-plus fs-2 mb-2 d-block"></i>
+            <div class="card hx-stat-card shadow-sm h-100">
+                <div class="hx-stat-accent bg-info"></div>
+                <div class="card-body text-center">
+                    <div class="hx-stat-icon bg-info-subtle text-info mb-2"><i class="bi bi-person-plus"></i></div>
                     <h3 class="fw-bold mb-1">{{ new_registrations_today }}</h3>
-                    <p class="small opacity-75 mb-0">New Today</p>
+                    <p class="text-muted mb-0 small">New Today</p>
                 </div>
             </div>
         </div>
     </div>
 
-
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card shadow-sm border-0 rounded-3">
+            <div class="card shadow-sm border-0 hx-filter-card">
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2 flex-wrap">
+                    <i class="bi bi-funnel text-primary"></i>
+                    <h5 class="mb-0">Smart Filters</h5>
+                    <span class="badge bg-light text-muted">Search & refine</span>
+                </div>
                 <div class="card-body py-4">
                     <form method="GET" class="row g-3 align-items-end">
-
                         <div class="col-lg-4 col-md-6">
                             <label class="form-label form-label-sm">Search Users</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0"><i
-                                        class="bi bi-search text-muted"></i></span>
-                                <input type="text" class="form-control border-start-0" name="search"
-                                    value="{{ request.args.get('search', '') }}" placeholder="Name, email, or ID">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                                <input type="text" class="form-control border-start-0" name="search" value="{{ request.args.get('search', '') }}" placeholder="Name, email, or ID">
                             </div>
                         </div>
-
-
                         <div class="col-lg-2 col-md-3">
                             <label class="form-label form-label-sm">Role</label>
                             <select class="form-select" name="role">
                                 <option value="">All Roles</option>
-                                <option value="doctor" {% if request.args.get('role')=='doctor' %}selected{% endif %}>
-                                    Doctor</option>
-                                <option value="patient" {% if request.args.get('role')=='patient' %}selected{% endif %}>
-                                    Patient</option>
-                                <option value="admin" {% if request.args.get('role')=='admin' %}selected{% endif %}>
-                                    Admin</option>
+                                <option value="doctor" {% if request.args.get('role')=='doctor' %}selected{% endif %}>Doctor</option>
+                                <option value="patient" {% if request.args.get('role')=='patient' %}selected{% endif %}>Patient</option>
+                                <option value="admin" {% if request.args.get('role')=='admin' %}selected{% endif %}>Admin</option>
                             </select>
                         </div>
-
-
                         <div class="col-lg-2 col-md-3">
                             <label class="form-label form-label-sm">Status</label>
                             <select class="form-select" name="status">
                                 <option value="">All Status</option>
-                                <option value="active" {% if request.args.get('status')=='active' %}selected{% endif %}>
-                                    Active</option>
-                                <option value="inactive" {% if request.args.get('status')=='inactive' %}selected{% endif
-                                    %}>Inactive</option>
-                                <option value="suspended" {% if request.args.get('status')=='suspended' %}selected{%
-                                    endif %}>Suspended</option>
+                                <option value="active" {% if request.args.get('status')=='active' %}selected{% endif %}>Active</option>
+                                <option value="inactive" {% if request.args.get('status')=='inactive' %}selected{% endif %}>Inactive</option>
+                                <option value="suspended" {% if request.args.get('status')=='suspended' %}selected{% endif %}>Suspended</option>
                             </select>
                         </div>
-
-
                         <div class="col-lg-2 col-md-4">
                             <label class="form-label form-label-sm">Registration Date</label>
                             <select class="form-select" name="date_filter">
                                 <option value="">All Time</option>
-                                <option value="today" {% if request.args.get('date_filter')=='today' %}selected{% endif
-                                    %}>Today</option>
-                                <option value="week" {% if request.args.get('date_filter')=='week' %}selected{% endif
-                                    %}>This Week</option>
-                                <option value="month" {% if request.args.get('date_filter')=='month' %}selected{% endif
-                                    %}>This Month</option>
+                                <option value="today" {% if request.args.get('date_filter')=='today' %}selected{% endif %}>Today</option>
+                                <option value="week" {% if request.args.get('date_filter')=='week' %}selected{% endif %}>This Week</option>
+                                <option value="month" {% if request.args.get('date_filter')=='month' %}selected{% endif %}>This Month</option>
                             </select>
                         </div>
-
-
                         <div class="col-lg-2 col-md-4">
-                            <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm transition">
+                            <button type="submit" class="btn btn-primary w-100 shadow-sm">
                                 <i class="bi bi-filter me-1"></i> Apply
                             </button>
                         </div>
@@ -141,14 +124,25 @@
         </div>
     </div>
 
-
     {% if users %}
     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="hx-dot bg-primary"></span>
+                        <h5 class="mb-0">User Directory</h5>
+                        <span class="badge bg-primary-subtle text-primary">{{ users.items|length if users.items is defined else users|length }} records</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.reload()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                        </button>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <table class="table table-hover align-middle mb-0 hx-user-table">
                             <thead class="table-light">
                                 <tr>
                                     <th>User</th>
@@ -163,13 +157,8 @@
                                 {% for user in users %}
                                 <tr id="user-row-{{ user.id }}">
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="me-3">
-                                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm"
-                                                    style="width: 40px; height: 40px;">
-                                                    {{ user.name[0].upper() }}
-                                                </div>
-                                            </div>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="hx-avatar bg-primary text-white">{{ user.name[0].upper() }}</div>
                                             <div>
                                                 <strong>{{ user.name }}</strong><br>
                                                 <small class="text-muted">{{ user.email }}</small>
@@ -182,8 +171,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span
-                                            class="badge bg-{{ 'primary' if user.role == 'doctor' else 'success' if user.role == 'patient' else 'warning' }}">
+                                        <span class="badge bg-{{ 'primary' if user.role == 'doctor' else 'success' if user.role == 'patient' else 'warning' }}">
                                             {{ user.role|title }}
                                         </span>
                                         {% if user.role == 'doctor' %}
@@ -209,19 +197,14 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm shadow-sm" role="group">
-                                            <button class="btn btn-outline-info" onclick="viewUser({{ user.id }})"
-                                                title="View">
+                                            <button class="btn btn-outline-info" onclick="viewUser({{ user.id }})" title="View">
                                                 <i class="bi bi-eye-fill"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning" onclick="editUser({{ user.id }})"
-                                                title="Edit">
+                                            <button class="btn btn-outline-warning" onclick="editUser({{ user.id }})" title="Edit">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </button>
                                             {% if user.role != 'admin' %}
-                                            <form method="POST"
-                                                action="{{ url_for('admin.delete_user', user_id=user.id) }}"
-                                                onsubmit="return confirm('Deactivate this user?');"
-                                                style="display: inline;">
+                                            <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}" onsubmit="return confirm('Deactivate this user?');" style="display: inline;">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-outline-danger" title="Deactivate">
                                                     <i class="bi bi-trash-fill"></i>
@@ -248,6 +231,7 @@
     {% endif %}
 
 </div>
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 <script>
     function viewUser(userId) {
         window.location.href = `/admin/users/edit/${userId}`;

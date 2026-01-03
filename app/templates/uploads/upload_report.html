@@ -3,39 +3,59 @@
 {% block title %}Upload Medical Report - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload_report.css') }}">
+
+<div class="container py-4 hx-i18n-admin">
 
     <div class="row mb-4">
         <div class="col-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        {% if current_user.role == 'doctor' %}
-                        <a href="{{ url_for('dashboard.doctor_dashboard') }}">Dashboard</a>
-                        {% else %}
-                        <a href="{{ url_for('dashboard.patient_dashboard') }}">Dashboard</a>
-                        {% endif %}
-                    </li>
-                    <li class="breadcrumb-item active">Upload Report</li>
-                </ol>
-            </nav>
-            <h2 class="mb-1">
-                <i class="bi bi-cloud-upload text-success me-2"></i>
-                Upload Medical Report
-            </h2>
-            <p class="text-muted">Upload prescriptions, test results, or medical documents</p>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                <nav aria-label="breadcrumb" class="hx-breadcrumb px-3 py-2">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">
+                            {% if current_user.role == 'doctor' %}
+                            <a href="{{ url_for('dashboard.doctor_dashboard') }}">Dashboard</a>
+                            {% else %}
+                            <a href="{{ url_for('dashboard.patient_dashboard') }}">Dashboard</a>
+                            {% endif %}
+                        </li>
+                        <li class="breadcrumb-item active">Upload Report</li>
+                    </ol>
+                </nav>
+                <div class="d-flex align-items-center gap-2 hx-status-chip">
+                    <span class="badge bg-success-subtle text-success"><i class="bi bi-shield-lock me-1"></i>Secure</span>
+                    <span class="text-muted small">Encrypted upload</span>
+                </div>
+            </div>
+            <div class="card hx-hero border-0 shadow-sm">
+                <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3 gap-md-4">
+                    <div class="hx-hero-icon"><i class="bi bi-cloud-upload"></i></div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                            <span class="badge hx-badge-soft-primary"><i class="bi bi-folder2-open me-1"></i>Medical records</span>
+                            <span class="badge hx-badge-soft-neutral"><i class="bi bi-activity me-1"></i>Real-time preview</span>
+                        </div>
+                        <h2 class="mb-1">Upload Medical Report</h2>
+                        <p class="text-muted mb-0">Upload prescriptions, test results, or medical documents with clear guidance.</p>
+                    </div>
+                    <div class="hx-hero-meta text-md-end">
+                        <div class="small text-muted">Step</div>
+                        <div class="fw-bold">Attach & Submit</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm hx-card">
                 <div class="card-body p-4">
                     {% if patient_info %}
 
-                    <div class="alert alert-info border-0 mb-4">
+                    <div class="alert alert-info border-0 mb-4 shadow-sm hx-patient-alert">
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-person-badge me-3" style="font-size: 1.5rem;"></i>
+                            <div class="hx-avatar"><i class="bi bi-person-badge"></i></div>
                             <div>
                                 <h6 class="mb-1">Uploading for: {{ patient_info.name }}</h6>
                                 <p class="mb-0 small">Patient ID: {{ patient_info.unique_patient_id }}</p>
@@ -50,10 +70,9 @@
                         {% if not patient_info and current_user.role == 'doctor' %}
 
                         <div class="mb-4">
-                            {{ form.patient_id.label(class="form-label") }}
+                            {{ form.patient_id.label(class="form-label fw-semibold small text-muted") }}
                             <div class="input-group">
-                                {{ form.patient_id(class="form-control", placeholder="Enter Patient ID (e.g.,
-                                HC-5F4A1B9D)") }}
+                                {{ form.patient_id(class="form-control", placeholder="Enter Patient ID (e.g., HC-5F4A1B9D)", **{'data-i18n-key': 'Enter Patient ID (e.g., HC-5F4A1B9D)', 'data-i18n-attr': 'placeholder'}) }}
                                 <button type="button" class="btn btn-outline-secondary" onclick="searchPatient()">
                                     <i class="bi bi-search"></i> Search
                                 </button>
@@ -64,36 +83,31 @@
 
 
                         <div class="mb-4">
-                            {{ form.report_type.label(class="form-label") }}
+                            {{ form.report_type.label(class="form-label fw-semibold small text-muted") }}
                             {{ form.report_type(class="form-select") }}
                         </div>
 
 
                         <div class="mb-4">
-                            {{ form.file.label(class="form-label") }}
+                            {{ form.file.label(class="form-label fw-semibold small text-muted") }}
                             <div class="input-group">
                                 {{ form.file(class="form-control", accept=".pdf,.jpg,.jpeg,.png", id="file-input") }}
                                 <span class="input-group-text">
                                     <i class="bi bi-paperclip"></i>
                                 </span>
                             </div>
-                            <div class="form-text">
-                                Supported formats: PDF, JPG, PNG (Max size: 5MB)
-                            </div>
-
+                            <div class="form-text">Supported formats: PDF, JPG, PNG (Max size: 5MB)</div>
 
                             <div id="file-preview" class="mt-3" style="display: none;">
-                                <div class="card border">
+                                <div class="card border-0 shadow-sm hx-preview-card">
                                     <div class="card-body p-3">
                                         <div class="d-flex align-items-center">
-                                            <i class="bi bi-file-earmark text-primary me-3"
-                                                style="font-size: 2rem;"></i>
+                                            <div class="hx-file-thumb"><i class="bi bi-file-earmark"></i></div>
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-1" id="file-name"></h6>
                                                 <p class="text-muted small mb-0" id="file-size"></p>
                                             </div>
-                                            <button type="button" class="btn btn-sm btn-outline-danger"
-                                                onclick="removeFile()">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile()">
                                                 <i class="bi bi-x"></i>
                                             </button>
                                         </div>
@@ -104,22 +118,21 @@
 
 
                         <div class="mb-4">
-                            {{ form.description.label(class="form-label") }}
-                            {{ form.description(class="form-control", rows="4", placeholder="Brief description of the
-                            report or test results") }}
+                            {{ form.description.label(class="form-label fw-semibold small text-muted") }}
+                            {{ form.description(class="form-control", rows="4", placeholder="Brief description of the report or test results", **{'data-i18n-key': 'Brief description of the report or test results', 'data-i18n-attr': 'placeholder'}) }}
                         </div>
 
 
                         <div class="mb-4">
-                            {{ form.upload_date.label(class="form-label") }}
+                            {{ form.upload_date.label(class="form-label fw-semibold small text-muted") }}
                             {{ form.upload_date(class="form-control") }}
                         </div>
 
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
                             <a href="{% if current_user.role == 'doctor' %}{{ url_for('dashboard.doctor_dashboard') }}{% else %}{{ url_for('uploads.view_reports') }}{% endif %}"
-                                class="btn btn-secondary me-md-2">
-                                <i class="bi bi-arrow-left"></i> Cancel
+                                class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-success" id="submit-btn">
                                 <i class="bi bi-cloud-upload me-2"></i>
@@ -131,12 +144,13 @@
             </div>
 
 
-            <div class="card border-0 bg-light mt-4">
+            <div class="card border-0 shadow-sm hx-guidelines mt-4">
                 <div class="card-body">
-                    <h6 class="text-muted mb-3">
-                        <i class="bi bi-info-circle me-2"></i>Upload Guidelines
-                    </h6>
-                    <div class="row">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="hx-pill"><i class="bi bi-info-circle"></i></div>
+                        <h6 class="mb-0">Upload Guidelines</h6>
+                    </div>
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <ul class="small text-muted mb-0">
                                 <li>Ensure files are clear and readable</li>
@@ -164,10 +178,10 @@
         <div class="modal-content">
             <div class="modal-body text-center p-4">
                 <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden" data-i18n-key="Loading...">Loading...</span>
                 </div>
-                <h5>Uploading Report...</h5>
-                <p class="text-muted mb-0">Please wait while we process your file</p>
+                <h5 data-i18n-key="Uploading Report...">Uploading Report...</h5>
+                <p class="text-muted mb-0" data-i18n-key="Please wait while we process your file">Please wait while we process your file</p>
                 <div class="progress mt-3">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                         style="width: 0%" id="upload-progress"></div>
@@ -179,12 +193,18 @@
 
 <script>
 
+    function hxInline(text) {
+        const lang = window.hxCurrentLanguage === 'hi' ? 'hi' : 'en';
+        const map = window.hxTextTranslations?.[lang];
+        return map && map[text] ? map[text] : text;
+    }
+
     document.getElementById('file-input').addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (file) {
 
             if (file.size > 5 * 1024 * 1024) {
-                showToast('File size must be less than 5MB', 'error');
+                showToast(hxInline('File size must be less than 5MB'), 'error');
                 e.target.value = '';
                 return;
             }
@@ -192,7 +212,7 @@
 
             const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
             if (!allowedTypes.includes(file.type)) {
-                showToast('Please upload PDF, JPG, or PNG files only', 'error');
+                showToast(hxInline('Please upload PDF, JPG, or PNG files only'), 'error');
                 e.target.value = '';
                 return;
             }
@@ -231,7 +251,7 @@
     function searchPatient() {
         const patientId = document.querySelector('input[name="patient_id"]').value;
         if (!patientId) {
-            showToast('Please enter a Patient ID', 'error');
+            showToast(hxInline('Please enter a Patient ID'), 'error');
             return;
         }
 
@@ -242,20 +262,20 @@
                     document.getElementById('patient-info').innerHTML = `
                     <div class="alert alert-success border-0 mb-0">
                         <i class="bi bi-check-circle me-2"></i>
-                        Patient found: <strong>${data.patient.name}</strong>
+                        ${hxInline('Patient found:')} <strong>${data.patient.name}</strong>
                     </div>
                 `;
                 } else {
                     document.getElementById('patient-info').innerHTML = `
                     <div class="alert alert-danger border-0 mb-0">
                         <i class="bi bi-exclamation-circle me-2"></i>
-                        Patient not found
+                        ${hxInline('Patient not found')}
                     </div>
                 `;
                 }
             })
             .catch(error => {
-                showToast('Error searching patient', 'error');
+                showToast(hxInline('Error searching patient'), 'error');
             });
     }
 
@@ -264,7 +284,7 @@
         const fileInput = document.getElementById('file-input');
         if (!fileInput.files[0]) {
             e.preventDefault();
-            showToast('Please select a file to upload', 'error');
+            showToast(hxInline('Please select a file to upload'), 'error');
             return;
         }
 

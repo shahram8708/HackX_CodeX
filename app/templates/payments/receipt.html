@@ -1,68 +1,98 @@
 {% extends "base/layout.html" %}
 {% block title %}Payment Receipt{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header bg-success text-white text-center">
-                    <i class="bi bi-check-circle fs-1"></i>
-                    <h4 class="mt-2">Payment Successful!</h4>
-                </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <h2 class="text-success">₹{{ payment.amount }}</h2>
-                        <p class="text-muted">Transaction ID: {{ payment.transaction_id or payment.id }}</p>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/receipt.css') }}">
+
+<section class="receipt-page hx-i18n-admin py-4 py-lg-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="receipt-card shadow-sm">
+                    <div class="receipt-header text-center">
+                        <div class="success-mark">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <h3 class="mb-1">Payment Successful</h3>
+                        <p class="text-muted mb-0">Transaction ID: {{ payment.transaction_id or payment.id }}</p>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Payment Details</h6>
-                            <p><strong>Amount:</strong> ₹{{ payment.amount }}</p>
-                            <p><strong>Type:</strong> {{ payment.payment_type.replace('_', ' ').title() }}</p>
-                            <p><strong>Status:</strong> <span class="badge bg-success">{{ payment.status.title()
-                                    }}</span></p>
-                            <p><strong>Date:</strong> {{ payment.payment_date.strftime('%B %d, %Y at %I:%M %p') if
-                                payment.payment_date else 'N/A' }}</p>
+                    <div class="receipt-body">
+                        <div class="summary-strip">
+                            <div>
+                                <small class="text-muted">Amount Paid</small>
+                                <div class="fs-3 fw-bold text-success">₹{{ payment.amount }}</div>
+                            </div>
+                            <div class="divider"></div>
+                            <div>
+                                <small class="text-muted">Date</small>
+                                <div class="fw-semibold">{{ payment.payment_date.strftime('%B %d, %Y at %I:%M %p') if payment.payment_date else 'N/A' }}</div>
+                            </div>
+                            <div class="divider"></div>
+                            <div>
+                                <small class="text-muted">Status</small>
+                                <div><span class="badge bg-success rounded-pill px-3">{{ payment.status.title() }}</span></div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6>{{ 'Appointment' if payment.payment_type == 'consultation' else 'Subscription' }}
-                                Details</h6>
-                            {% if payment.appointment %}
-                            <p><strong>Doctor:</strong> {{ payment.appointment.doctor.name if payment.appointment.doctor
-                                else 'N/A' }}</p>
-                            <p><strong>Date:</strong> {{ payment.appointment.appointment_date.strftime('%B %d, %Y') if
-                                payment.appointment.appointment_date else 'N/A' }}</p>
-                            <p><strong>Type:</strong> {{ payment.appointment.appointment_type.replace('_', ' ').title()
-                                if payment.appointment.appointment_type else 'N/A' }}</p>
-                            {% elif payment.payment_type == 'subscription' %}
-                            <p><strong>Plan:</strong> {{ payment.subscription_plan or 'N/A' }}</p>
-                            <p><strong>Duration:</strong> {{ payment.subscription_duration or 'N/A' }}</p>
-                            {% endif %}
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="info-card h-100">
+                                    <div class="info-heading">
+                                        <span class="icon-circle text-primary bg-primary-soft"><i class="bi bi-credit-card-2-front"></i></span>
+                                        <div>
+                                            <h6 class="mb-0">Payment Details</h6>
+                                            <small class="text-muted">Summary of your transaction</small>
+                                        </div>
+                                    </div>
+                                    <ul class="list-unstyled mb-0">
+                                        <li><span>Amount</span><strong>₹{{ payment.amount }}</strong></li>
+                                        <li><span>Type</span><strong>{{ payment.payment_type.replace('_', ' ').title() }}</strong></li>
+                                        <li><span>Status</span><strong class="text-success">{{ payment.status.title() }}</strong></li>
+                                        <li><span>Date</span><strong>{{ payment.payment_date.strftime('%B %d, %Y at %I:%M %p') if payment.payment_date else 'N/A' }}</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card h-100">
+                                    <div class="info-heading">
+                                        <span class="icon-circle text-info bg-info-soft"><i class="bi bi-journal-medical"></i></span>
+                                        <div>
+                                            <h6 class="mb-0">{{ 'Appointment' if payment.payment_type == 'consultation' else 'Subscription' }} Details</h6>
+                                            <small class="text-muted">What this payment covers</small>
+                                        </div>
+                                    </div>
+                                    <ul class="list-unstyled mb-0">
+                                        {% if payment.appointment %}
+                                        <li><span>Doctor</span><strong>{{ payment.appointment.doctor.name if payment.appointment.doctor else 'N/A' }}</strong></li>
+                                        <li><span>Date</span><strong>{{ payment.appointment.appointment_date.strftime('%B %d, %Y') if payment.appointment.appointment_date else 'N/A' }}</strong></li>
+                                        <li><span>Type</span><strong>{{ payment.appointment.appointment_type.replace('_', ' ').title() if payment.appointment.appointment_type else 'N/A' }}</strong></li>
+                                        {% elif payment.payment_type == 'subscription' %}
+                                        <li><span>Plan</span><strong>{{ payment.subscription_plan or 'N/A' }}</strong></li>
+                                        <li><span>Duration</span><strong>{{ payment.subscription_duration or 'N/A' }}</strong></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <hr>
-
-                    <div class="text-center">
-                        <p class="text-muted">Thank you for using HealneX!</p>
-                        <div class="d-flex gap-2 justify-content-center">
-                            <button onclick="window.print()" class="btn btn-outline-primary">
-                                <i class="bi bi-printer"></i> Print Receipt
-                            </button>
-                            <a href="{{ url_for('payments.view_receipt', payment_id=payment.id) }}"
-                                class="btn btn-outline-secondary">
-                                <i class="bi bi-download"></i> Download PDF
-                            </a>
-                            <a href="{{ url_for('dashboard.patient_lookup' if current_user.role == 'patient' else 'admin.admin_dashboard') }}"
-                                class="btn btn-primary">
-                                <i class="bi bi-house"></i> Back to Dashboard
-                            </a>
+                        <div class="mt-4 text-center">
+                            <p class="text-muted mb-3">Thank you for choosing HealneX. A copy of this receipt is saved in your history.</p>
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                                <button onclick="window.print()" class="btn btn-outline-primary">
+                                    <i class="bi bi-printer me-2"></i>Print Receipt
+                                </button>
+                                <a href="{{ url_for('payments.view_receipt', payment_id=payment.id) }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-download me-2"></i>Download PDF
+                                </a>
+                                <a href="{{ url_for('dashboard.patient_lookup' if current_user.role == 'patient' else 'admin.admin_dashboard') }}" class="btn btn-primary">
+                                    <i class="bi bi-house me-2"></i>Back to Dashboard
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

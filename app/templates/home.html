@@ -4,16 +4,16 @@
 
 {% block content %}
 
-<section class="hero-section bg-primary text-white py-5 py-lg-5">
+<section class="hero-section bg-primary text-white py-5 py-lg-5 position-relative overflow-hidden hx-i18n-admin">
     <div class="container">
         <div class="row align-items-center min-vh-75 gy-4 gy-lg-0">
 
             <div class="col-lg-6">
                 <div class="hero-content animate__animated animate__fadeInLeft">
-                    <h1 class="display-4 fw-bold mb-4 lh-sm">
+                    <h1 class="display-4 fw-bold mb-4 lh-sm text-gradient" data-i18n-key="home.hero.title" data-i18n-attr="html">
                         Seamless Healthcare<br class="d-none d-md-inline"> for Everyone
                     </h1>
-                    <p class="lead mb-4 opacity-90">
+                    <p class="lead mb-4 opacity-90" data-i18n-key="home.hero.subtitle">
                         HealneX empowers patients and doctors to connect, consult, and manage health effortlessly with
                         secure digital tools.
                     </p>
@@ -22,19 +22,19 @@
                     <div class="d-flex flex-wrap gap-3">
                         {% if current_user.is_authenticated %}
                         {% if current_user.role == 'patient' %}
-                        <a href="{{ url_for('dashboard.patient_dashboard') }}" class="btn btn-light btn-lg shadow-sm">
+                        <a href="{{ url_for('dashboard.patient_dashboard') }}" class="btn btn-light btn-lg shadow-sm btn-animated" data-i18n-key="home.hero.patientDashboard" data-i18n-attr="html">
                             <i class="bi bi-person-circle me-1"></i> Patient Dashboard
                         </a>
                         {% elif current_user.role == 'doctor' %}
-                        <a href="{{ url_for('dashboard.doctor_dashboard') }}" class="btn btn-light btn-lg shadow-sm">
+                        <a href="{{ url_for('dashboard.doctor_dashboard') }}" class="btn btn-light btn-lg shadow-sm btn-animated" data-i18n-key="home.hero.doctorDashboard" data-i18n-attr="html">
                             <i class="bi bi-stethoscope me-1"></i> Doctor Dashboard
                         </a>
                         {% endif %}
                         {% else %}
-                        <a href="{{ url_for('auth.register_patient') }}" class="btn btn-light btn-lg shadow-sm">
+                        <a href="{{ url_for('auth.register_patient') }}" class="btn btn-light btn-lg shadow-sm btn-animated" data-i18n-key="home.hero.joinPatient" data-i18n-attr="html">
                             <i class="bi bi-person-plus me-1"></i> Join as Patient
                         </a>
-                        <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-light btn-lg shadow-sm">
+                        <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-light btn-lg shadow-sm btn-animated" data-i18n-key="home.hero.joinDoctor" data-i18n-attr="html">
                             <i class="bi bi-hospital me-1"></i> Join as Doctor
                         </a>
                         {% endif %}
@@ -55,83 +55,83 @@
 </section>
 
 
-<section class="features-section py-5">
+<section class="features-section py-5 hx-i18n-admin">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="display-5 fw-bold">Comprehensive Healthcare Features</h2>
-                <p class="lead text-muted">Everything you need for modern healthcare management in one platform</p>
+                <h2 class="display-5 fw-bold" data-i18n-key="home.features.title" data-i18n-attr="html"><i class="bi bi-grid-1x2-fill text-primary me-2"></i>Comprehensive Healthcare Features</h2>
+                <p class="lead text-muted" data-i18n-key="home.features.subtitle">Everything you need for modern healthcare management in one platform</p>
             </div>
         </div>
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="feature-card card h-100 shadow-sm border-0">
+                <div class="feature-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body text-center p-4">
-                        <div class="feature-icon text-primary mb-3">
+                        <div class="feature-icon text-primary mb-3 icon-badge">
                             <i class="bi bi-calendar-check display-4"></i>
                         </div>
-                        <h5 class="card-title">Book Appointments</h5>
-                        <p class="card-text">Schedule appointments with doctors instantly. Choose between in-person and
+                        <h5 class="card-title" data-i18n-key="home.features.card1.title">Book Appointments</h5>
+                        <p class="card-text" data-i18n-key="home.features.card1.text">Schedule appointments with doctors instantly. Choose between in-person and
                             teleconsultation options.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="feature-card card h-100 shadow-sm border-0">
+                <div class="feature-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body text-center p-4">
-                        <div class="feature-icon text-success mb-3">
+                        <div class="feature-icon text-success mb-3 icon-badge">
                             <i class="bi bi-file-medical display-4"></i>
                         </div>
-                        <h5 class="card-title">Medical History</h5>
-                        <p class="card-text">Access your complete medical history, prescriptions, and reports in one
+                        <h5 class="card-title" data-i18n-key="home.features.card2.title">Medical History</h5>
+                        <p class="card-text" data-i18n-key="home.features.card2.text">Access your complete medical history, prescriptions, and reports in one
                             secure location.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="feature-card card h-100 shadow-sm border-0">
+                <div class="feature-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body text-center p-4">
-                        <div class="feature-icon text-info mb-3">
+                        <div class="feature-icon text-info mb-3 icon-badge">
                             <i class="bi bi-cloud-upload display-4"></i>
                         </div>
-                        <h5 class="card-title">Upload Reports</h5>
-                        <p class="card-text">Securely upload and share medical reports, test results, and prescriptions
+                        <h5 class="card-title" data-i18n-key="home.features.card3.title">Upload Reports</h5>
+                        <p class="card-text" data-i18n-key="home.features.card3.text">Securely upload and share medical reports, test results, and prescriptions
                             with your doctors.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="feature-card card h-100 shadow-sm border-0">
+                <div class="feature-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body text-center p-4">
-                        <div class="feature-icon text-warning mb-3">
+                        <div class="feature-icon text-warning mb-3 icon-badge">
                             <i class="bi bi-chat-dots display-4"></i>
                         </div>
-                        <h5 class="card-title">Real-time Chat</h5>
-                        <p class="card-text">Connect with your healthcare providers through secure, real-time messaging.
+                        <h5 class="card-title" data-i18n-key="home.features.card4.title">Real-time Chat</h5>
+                        <p class="card-text" data-i18n-key="home.features.card4.text">Connect with your healthcare providers through secure, real-time messaging.
                         </p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="feature-card card h-100 shadow-sm border-0">
+                <div class="feature-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body text-center p-4">
-                        <div class="feature-icon text-danger mb-3">
+                        <div class="feature-icon text-danger mb-3 icon-badge">
                             <i class="bi bi-calendar3 display-4"></i>
                         </div>
-                        <h5 class="card-title">Manage Schedules</h5>
-                        <p class="card-text">Doctors can efficiently manage their schedules, appointments, and patient
+                        <h5 class="card-title" data-i18n-key="home.features.card5.title">Manage Schedules</h5>
+                        <p class="card-text" data-i18n-key="home.features.card5.text">Doctors can efficiently manage their schedules, appointments, and patient
                             consultations.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="feature-card card h-100 shadow-sm border-0">
+                <div class="feature-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body text-center p-4">
-                        <div class="feature-icon text-primary mb-3">
+                        <div class="feature-icon text-primary mb-3 icon-badge">
                             <i class="bi bi-person-badge display-4"></i>
                         </div>
-                        <h5 class="card-title">Unique Patient ID</h5>
-                        <p class="card-text">Each patient gets a unique ID for easy identification and secure record
+                        <h5 class="card-title" data-i18n-key="home.features.card6.title">Unique Patient ID</h5>
+                        <p class="card-text" data-i18n-key="home.features.card6.text">Each patient gets a unique ID for easy identification and secure record
                             access.</p>
                     </div>
                 </div>
@@ -141,58 +141,58 @@
 </section>
 
 
-<section class="how-it-works-section py-5 bg-light">
+<section class="how-it-works-section py-5 bg-light hx-i18n-admin">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="display-5 fw-bold">How HealneX Works</h2>
-                <p class="lead text-muted">Simple steps to get started with your healthcare journey</p>
+                <h2 class="display-5 fw-bold" data-i18n-key="home.how.title" data-i18n-attr="html"><i class="bi bi-diagram-3-fill text-success me-2"></i>How HealneX Works</h2>
+                <p class="lead text-muted" data-i18n-key="home.how.subtitle">Simple steps to get started with your healthcare journey</p>
             </div>
         </div>
 
 
         <div class="row mb-5">
             <div class="col-lg-12">
-                <h3 class="text-center mb-4 text-primary">For Patients</h3>
+                <h3 class="text-center mb-4 text-primary" data-i18n-key="home.how.patientsTitle">For Patients</h3>
             </div>
             <div class="col-md-3">
-                <div class="step-card text-center">
+                <div class="step-card text-center rounded-4 shadow-sm hover-lift">
                     <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px;">
                         <span class="fw-bold">1</span>
                     </div>
-                    <h5>Register</h5>
-                    <p class="text-muted">Create your account and receive your unique patient ID</p>
+                    <h5 data-i18n-key="home.how.patient.step1.title">Register</h5>
+                    <p class="text-muted" data-i18n-key="home.how.patient.step1.text">Create your account and receive your unique patient ID</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="step-card text-center">
+                <div class="step-card text-center rounded-4 shadow-sm hover-lift">
                     <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px;">
                         <span class="fw-bold">2</span>
                     </div>
-                    <h5>Find Doctors</h5>
-                    <p class="text-muted">Browse and select from our network of qualified healthcare providers</p>
+                    <h5 data-i18n-key="home.how.patient.step2.title">Find Doctors</h5>
+                    <p class="text-muted" data-i18n-key="home.how.patient.step2.text">Browse and select from our network of qualified healthcare providers</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="step-card text-center">
+                <div class="step-card text-center rounded-4 shadow-sm hover-lift">
                     <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px;">
                         <span class="fw-bold">3</span>
                     </div>
-                    <h5>Book & Pay</h5>
-                    <p class="text-muted">Schedule appointments and make secure payments online</p>
+                    <h5 data-i18n-key="home.how.patient.step3.title">Book & Pay</h5>
+                    <p class="text-muted" data-i18n-key="home.how.patient.step3.text">Schedule appointments and make secure payments online</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="step-card text-center">
+                <div class="step-card text-center rounded-4 shadow-sm hover-lift">
                     <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px;">
                         <span class="fw-bold">4</span>
                     </div>
-                    <h5>Get Care</h5>
-                    <p class="text-muted">Receive quality healthcare and manage your medical records</p>
+                    <h5 data-i18n-key="home.how.patient.step4.title">Get Care</h5>
+                    <p class="text-muted" data-i18n-key="home.how.patient.step4.text">Receive quality healthcare and manage your medical records</p>
                 </div>
             </div>
         </div>
@@ -200,46 +200,46 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <h3 class="text-center mb-4 text-success">For Doctors</h3>
+                <h3 class="text-center mb-4 text-success" data-i18n-key="home.how.doctorsTitle">For Doctors</h3>
             </div>
             <div class="col-md-3">
-                <div class="step-card text-center">
+                <div class="step-card text-center rounded-4 shadow-sm hover-lift">
                     <div class="step-number bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px;">
                         <span class="fw-bold">1</span>
                     </div>
-                    <h5>Join Platform</h5>
-                    <p class="text-muted">Register with your medical credentials and specialization</p>
+                    <h5 data-i18n-key="home.how.doctor.step1.title">Join Platform</h5>
+                    <p class="text-muted" data-i18n-key="home.how.doctor.step1.text">Register with your medical credentials and specialization</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="step-card text-center">
+                <div class="step-card text-center rounded-4 shadow-sm hover-lift">
                     <div class="step-number bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px;">
                         <span class="fw-bold">2</span>
                     </div>
-                    <h5>Set Schedule</h5>
-                    <p class="text-muted">Configure your availability and consultation fees</p>
+                    <h5 data-i18n-key="home.how.doctor.step2.title">Set Schedule</h5>
+                    <p class="text-muted" data-i18n-key="home.how.doctor.step2.text">Configure your availability and consultation fees</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="step-card text-center">
+                <div class="step-card text-center rounded-4 shadow-sm hover-lift">
                     <div class="step-number bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px;">
                         <span class="fw-bold">3</span>
                     </div>
-                    <h5>Manage Patients</h5>
-                    <p class="text-muted">View patient records, manage appointments, and provide consultations</p>
+                    <h5 data-i18n-key="home.how.doctor.step3.title">Manage Patients</h5>
+                    <p class="text-muted" data-i18n-key="home.how.doctor.step3.text">View patient records, manage appointments, and provide consultations</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="step-card text-center">
+                <div class="step-card text-center rounded-4 shadow-sm hover-lift">
                     <div class="step-number bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px;">
                         <span class="fw-bold">4</span>
                     </div>
-                    <h5>Earn & Grow</h5>
-                    <p class="text-muted">Build your practice and earn from consultations</p>
+                    <h5 data-i18n-key="home.how.doctor.step4.title">Earn & Grow</h5>
+                    <p class="text-muted" data-i18n-key="home.how.doctor.step4.text">Build your practice and earn from consultations</p>
                 </div>
             </div>
         </div>
@@ -247,17 +247,17 @@
 </section>
 
 
-<section class="testimonials-section py-5">
+<section class="testimonials-section py-5 hx-i18n-admin">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="display-5 fw-bold">What Our Users Say</h2>
-                <p class="lead text-muted">Trusted by patients and doctors across the country</p>
+                <h2 class="display-5 fw-bold" data-i18n-key="home.testimonials.title" data-i18n-attr="html"><i class="bi bi-chat-quote-fill text-info me-2"></i>What Our Users Say</h2>
+                <p class="lead text-muted" data-i18n-key="home.testimonials.subtitle">Trusted by patients and doctors across the country</p>
             </div>
         </div>
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="testimonial-card card h-100 shadow-sm border-0">
+                <div class="testimonial-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body p-4">
                         <div class="testimonial-content">
                             <div class="rating mb-3">
@@ -267,7 +267,7 @@
                                 <i class="bi bi-star-fill text-warning"></i>
                                 <i class="bi bi-star-fill text-warning"></i>
                             </div>
-                            <p class="card-text">"HealneX has revolutionized how I manage my patients. The platform is
+                            <p class="card-text" data-i18n-key="home.testimonials.quote1">"HealneX has revolutionized how I manage my patients. The platform is
                                 intuitive and saves me hours of administrative work every week."</p>
                             <div class="testimonial-author d-flex align-items-center mt-3">
                                 <div class="author-avatar bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center"
@@ -276,7 +276,7 @@
                                 </div>
                                 <div>
                                     <h6 class="mb-0">Dr. Sarah Johnson</h6>
-                                    <small class="text-muted">Cardiologist</small>
+                                    <small class="text-muted" data-i18n-key="home.testimonials.role1">Cardiologist</small>
                                 </div>
                             </div>
                         </div>
@@ -284,7 +284,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="testimonial-card card h-100 shadow-sm border-0">
+                <div class="testimonial-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body p-4">
                         <div class="testimonial-content">
                             <div class="rating mb-3">
@@ -294,7 +294,7 @@
                                 <i class="bi bi-star-fill text-warning"></i>
                                 <i class="bi bi-star-fill text-warning"></i>
                             </div>
-                            <p class="card-text">"As a patient, I love having all my medical records in one place.
+                            <p class="card-text" data-i18n-key="home.testimonials.quote2">"As a patient, I love having all my medical records in one place.
                                 Booking appointments and communicating with my doctor has never been easier."</p>
                             <div class="testimonial-author d-flex align-items-center mt-3">
                                 <div class="author-avatar bg-success text-white rounded-circle me-3 d-flex align-items-center justify-content-center"
@@ -303,7 +303,7 @@
                                 </div>
                                 <div>
                                     <h6 class="mb-0">Michael Chen</h6>
-                                    <small class="text-muted">Patient</small>
+                                    <small class="text-muted" data-i18n-key="home.testimonials.role2">Patient</small>
                                 </div>
                             </div>
                         </div>
@@ -311,7 +311,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="testimonial-card card h-100 shadow-sm border-0">
+                <div class="testimonial-card card h-100 shadow border-0 rounded-4 hover-lift">
                     <div class="card-body p-4">
                         <div class="testimonial-content">
                             <div class="rating mb-3">
@@ -321,7 +321,7 @@
                                 <i class="bi bi-star-fill text-warning"></i>
                                 <i class="bi bi-star-fill text-warning"></i>
                             </div>
-                            <p class="card-text">"The real-time chat feature and secure file sharing have made patient
+                            <p class="card-text" data-i18n-key="home.testimonials.quote3">"The real-time chat feature and secure file sharing have made patient
                                 care so much more efficient. Highly recommend to fellow healthcare professionals."</p>
                             <div class="testimonial-author d-flex align-items-center mt-3">
                                 <div class="author-avatar bg-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center"
@@ -330,7 +330,7 @@
                                 </div>
                                 <div>
                                     <h6 class="mb-0">Dr. Emily Rodriguez</h6>
-                                    <small class="text-muted">Family Medicine</small>
+                                    <small class="text-muted" data-i18n-key="home.testimonials.role3">Family Medicine</small>
                                 </div>
                             </div>
                         </div>
@@ -342,13 +342,13 @@
 </section>
 
 
-<section class="cta-section py-5 bg-primary text-white position-relative overflow-hidden" style="z-index: 1;">
+<section class="cta-section py-5 bg-primary text-white position-relative overflow-hidden hx-i18n-admin" style="z-index: 1;">
     <div class="container position-relative" style="z-index: 2;">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center">
-                <h2 class="display-5 fw-bold mb-4 animate__animated animate__fadeInUp">Start Your Health Journey Today
+                <h2 class="display-5 fw-bold mb-4 animate__animated animate__fadeInUp" data-i18n-key="home.cta.title">Start Your Health Journey Today
                 </h2>
-                <p class="lead mb-4 text-light animate__animated animate__fadeInUp animate__delay-1s">
+                <p class="lead mb-4 text-light animate__animated animate__fadeInUp animate__delay-1s" data-i18n-key="home.cta.subtitle" data-i18n-attr="html">
                     Join thousands of patients and doctors who trust <strong>HealneX</strong> for their healthcare
                     needs. Experience the future of digital healthcare management.
                 </p>
@@ -356,25 +356,25 @@
                 <div
                     class="cta-buttons d-flex flex-wrap justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-2s">
                     {% if not current_user.is_authenticated %}
-                    <a href="{{ url_for('auth.register_patient') }}" class="btn btn-light btn-lg shadow-sm">
-                        <i class="bi bi-person-plus me-1"></i> Get Started as Patient
+                    <a href="{{ url_for('auth.register_patient') }}" class="btn btn-light btn-lg shadow-sm btn-animated">
+                        <i class="bi bi-person-plus me-1"></i> <span data-i18n-key="home.cta.btnPatientStart">Get Started as Patient</span>
                     </a>
-                    <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-light btn-lg shadow-sm">
-                        <i class="bi bi-hospital me-1"></i> Join as Doctor
+                    <a href="{{ url_for('auth.register_doctor') }}" class="btn btn-outline-light btn-lg shadow-sm btn-animated">
+                        <i class="bi bi-hospital me-1"></i> <span data-i18n-key="home.cta.btnDoctorStart">Join as Doctor</span>
                     </a>
                     {% elif current_user.role == 'patient' %}
-                    <a href="{{ url_for('appointments.book_appointment') }}" class="btn btn-light btn-lg shadow-sm">
-                        <i class="bi bi-calendar-plus me-1"></i> Book Appointment
+                    <a href="{{ url_for('appointments.book_appointment') }}" class="btn btn-light btn-lg shadow-sm btn-animated">
+                        <i class="bi bi-calendar-plus me-1"></i> <span data-i18n-key="home.cta.btnBook">Book Appointment</span>
                     </a>
-                    <a href="{{ url_for('uploads.view_reports') }}" class="btn btn-outline-light btn-lg shadow-sm">
-                        <i class="bi bi-folder2-open me-1"></i> My Reports
+                    <a href="{{ url_for('uploads.view_reports') }}" class="btn btn-outline-light btn-lg shadow-sm btn-animated">
+                        <i class="bi bi-folder2-open me-1"></i> <span data-i18n-key="home.cta.btnReports">My Reports</span>
                     </a>
                     {% elif current_user.role == 'doctor' %}
-                    <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-light btn-lg shadow-sm">
-                        <i class="bi bi-calendar-check me-1"></i> View Appointments
+                    <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-light btn-lg shadow-sm btn-animated">
+                        <i class="bi bi-calendar-check me-1"></i> <span data-i18n-key="home.cta.btnDoctorAppointments">View Appointments</span>
                     </a>
-                    <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-outline-light btn-lg shadow-sm">
-                        <i class="bi bi-cloud-upload me-1"></i> Upload Report
+                    <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-outline-light btn-lg shadow-sm btn-animated">
+                        <i class="bi bi-cloud-upload me-1"></i> <span data-i18n-key="home.cta.btnUploadReport">Upload Report</span>
                     </a>
                     {% endif %}
                 </div>
@@ -392,31 +392,35 @@
 </section>
 
 
-<section class="stats-section py-5">
+<section class="stats-section py-5 hx-i18n-admin">
     <div class="container">
-        <div class="row text-center">
-            <div class="col-md-3">
-                <div class="stat-item">
-                    <div class="stat-number display-4 fw-bold text-primary">5000+</div>
-                    <div class="stat-label text-muted">Happy Patients</div>
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-item rounded-4 shadow-sm p-4 h-100">
+                    <div class="stat-icon text-primary mb-2"><i class="bi bi-emoji-smile fs-2"></i></div>
+                    <div class="stat-number display-6 fw-bold text-primary">5000+</div>
+                    <div class="stat-label text-muted" data-i18n-key="home.stats.happy">Happy Patients</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-item">
-                    <div class="stat-number display-4 fw-bold text-success">500+</div>
-                    <div class="stat-label text-muted">Qualified Doctors</div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item rounded-4 shadow-sm p-4 h-100">
+                    <div class="stat-icon text-success mb-2"><i class="bi bi-heart-pulse fs-2"></i></div>
+                    <div class="stat-number display-6 fw-bold text-success">500+</div>
+                    <div class="stat-label text-muted" data-i18n-key="home.stats.doctors">Qualified Doctors</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-item">
-                    <div class="stat-number display-4 fw-bold text-info">15000+</div>
-                    <div class="stat-label text-muted">Consultations</div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item rounded-4 shadow-sm p-4 h-100">
+                    <div class="stat-icon text-info mb-2"><i class="bi bi-people fs-2"></i></div>
+                    <div class="stat-number display-6 fw-bold text-info">15000+</div>
+                    <div class="stat-label text-muted" data-i18n-key="home.stats.consultations">Consultations</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-item">
-                    <div class="stat-number display-4 fw-bold text-warning">98%</div>
-                    <div class="stat-label text-muted">Satisfaction Rate</div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item rounded-4 shadow-sm p-4 h-100">
+                    <div class="stat-icon text-warning mb-2"><i class="bi bi-hand-thumbs-up fs-2"></i></div>
+                    <div class="stat-number display-6 fw-bold text-warning">98%</div>
+                    <div class="stat-label text-muted" data-i18n-key="home.stats.satisfaction">Satisfaction Rate</div>
                 </div>
             </div>
         </div>
@@ -429,33 +433,49 @@
         min-height: 80vh;
     }
 
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        inset: -20% -10% auto -10%;
+        height: 60%;
+        background: radial-gradient(1200px 400px at 10% 20%, rgba(255,255,255,0.15), transparent 60%),
+                    radial-gradient(900px 300px at 90% 10%, rgba(0,0,0,0.08), transparent 60%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
     .min-vh-75 {
         min-height: 75vh;
     }
 
     .feature-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
     .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
     }
 
     .step-card {
         padding: 20px;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.04);
     }
 
     .testimonial-card {
-        transition: transform 0.3s ease;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
     .testimonial-card:hover {
-        transform: translateY(-3px);
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1) !important;
     }
 
     .stat-item {
         padding: 20px;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.04);
     }
 
     .cta-section {
@@ -483,6 +503,43 @@
             transform: translateY(0);
         }
     }
+
+    .hover-lift {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .text-gradient {
+        background: linear-gradient(90deg, #ffffff 0%, #d1dbff 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .icon-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 72px;
+        height: 72px;
+        border-radius: 18px;
+        background: rgba(99, 102, 241, 0.08);
+    }
+
+    .btn-animated {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-animated:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+    }
 </style>
+
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 
 {% endblock %}

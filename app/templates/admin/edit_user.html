@@ -2,20 +2,39 @@
 {% block title %}Edit User - HealneX Admin{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="card shadow-sm border-0 rounded-3 mb-4">
-                <div class="card-header bg-primary text-white rounded-top-3">
-                    <h4 class="mb-0 d-flex align-items-center">
-                        <i class="bi bi-person-gear me-2 fs-5"></i> Edit User: {{ user.name }}
-                    </h4>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_edit_user.css') }}">
+
+        <div class="container-fluid hx-admin-edit-user hx-i18n-admin py-4">
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card hx-hero-card shadow-lg border-0">
+                <div class="card-body p-4 p-lg-5 d-flex flex-column flex-lg-row justify-content-between gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="hx-hero-pill"><i class="bi bi-person-gear me-2"></i>Edit User</span>
+                            <span class="badge bg-light text-dark fw-semibold">Admin Control</span>
+                        </div>
+                        <h1 class="text-white fw-bold mb-2">{{ user.name }}</h1>
+                        <p class="text-white-50 mb-0">Update profile details, roles, and health info with confidence.</p>
+                    </div>
+                    <div class="d-flex flex-column align-items-lg-end align-items-start gap-2">
+                        <span class="badge bg-white text-dark px-3 py-2">Role: {{ user.role|title }}</span>
+                        <span class="badge bg-white text-dark px-3 py-2">Status: {{ 'Active' if user.is_active else 'Inactive' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-3 hx-section-card">
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2">
+                    <span class="hx-dot bg-primary"></span>
+                    <h5 class="mb-0">Primary Details</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" class="mt-3">
+                    <form method="POST" class="mt-2">
                         {{ form.hidden_tag() }}
                         <div class="row g-3">
-
                             <div class="col-md-6">
                                 {{ form.name.label(class="form-label") }}
                                 {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
@@ -25,8 +44,6 @@
                                 </div>
                                 {% endif %}
                             </div>
-
-
                             <div class="col-md-6">
                                 {{ form.email.label(class="form-label") }}
                                 {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
@@ -36,8 +53,6 @@
                                 </div>
                                 {% endif %}
                             </div>
-
-
                             <div class="col-md-6">
                                 {{ form.role.label(class="form-label") }}
                                 {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
@@ -47,9 +62,7 @@
                                 </div>
                                 {% endif %}
                             </div>
-
-
-                            <div class="col-md-6 d-flex gap-4 align-items-center pt-2">
+                            <div class="col-md-6 d-flex flex-wrap gap-4 align-items-center pt-2">
                                 <div class="form-check form-switch">
                                     {{ form.is_active(class="form-check-input") }}
                                     {{ form.is_active.label(class="form-check-label") }}
@@ -61,122 +74,120 @@
                             </div>
                         </div>
 
-
                         {% if user.role == 'doctor' %}
-                        <hr>
-                        <h6 class="text-muted mt-4 mb-2">Doctor Details</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                {{ form.specialization.label(class="form-label") }}
-                                {{ form.specialization(class="form-control") }}
+                        <div class="hx-subsection mt-4">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="hx-dot bg-success"></span>
+                                <h6 class="mb-0 text-muted">Doctor Details</h6>
                             </div>
-                            <div class="col-md-6">
-                                {{ form.license_number.label(class="form-label") }}
-                                {{ form.license_number(class="form-control") }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.clinic_hospital.label(class="form-label") }}
-                                {{ form.clinic_hospital(class="form-control") }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.consultation_fee.label(class="form-label") }}
-                                {{ form.consultation_fee(class="form-control") }}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form.specialization.label(class="form-label") }}
+                                    {{ form.specialization(class="form-control") }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.license_number.label(class="form-label") }}
+                                    {{ form.license_number(class="form-control") }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.clinic_hospital.label(class="form-label") }}
+                                    {{ form.clinic_hospital(class="form-control") }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.consultation_fee.label(class="form-label") }}
+                                    {{ form.consultation_fee(class="form-control") }}
+                                </div>
                             </div>
                         </div>
                         {% endif %}
-
 
                         {% if user.role == 'patient' %}
-                        <hr>
-                        <h6 class="text-muted mt-4 mb-2">Patient Details</h6>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                {{ form.age.label(class="form-label") }}
-                                {{ form.age(class="form-control") }}
+                        <div class="hx-subsection mt-4">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="hx-dot bg-info"></span>
+                                <h6 class="mb-0 text-muted">Patient Details</h6>
                             </div>
-                            <div class="col-md-4">
-                                {{ form.phone.label(class="form-label") }}
-                                {{ form.phone(class="form-control") }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.allergies.label(class="form-label") }}
-                                {{ form.allergies(class="form-control") }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.medical_conditions.label(class="form-label") }}
-                                {{ form.medical_conditions(class="form-control") }}
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    {{ form.age.label(class="form-label") }}
+                                    {{ form.age(class="form-control") }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form.phone.label(class="form-label") }}
+                                    {{ form.phone(class="form-control") }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.allergies.label(class="form-label") }}
+                                    {{ form.allergies(class="form-control") }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.medical_conditions.label(class="form-label") }}
+                                    {{ form.medical_conditions(class="form-control") }}
+                                </div>
                             </div>
                         </div>
                         {% endif %}
 
-
                         <div class="d-flex justify-content-between align-items-center mt-4">
-                            <a href="{{ url_for('admin.edit_user', user_id=user.id) }}"
-                                class="btn btn-secondary rounded-pill">
+                            <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-light border px-4">
                                 <i class="bi bi-arrow-left me-1"></i> Back
                             </a>
-                            <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm transition">
+                            <button type="submit" class="btn btn-primary px-4 shadow-sm">
                                 <i class="bi bi-check2 me-1"></i> Save Changes
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+        </div>
 
-
-            <div class="card shadow-sm border-0 rounded-3 mt-4">
-                <div class="card-header bg-white border-bottom-0 pb-0">
-                    <h5 class="mb-0 d-flex align-items-center">
-                        <i class="bi bi-bar-chart-fill text-primary me-2 fs-5"></i> User Statistics
-                    </h5>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-3 hx-section-card">
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-bar-chart-fill text-primary fs-5"></i>
+                    <h5 class="mb-0">User Statistics</h5>
                 </div>
-                <div class="card-body pt-3">
+                <div class="card-body">
                     <div class="row g-3 text-center">
                         {% if user.role == 'doctor' %}
-
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3 hover-float shadow-sm">
+                        <div class="col-12">
+                            <div class="hx-stat-tile">
                                 <i class="bi bi-calendar-check-fill text-primary fs-2 mb-2 d-block"></i>
                                 <h3 class="fw-bold mb-0">{{ user.doctor_appointments.count() }}</h3>
                                 <p class="text-muted small mb-0">Total Appointments</p>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3 hover-float shadow-sm">
+                        <div class="col-12">
+                            <div class="hx-stat-tile">
                                 <i class="bi bi-file-earmark-medical-fill text-success fs-2 mb-2 d-block"></i>
                                 <h3 class="fw-bold mb-0">{{ user.medical_files.count() }}</h3>
                                 <p class="text-muted small mb-0">Files Uploaded</p>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3 hover-float shadow-sm">
+                        <div class="col-12">
+                            <div class="hx-stat-tile">
                                 <i class="bi bi-share-fill text-info fs-2 mb-2 d-block"></i>
                                 <h3 class="fw-bold mb-0">{{ user.sent_doctor_referrals.count() }}</h3>
                                 <p class="text-muted small mb-0">Referrals Sent</p>
                             </div>
                         </div>
                         {% elif user.role == 'patient' %}
-
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3 hover-float shadow-sm">
+                        <div class="col-12">
+                            <div class="hx-stat-tile">
                                 <i class="bi bi-calendar2-check-fill text-primary fs-2 mb-2 d-block"></i>
                                 <h3 class="fw-bold mb-0">{{ user.patient_appointments.count() }}</h3>
                                 <p class="text-muted small mb-0">Appointments Booked</p>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3 hover-float shadow-sm">
+                        <div class="col-12">
+                            <div class="hx-stat-tile">
                                 <i class="bi bi-credit-card-fill text-success fs-2 mb-2 d-block"></i>
                                 <h3 class="fw-bold mb-0">{{ user.payments.count() }}</h3>
                                 <p class="text-muted small mb-0">Payments Made</p>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3 hover-float shadow-sm">
+                        <div class="col-12">
+                            <div class="hx-stat-tile">
                                 <i class="bi bi-send-fill text-info fs-2 mb-2 d-block"></i>
                                 <h3 class="fw-bold mb-0">{{ user.referred_users.count() }}</h3>
                                 <p class="text-muted small mb-0">Referrals Made</p>
@@ -186,14 +197,13 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
         const form = document.querySelector('form');
         form.addEventListener('submit', function (e) {
             let isValid = true;

@@ -3,23 +3,29 @@
 {% block title %}Medical Reports - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/view_reports.css') }}">
+
+<div class="container py-4 hx-i18n-admin">
 
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h2 class="mb-1">
-                        <i class="bi bi-file-earmark-medical text-success me-2"></i>
-                        Medical Reports
-                    </h2>
-                    <p class="text-muted mb-0">View and download your medical documents</p>
+            <div class="card hx-hero border-0 shadow-sm">
+                <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3 gap-md-4">
+                    <div class="hx-hero-icon"><i class="bi bi-file-earmark-medical"></i></div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                            <span class="badge hx-badge-soft-primary"><i class="bi bi-shield-check me-1"></i>Secure vault</span>
+                            <span class="badge hx-badge-soft-neutral"><i class="bi bi-lightning me-1"></i>Instant preview</span>
+                        </div>
+                        <h2 class="mb-1">Medical Reports</h2>
+                        <p class="text-muted mb-0">View, filter, and download your medical documents seamlessly.</p>
+                    </div>
+                    {% if current_user.role == 'doctor' %}
+                    <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-success shadow-sm">
+                        <i class="bi bi-plus-circle me-2"></i>Upload Report
+                    </a>
+                    {% endif %}
                 </div>
-                {% if current_user.role == 'doctor' %}
-                <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-success">
-                    <i class="bi bi-plus-circle me-2"></i>Upload Report
-                </a>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -27,52 +33,49 @@
 
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm hx-filter-card">
                 <div class="card-body">
-                    <form method="GET" class="row g-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="hx-pill"><i class="bi bi-magic"></i></span>
+                            <span class="fw-semibold">Smart filters</span>
+                        </div>
+                        <small class="text-muted">Search by type, date, or description to narrow results.</small>
+                    </div>
+                    <form method="GET" class="row g-3 align-items-end">
                         <div class="col-md-4">
-                            <label class="form-label">Search Reports</label>
-                            <input type="text" class="form-control" name="search"
-                                value="{{ request.args.get('search', '') }}" placeholder="Report type or description">
+                            <label class="form-label small text-muted fw-semibold">Search Reports</label>
+                            <div class="input-group hx-input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" name="search" value="{{ request.args.get('search', '') }}" placeholder="Report type or description">
+                            </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Report Type</label>
+                            <label class="form-label small text-muted fw-semibold">Report Type</label>
                             <select class="form-select" name="report_type">
                                 <option value="">All Types</option>
-                                <option value="blood_test" {% if request.args.get('report_type')=='blood_test'
-                                    %}selected{% endif %}>Blood Test</option>
-                                <option value="x_ray" {% if request.args.get('report_type')=='x_ray' %}selected{% endif
-                                    %}>X-Ray</option>
-                                <option value="mri_scan" {% if request.args.get('report_type')=='mri_scan' %}selected{%
-                                    endif %}>MRI Scan</option>
-                                <option value="ct_scan" {% if request.args.get('report_type')=='ct_scan' %}selected{%
-                                    endif %}>CT Scan</option>
-                                <option value="prescription" {% if request.args.get('report_type')=='prescription'
-                                    %}selected{% endif %}>Prescription</option>
-                                <option value="consultation_notes" {% if
-                                    request.args.get('report_type')=='consultation_notes' %}selected{% endif %}>
-                                    Consultation Notes</option>
-                                <option value="other" {% if request.args.get('report_type')=='other' %}selected{% endif
-                                    %}>Other</option>
+                                <option value="blood_test" {% if request.args.get('report_type')=='blood_test' %}selected{% endif %}>Blood Test</option>
+                                <option value="x_ray" {% if request.args.get('report_type')=='x_ray' %}selected{% endif %}>X-Ray</option>
+                                <option value="mri_scan" {% if request.args.get('report_type')=='mri_scan' %}selected{% endif %}>MRI Scan</option>
+                                <option value="ct_scan" {% if request.args.get('report_type')=='ct_scan' %}selected{% endif %}>CT Scan</option>
+                                <option value="prescription" {% if request.args.get('report_type')=='prescription' %}selected{% endif %}>Prescription</option>
+                                <option value="consultation_notes" {% if request.args.get('report_type')=='consultation_notes' %}selected{% endif %}>Consultation Notes</option>
+                                <option value="other" {% if request.args.get('report_type')=='other' %}selected{% endif %}>Other</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Date Range</label>
+                            <label class="form-label small text-muted fw-semibold">Date Range</label>
                             <select class="form-select" name="date_range">
                                 <option value="">All Time</option>
-                                <option value="last_week" {% if request.args.get('date_range')=='last_week' %}selected{%
-                                    endif %}>Last Week</option>
-                                <option value="last_month" {% if request.args.get('date_range')=='last_month'
-                                    %}selected{% endif %}>Last Month</option>
-                                <option value="last_3_months" {% if request.args.get('date_range')=='last_3_months'
-                                    %}selected{% endif %}>Last 3 Months</option>
-                                <option value="last_year" {% if request.args.get('date_range')=='last_year' %}selected{%
-                                    endif %}>Last Year</option>
+                                <option value="last_week" {% if request.args.get('date_range')=='last_week' %}selected{% endif %}>Last Week</option>
+                                <option value="last_month" {% if request.args.get('date_range')=='last_month' %}selected{% endif %}>Last Month</option>
+                                <option value="last_3_months" {% if request.args.get('date_range')=='last_3_months' %}selected{% endif %}>Last 3 Months</option>
+                                <option value="last_year" {% if request.args.get('date_range')=='last_year' %}selected{% endif %}>Last Year</option>
                             </select>
                         </div>
-                        <div class="col-md-2 d-flex align-items-end">
+                        <div class="col-md-2">
                             <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-search"></i> Filter
+                                <i class="bi bi-filter me-1"></i> Filter
                             </button>
                         </div>
                     </form>
@@ -83,55 +86,51 @@
 
 
     {% if medical_files %}
-    <div class="row">
+    <div class="row g-3 g-lg-4">
         {% for file in medical_files %}
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-start mb-3">
-                        <div class="me-3">
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100 hx-report-card">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-start mb-3 gap-3">
+                        <div class="hx-file-icon">
                             {% if file.filename.lower().endswith('.pdf') %}
-                            <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 2.5rem;"></i>
+                            <i class="bi bi-file-earmark-pdf"></i>
                             {% else %}
-                            <i class="bi bi-file-earmark-image text-primary" style="font-size: 2.5rem;"></i>
+                            <i class="bi bi-file-earmark-image"></i>
                             {% endif %}
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="card-title mb-1">{{ (file.report_type or 'Unknown').replace('_', ' ')|title }}
-                            </h6>
-                            <p class="text-muted small mb-2">
-                                {% if current_user.role == 'patient' %}
-                                Dr. {{ file.doctor.name }}
-                                {% else %}
-                                {{ file.patient.name }}
-                                {% endif %}
-                            </p>
-                            <p class="text-muted small mb-0">
-                                <i class="bi bi-calendar3 me-1"></i>{{ file.upload_date.strftime('%b %d, %Y') }}
-                            </p>
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div>
+                                    <h6 class="card-title mb-1">{{ (file.report_type or 'Unknown').replace('_', ' ')|title }}</h6>
+                                    <p class="text-muted small mb-1">
+                                        {% if current_user.role == 'patient' %}
+                                        Dr. {{ file.doctor.name }}
+                                        {% else %}
+                                        {{ file.patient.name }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <span class="badge hx-date-badge"><i class="bi bi-calendar3 me-1"></i>{{ file.upload_date.strftime('%b %d, %Y') }}</span>
+                            </div>
                         </div>
                         <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </button>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                 <li>
-                                    <a class="dropdown-item"
-                                        href="{{ url_for('uploads.download_file', file_id=file.id) }}">
+                                    <a class="dropdown-item" href="{{ url_for('uploads.download_file', file_id=file.id) }}">
                                         <i class="bi bi-download me-2"></i>Download
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#"
-                                        onclick="viewFile({{ file.id }}, '{{ file.filename }}')">
+                                    <a class="dropdown-item" href="#" onclick="viewFile({{ file.id }}, '{{ file.filename }}')">
                                         <i class="bi bi-eye me-2"></i>Preview
                                     </a>
                                 </li>
                                 {% if current_user.role == 'doctor' or current_user.id == file.patient_id %}
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item text-danger" href="#" onclick="deleteFile({{ file.id }})">
                                         <i class="bi bi-trash me-2"></i>Delete
@@ -145,7 +144,7 @@
                     {% if file.ai_analysis %}
 
 
-                    <div class="modal fade" id="aiSummaryModal-{{ file.id }}" tabindex="-1"
+                    <div class="modal fade ai-summary-modal" id="aiSummaryModal-{{ file.id }}" tabindex="-1"
                         aria-labelledby="aiSummaryLabel-{{ file.id }}" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-scrollable">
                             <div class="modal-content border-info">
@@ -179,34 +178,29 @@
                     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+                        <small class="text-muted text-truncate" title="{{ file.filename }}">
                             {{ (file.filename|length > 20) and (file.filename[:20] + '...') or file.filename }}
                         </small>
                         <div class="btn-group btn-group-sm" role="group">
-                            <a href="{{ url_for('uploads.download_file', file_id=file.id) }}"
-                                class="btn btn-outline-primary" title="Download">
+                            <a href="{{ url_for('uploads.download_file', file_id=file.id) }}" class="btn btn-outline-primary" title="Download">
                                 <i class="bi bi-download"></i>
                             </a>
-                            <button type="button" class="btn btn-outline-success"
-                                onclick="viewFile({{ file.id }}, '{{ file.filename }}')" title="Preview">
+                            <button type="button" class="btn btn-outline-success" onclick="viewFile({{ file.id }}, '{{ file.filename }}')" title="Preview">
                                 <i class="bi bi-eye"></i>
                             </button>
                             {% if not file.ai_analysis %}
-                            <form method="POST" action="{{ url_for('uploads.analyze_report', file_id=file.id) }}"
-                                onsubmit="return disableAnalyzeButton(this, '{{ file.id }}')">
+                            <form method="POST" action="{{ url_for('uploads.analyze_report', file_id=file.id) }}" onsubmit="return disableAnalyzeButton(this, '{{ file.id }}')">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn btn-outline-info" id="analyze-btn-{{ file.id }}">
-                                    <span class="spinner-border spinner-border-sm d-none" role="status"
-                                        aria-hidden="true" id="spinner-{{ file.id }}"></span>
+                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner-{{ file.id }}"></span>
                                     <span id="analyze-text-{{ file.id }}"><i class="bi bi-stars"></i></span>
                                 </button>
                             </form>
                             {% endif %}
 
                             {% if file.ai_analysis %}
-                            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
-                                data-bs-target="#aiSummaryModal-{{ file.id }}">
+                            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#aiSummaryModal-{{ file.id }}">
                                 <i class="bi bi-lightbulb"></i>
                             </button>
                             {% endif %}
@@ -282,21 +276,23 @@
     {% else %}
     <div class="row">
         <div class="col-12">
-            <div class="text-center py-5">
-                <i class="bi bi-file-earmark text-muted mb-3" style="font-size: 4rem;"></i>
-                <h4 class="text-muted mb-3">No medical reports found</h4>
-                <p class="text-muted mb-4">
-                    {% if current_user.role == 'patient' %}
-                    Your medical reports will appear here once your doctors upload them.
-                    {% else %}
-                    Start uploading medical reports for your patients.
+            <div class="card border-0 shadow-sm hx-empty-state text-center py-5">
+                <div class="card-body">
+                    <div class="hx-empty-icon mb-3"><i class="bi bi-file-earmark"></i></div>
+                    <h4 class="text-muted mb-2">No medical reports found</h4>
+                    <p class="text-muted mb-4">
+                        {% if current_user.role == 'patient' %}
+                        Your medical reports will appear here once your doctors upload them.
+                        {% else %}
+                        Start uploading medical reports for your patients.
+                        {% endif %}
+                    </p>
+                    {% if current_user.role == 'doctor' %}
+                    <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-success shadow-sm">
+                        <i class="bi bi-plus-circle me-2"></i>Upload First Report
+                    </a>
                     {% endif %}
-                </p>
-                {% if current_user.role == 'doctor' %}
-                <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-success">
-                    <i class="bi bi-plus-circle me-2"></i>Upload First Report
-                </a>
-                {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -420,11 +416,13 @@
     });
 
 
-    setInterval(function () {
-
-        if (!document.querySelector('.modal.show')) {
-            location.reload();
-        }
-    }, 30000);
+    // Move AI summary modals to the document body before showing to prevent clipping/flicker
+    document.querySelectorAll('.ai-summary-modal').forEach(function (modalEl) {
+        modalEl.addEventListener('show.bs.modal', function () {
+            if (modalEl.parentElement !== document.body) {
+                document.body.appendChild(modalEl);
+            }
+        });
+    });
 </script>
 {% endblock %}

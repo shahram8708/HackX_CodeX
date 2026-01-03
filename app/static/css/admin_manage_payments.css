@@ -1,0 +1,144 @@
+:root {
+  --hx-surface: #ffffff;
+  --hx-bg: #f6f8fb;
+  --hx-muted: #6c757d;
+  --hx-border: #e7ecf3;
+}
+
+.hx-manage-payments {
+  background: var(--hx-bg);
+}
+
+.hx-hero-card {
+  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #6366f1 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.hx-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.16), transparent 40%),
+    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.12), transparent 32%);
+  pointer-events: none;
+}
+
+.hx-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.hx-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.08);
+}
+
+.hx-stat-card {
+  border: none;
+  border-radius: 14px;
+  background: var(--hx-surface);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.hx-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+}
+
+.hx-stat-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+}
+
+.hx-stat-icon {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 1.2rem;
+}
+
+.hx-filter-card {
+  border-radius: 14px;
+  background: var(--hx-surface);
+}
+
+.hx-filter-card .form-control,
+.hx-filter-card .form-select,
+.hx-filter-card .input-group-text {
+  border-color: var(--hx-border);
+}
+
+.hx-filter-card .form-control:focus,
+.hx-filter-card .form-select:focus {
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.18);
+}
+
+.hx-payments-table th {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 0.82rem;
+  color: var(--hx-muted);
+}
+
+.hx-payments-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.hx-payments-table tbody tr:hover {
+  background: #f3f7ff;
+  box-shadow: inset 4px 0 0 #2563eb;
+}
+
+.hx-type-badge,
+.hx-status-badge {
+  padding: 0.55rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.hx-date-chip {
+  padding: 0.35rem 0.6rem;
+  border-radius: 10px;
+  background: #eef2ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 992px) {
+  .hx-hero-card {
+    border-radius: 14px;
+  }
+
+  .hx-stat-card {
+    height: 100%;
+  }
+}

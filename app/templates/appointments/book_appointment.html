@@ -3,216 +3,220 @@
 {% block title %}Book Appointment - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/book_appointment.css') }}">
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-light rounded p-2 shadow-sm">
-                    <li class="breadcrumb-item">
-                        <a class="text-decoration-none d-flex align-items-center gap-2"
-                            href="{{ url_for('dashboard.patient_dashboard') }}">
-                            <i class="bi bi-house-door text-primary"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item active text-muted" aria-current="page">
-                        <i class="bi bi-calendar-plus text-secondary"></i>
-                        Book Appointment
-                    </li>
-                </ol>
-            </nav>
+<section class="book-shell hx-i18n-admin py-4 py-lg-5">
+    <div class="container">
 
-            <div class="d-flex align-items-center justify-content-between flex-wrap">
-                <div>
-                    <h2 class="mb-1">
-                        <i class="bi bi-calendar-plus text-primary me-2"></i>
-                        Book an Appointment
-                    </h2>
-                    <p class="text-muted mb-0">Easily schedule consultations with our verified doctors</p>
+        <div class="row mb-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb" class="breadcrumb-card p-3">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">
+                            <a class="d-flex align-items-center gap-2"
+                                href="{{ url_for('dashboard.patient_dashboard') }}">
+                                <i class="bi bi-house-door-fill"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active text-muted" aria-current="page">
+                            <i class="bi bi-calendar-plus"></i>
+                            <span>Book Appointment</span>
+                        </li>
+                    </ol>
+                </nav>
+
+                <div class="card border-0 shadow-sm hero-card mt-3">
+                    <div class="card-body p-4 p-lg-5 d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3">
+                        <div>
+                            <div class="d-inline-flex align-items-center gap-2 text-uppercase text-muted small mb-2">
+                                <span class="badge bg-light text-primary rounded-pill px-3 py-2">
+                                    <i class="bi bi-calendar-week me-1"></i> Quick booking
+                                </span>
+                            </div>
+                            <h2 class="mb-1">
+                                <i class="bi bi-calendar-plus text-primary me-2"></i>
+                                Book an Appointment
+                            </h2>
+                            <p class="text-muted mb-0">Find a doctor, pick a time, and confirm in seconds.</p>
+                        </div>
+                        <div class="mt-2 mt-lg-0">
+                            <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-outline-primary btn-lg shadow-sm">
+                                <i class="bi bi-clock-history me-1"></i> View My Appointments
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-3 mt-md-0">
-                    <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-outline-primary shadow-sm">
-                        <i class="bi bi-clock-history me-1"></i> View My Appointments
+            </div>
+        </div>
+
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm filter-card">
+                    <div class="card-body p-4">
+                        <form method="GET" id="doctor-search-form">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Search Doctors</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                                        <input type="text" class="form-control" name="search"
+                                            value="{{ request.args.get('search', '') }}"
+                                            placeholder="Doctor name or specialization">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Specialization</label>
+                                    <select class="form-select" name="specialization">
+                                        <option value="">All Specializations</option>
+                                        {% for spec in specializations %}
+                                        <option value="{{ spec }}" {% if request.args.get('specialization')==spec %}selected{% endif %}>
+                                            {{ spec }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Consultation Type</label>
+                                    <select class="form-select" name="consultation_type">
+                                        <option value="">Both</option>
+                                        <option value="in_person" {% if request.args.get('consultation_type')=='in_person' %}selected{% endif %}>
+                                            In-Person
+                                        </option>
+        <option value="teleconsultation" {% if request.args.get('consultation_type')=='teleconsultation' %}selected{% endif %}>
+                                            Teleconsultation
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-funnel me-2"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row g-4">
+            {% if doctors %}
+            {% for doctor in doctors %}
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100 doctor-card">
+                    <div class="card-body d-flex flex-column h-100">
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="avatar-circle bg-primary text-white">{{ doctor.name[0].upper() }}</div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                    <div>
+                                        <h5 class="mb-1">Dr. {{ doctor.name }}</h5>
+                                        <p class="text-primary mb-1">{{ doctor.specialization }}</p>
+                                    </div>
+                                    <span class="badge bg-light text-dark rounded-pill">{{ doctor.license_number }}</span>
+                                </div>
+                                <p class="text-muted small mb-1"><i class="bi bi-building me-1"></i>{{ doctor.clinic_hospital }}</p>
+                                <p class="text-muted small mb-0"><i class="bi bi-clock me-1"></i>{{ doctor.working_hours_start.strftime('%I:%M %p') }} - {{ doctor.working_hours_end.strftime('%I:%M %p') }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 g-3">
+                            <div class="col-sm-6">
+                                <div class="info-tile">
+                                    <span class="icon-circle bg-success-subtle text-success"><i class="bi bi-currency-rupee"></i></span>
+                                    <div>
+                                        <small class="text-muted">Consultation Fee</small>
+                                        <div class="fw-semibold">₹{{ doctor.consultation_fee }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="info-tile">
+                                    <span class="icon-circle bg-info-subtle text-info"><i class="bi bi-laptop"></i></span>
+                                    <div>
+                                        <small class="text-muted">Consultation Type</small>
+                                        <div class="fw-semibold">In-person & Online</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-3">
+                            <button type="button" class="btn btn-primary w-100" onclick="bookAppointment({{ doctor.id }}, '{{ doctor.name }}', {{ doctor.consultation_fee }},
+                                 '{{ doctor.working_hours_start.strftime('%H:%M') }}',
+                                 '{{ doctor.working_hours_end.strftime('%H:%M') }}')">
+                                <i class="bi bi-calendar-plus me-2"></i>Book Appointment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-12">
+                <div class="empty-state text-center py-5">
+                    <div class="empty-icon bg-primary-subtle text-primary"><i class="bi bi-search"></i></div>
+                    <h4 class="mt-3 mb-2">No doctors found</h4>
+                    <p class="text-muted mb-3">Try adjusting your search criteria</p>
+                    <a href="{{ url_for('appointments.book_appointment') }}" class="btn btn-primary">
+                        View All Doctors
                     </a>
                 </div>
             </div>
+            {% endif %}
         </div>
-    </div>
 
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <form method="GET" id="doctor-search-form">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Search Doctors</label>
-                                <input type="text" class="form-control" name="search"
-                                    value="{{ request.args.get('search', '') }}"
-                                    placeholder="Doctor name or specialization">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Specialization</label>
-                                <select class="form-select" name="specialization">
-                                    <option value="">All Specializations</option>
-                                    {% for spec in specializations %}
-                                    <option value="{{ spec }}" {% if request.args.get('specialization')==spec
-                                        %}selected{% endif %}>
-                                        {{ spec }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Consultation Type</label>
-                                <select class="form-select" name="consultation_type">
-                                    <option value="">Both</option>
-                                    <option value="in_person" {% if request.args.get('consultation_type')=='in_person'
-                                        %}selected{% endif %}>
-                                        In-Person
-                                    </option>
-                                    <option value="teleconsultation" {% if
-                                        request.args.get('consultation_type')=='teleconsultation' %}selected{% endif %}>
-                                        Teleconsultation
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="bi bi-search"></i> Search
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+        {% if doctors.pages > 1 %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <nav aria-label="Doctors pagination">
+                    <ul class="pagination justify-content-center pagination-modern">
+                        {% if doctors.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('appointments.book_appointment', page=doctors.prev_num, **request.args) }}">Previous</a>
+                        </li>
+                        {% endif %}
 
+                        {% for page_num in doctors.iter_pages() %}
+                        {% if page_num %}
+                        {% if page_num != doctors.page %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('appointments.book_appointment', page=page_num, **request.args) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        {% endif %}
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
 
-    <div class="row">
-        {% if doctors %}
-        {% for doctor in doctors %}
-        <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-3">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto"
-                                style="width: 60px; height: 60px; font-size: 1.5rem;">
-                                {{ doctor.name[0].upper() }}
-                            </div>
-                        </div>
-                        <div class="col-9">
-                            <h5 class="card-title mb-1">Dr. {{ doctor.name }}</h5>
-                            <p class="text-primary mb-1">{{ doctor.specialization }}</p>
-                            <p class="text-muted small mb-2">
-                                <i class="bi bi-building me-1"></i>{{ doctor.clinic_hospital }}
-                            </p>
-                            <p class="text-muted small mb-2">
-                                <i class="bi bi-clock me-1"></i>{{ doctor.working_hours_start.strftime('%I:%M %p') }} -
-                                {{ doctor.working_hours_end.strftime('%I:%M %p') }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <hr class="my-3">
-
-                    <div class="row align-items-center">
-                        <div class="col-6">
-                            <div class="text-center">
-                                <h6 class="text-success mb-1">₹{{ doctor.consultation_fee }}</h6>
-                                <small class="text-muted">Consultation Fee</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-center">
-                                <span class="badge bg-info">{{ doctor.license_number }}</span><br>
-                                <small class="text-muted">License #</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="my-3">
-
-                    <div class="d-grid">
-                        <button type="button" class="btn btn-primary" onclick="bookAppointment({{ doctor.id }}, '{{ doctor.name }}', {{ doctor.consultation_fee }},
-                             '{{ doctor.working_hours_start.strftime('%H:%M') }}',
-                             '{{ doctor.working_hours_end.strftime('%H:%M') }}')">
-                            <i class="bi bi-calendar-plus me-2"></i>Book Appointment
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-        {% else %}
-        <div class="col-12">
-            <div class="text-center py-5">
-                <i class="bi bi-search text-muted mb-3" style="font-size: 4rem;"></i>
-                <h4 class="text-muted mb-3">No doctors found</h4>
-                <p class="text-muted mb-4">Try adjusting your search criteria</p>
-                <a href="{{ url_for('appointments.book_appointment') }}" class="btn btn-primary">
-                    View All Doctors
-                </a>
+                        {% if doctors.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('appointments.book_appointment', page=doctors.next_num, **request.args) }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
             </div>
         </div>
         {% endif %}
     </div>
-
-
-    {% if doctors.pages > 1 %}
-    <div class="row mt-4">
-        <div class="col-12">
-            <nav aria-label="Doctors pagination">
-                <ul class="pagination justify-content-center">
-                    {% if doctors.has_prev %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="{{ url_for('appointments.book_appointment', page=doctors.prev_num, **request.args) }}">Previous</a>
-                    </li>
-                    {% endif %}
-
-                    {% for page_num in doctors.iter_pages() %}
-                    {% if page_num %}
-                    {% if page_num != doctors.page %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="{{ url_for('appointments.book_appointment', page=page_num, **request.args) }}">{{
-                            page_num }}</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item active">
-                        <span class="page-link">{{ page_num }}</span>
-                    </li>
-                    {% endif %}
-                    {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                    {% endif %}
-                    {% endfor %}
-
-                    {% if doctors.has_next %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="{{ url_for('appointments.book_appointment', page=doctors.next_num, **request.args) }}">Next</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
-    </div>
-    {% endif %}
-</div>
+</section>
 
 
 <div class="modal fade" id="bookingModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-light border-0">
                 <h5 class="modal-title">
                     <i class="bi bi-calendar-plus me-2"></i>Book Appointment
                 </h5>
@@ -223,7 +227,7 @@
                 <div class="modal-body">
                     <div class="row mb-3">
                         <div class="col-12">
-                            <div class="alert alert-info border-0">
+                            <div class="alert alert-info border-0 rounded-3 shadow-sm">
                                 <strong>Doctor:</strong> <span id="selected-doctor-name"></span><br>
                                 <strong>Consultation Fee:</strong> ₹<span id="selected-doctor-fee"></span>
                             </div>
@@ -282,8 +286,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-circle me-2"></i>Confirm Booking
                     </button>
@@ -293,6 +297,7 @@
     </div>
 </div>
 
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 <script>
 
     const timeSlots = [

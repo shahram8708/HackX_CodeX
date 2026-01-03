@@ -3,42 +3,36 @@
 {% block title %}Doctor Dashboard - HealneX{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/doctor_dashboard.css') }}">
 
-    <div class="row mb-4">
+<div class="container-fluid dashboard-page hx-i18n-admin py-4">
+
+    <div class="row g-4">
         <div class="col-12">
-            <div class="card border-0 bg-gradient bg-success text-white shadow-sm rounded-4">
-                <div class="card-body py-4 px-4">
-                    <div class="row align-items-center">
-
-                        <div class="col-md-8 mb-3 mb-md-0">
-                            <h2 class="card-title fw-bold mb-2">
-                                <i class="bi bi-person-heart me-2"></i>Welcome, Dr. {{ current_user.name }}
-                            </h2>
-                            <p class="mb-1 text-light">
-                                <i class="bi bi-person-badge me-1"></i>{{ current_user.specialization }}
+            <div class="card hx-hero-card shadow-lg border-0">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-8">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <span class="hx-hero-badge"><i class="bi bi-shield-check me-2"></i>Doctor Dashboard</span>
+                                <span class="badge bg-light text-success fw-semibold">Live</span>
+                            </div>
+                            <h1 class="fw-bold text-white mb-2">Welcome, Dr. {{ current_user.name }}</h1>
+                            <p class="text-white-50 mb-3">
+                                <i class="bi bi-person-badge me-2"></i>{{ current_user.specialization }}
                             </p>
-                            <p class="mb-1 text-light">
-                                <i class="bi bi-building me-1"></i>{{ current_user.clinic_hospital }}
-                            </p>
-                            <p class="mb-0 text-light small">
-                                <i class="bi bi-clock-history me-1"></i>
-                                Working Hours:
-                                {{ current_user.working_hours_start.strftime('%I:%M %p') }} -
-                                {{ current_user.working_hours_end.strftime('%I:%M %p') if current_user.working_hours_end
-                                else '' }}
-                            </p>
+                            <div class="d-flex flex-wrap gap-3 text-white small">
+                                <span class="hx-hero-chip"><i class="bi bi-building me-2"></i>{{ current_user.clinic_hospital }}</span>
+                                <span class="hx-hero-chip"><i class="bi bi-clock-history me-2"></i>Working Hours: {{ current_user.working_hours_start.strftime('%I:%M %p') }} - {{ current_user.working_hours_end.strftime('%I:%M %p') if current_user.working_hours_end else '' }}</span>
+                            </div>
                         </div>
-
-
-                        <div class="col-md-4 text-md-end">
-                            <div class="d-grid d-md-flex gap-2 justify-content-md-end">
-                                <a href="{{ url_for('dashboard.edit_profile') }}" class="btn btn-light shadow-sm">
-                                    <i class="bi bi-pencil me-1"></i>Edit Profile
+                        <div class="col-lg-4 text-lg-end">
+                            <div class="d-grid d-sm-flex justify-content-lg-end gap-2">
+                                <a href="{{ url_for('dashboard.edit_profile') }}" class="btn btn-light btn-lg shadow-sm px-4">
+                                    <i class="bi bi-pencil-square me-2"></i>Edit Profile
                                 </a>
-                                <a href="{{ url_for('uploads.upload_report') }}"
-                                    class="btn btn-outline-light shadow-sm">
-                                    <i class="bi bi-cloud-upload me-1"></i>Upload Report
+                                <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-outline-light btn-lg shadow-sm px-4">
+                                    <i class="bi bi-cloud-upload me-2"></i>Upload Report
                                 </a>
                             </div>
                         </div>
@@ -49,81 +43,87 @@
     </div>
 
 
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <div class="text-primary mb-2">
-                        <i class="bi bi-people" style="font-size: 2rem;"></i>
+    <div class="row g-4 mt-1">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card hx-metric-card shadow-sm border-0 hover-lift h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="hx-metric-icon bg-primary-soft text-primary"><i class="bi bi-people"></i></div>
+                    <div>
+                        <p class="text-muted text-uppercase small mb-1">Total Patients</p>
+                        <h3 class="fw-bold mb-0">{{ total_patients }}</h3>
                     </div>
-                    <h4 class="mb-1">{{ total_patients }}</h4>
-                    <p class="text-muted small mb-0">Total Patients</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <div class="text-success mb-2">
-                        <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card hx-metric-card shadow-sm border-0 hover-lift h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="hx-metric-icon bg-success-soft text-success"><i class="bi bi-calendar-check"></i></div>
+                    <div>
+                        <p class="text-muted text-uppercase small mb-1">Upcoming Appointments</p>
+                        <h3 class="fw-bold mb-0">{{ upcoming_count }}</h3>
                     </div>
-                    <h4 class="mb-1">{{ upcoming_count }}</h4>
-                    <p class="text-muted small mb-0">Upcoming Appointments</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <div class="text-info mb-2">
-                        <i class="bi bi-file-medical" style="font-size: 2rem;"></i>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card hx-metric-card shadow-sm border-0 hover-lift h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="hx-metric-icon bg-info-soft text-info"><i class="bi bi-file-medical"></i></div>
+                    <div>
+                        <p class="text-muted text-uppercase small mb-1">Prescriptions Issued</p>
+                        <h3 class="fw-bold mb-0">{{ total_prescriptions }}</h3>
                     </div>
-                    <h4 class="mb-1">{{ total_prescriptions }}</h4>
-                    <p class="text-muted small mb-0">Prescriptions Issued</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <div class="text-warning mb-2">
-                        <i class="bi bi-currency-rupee" style="font-size: 2rem;"></i>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card hx-metric-card shadow-sm border-0 hover-lift h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="hx-metric-icon bg-warning-soft text-warning"><i class="bi bi-currency-rupee"></i></div>
+                    <div>
+                        <p class="text-muted text-uppercase small mb-1">Total Earnings</p>
+                        <h3 class="fw-bold mb-0">₹{{ total_earnings|default(0) }}</h3>
                     </div>
-                    <h4 class="mb-1">₹{{ total_earnings|default(0) }}</h4>
-                    <p class="text-muted small mb-0">Total Earnings</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
 
-        <div class="col-lg-4 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">
-                        <i class="bi bi-search text-primary me-2"></i>
-                        Patient Lookup
-                    </h5>
+    <div class="row g-4 mt-1">
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 h-100 hover-lift">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="hx-dot bg-primary"></span>
+                        <h5 class="mb-0">Patient Lookup</h5>
+                    </div>
+                    <span class="badge bg-light text-primary">Quick Search</span>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('dashboard.patient_lookup') }}">
+                    <p class="text-muted small mb-3">Find patient details instantly using their unique ID.</p>
+                    <form method="POST" action="{{ url_for('dashboard.patient_lookup') }}" class="hx-form">
                         {{ lookup_form.hidden_tag() }}
                         <div class="mb-3">
-                            {{ lookup_form.patient_id.label(class="form-label") }}
-                            {{ lookup_form.patient_id(class="form-control", placeholder="Enter Patient ID (e.g.,
-                            HC-5F4A1B9D)") }}
+                            {{ lookup_form.patient_id.label(class="form-label fw-semibold") }}
+                            {{ lookup_form.patient_id(class="form-control form-control-lg", placeholder="Enter Patient ID (e.g., HC-5F4A1B9D)", **{'data-i18n-key': "Enter Patient ID (e.g., HC-5F4A1B9D)", 'data-i18n-attr': 'placeholder'}) }}
                         </div>
                         <div class="d-grid">
-                            {{ lookup_form.submit(class="btn btn-primary") }}
+                            {{ lookup_form.submit(class="btn btn-primary btn-lg") }}
                         </div>
                     </form>
 
                     {% if patient_data %}
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <h6 class="text-primary mb-2">
-                            <i class="bi bi-person-badge me-2"></i>{{ patient_data.name }}
-                        </h6>
+                    <div class="mt-4 p-3 rounded hx-lookup-result">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="hx-avatar-soft">{{ patient_data.name[0].upper() }}</span>
+                            <div>
+                                <h6 class="mb-0">{{ patient_data.name }}</h6>
+                                <small class="text-muted">{{ patient_data.unique_patient_id }}</small>
+                            </div>
+                        </div>
                         <div class="small text-muted">
                             <p class="mb-1"><strong>Age:</strong> {{ patient_data.age }} years</p>
                             <p class="mb-1"><strong>Gender:</strong> {{ patient_data.gender }}</p>
@@ -135,13 +135,11 @@
                             <p class="mb-1"><strong>Conditions:</strong> {{ patient_data.medical_conditions }}</p>
                             {% endif %}
                         </div>
-                        <div class="mt-3">
-                            <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient_data.unique_patient_id) }}"
-                                class="btn btn-sm btn-primary me-2">
+                        <div class="d-flex gap-2 mt-3 flex-wrap">
+                            <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient_data.unique_patient_id) }}" class="btn btn-sm btn-primary">
                                 <i class="bi bi-eye"></i> View Full Profile
                             </a>
-                            <a href="{{ url_for('uploads.upload_report', patient_id=patient_data.unique_patient_id) }}"
-                                class="btn btn-sm btn-success">
+                            <a href="{{ url_for('uploads.upload_report', patient_id=patient_data.unique_patient_id) }}" class="btn btn-sm btn-success">
                                 <i class="bi bi-file-plus"></i> Add Report
                             </a>
                         </div>
@@ -152,79 +150,66 @@
         </div>
 
 
-        <div class="col-lg-8 mb-4">
-            <div class="card border-0 shadow-sm">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-calendar-day text-success me-2"></i>
-                        Today's Appointments
-                    </h5>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="hx-dot bg-success"></span>
+                        <h5 class="mb-0">Today's Appointments</h5>
+                    </div>
                     <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-sm btn-outline-success">
-                        View All
+                        <i class="bi bi-list-ul me-1"></i>View All
                     </a>
                 </div>
                 <div class="card-body">
                     {% if today_appointments %}
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
+                        <table class="table align-middle hx-table mb-0">
+                            <thead>
                                 <tr>
                                     <th>Time</th>
                                     <th>Patient</th>
                                     <th>Type</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for appointment in today_appointments %}
                                 <tr>
+                                    <td class="fw-semibold">{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
                                     <td>
-                                        <strong>{{ appointment.appointment_time.strftime('%I:%M %p') }}</strong>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <strong>{{ appointment.patient.name }}</strong>
-                                            <br>
-                                            <small class="text-muted">{{ appointment.patient.unique_patient_id
-                                                }}</small>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="hx-avatar-soft">{{ appointment.patient.name[0].upper() }}</span>
+                                            <div>
+                                                <div class="fw-semibold">{{ appointment.patient.name }}</div>
+                                                <small class="text-muted">{{ appointment.patient.unique_patient_id }}</small>
+                                            </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span
-                                            class="badge bg-{{ 'info' if appointment.appointment_type == 'teleconsultation' else 'success' }}">
-                                            {{ appointment.appointment_type|title }}
-                                        </span>
+                                        <span class="badge hx-pill bg-{{ 'info' if appointment.appointment_type == 'teleconsultation' else 'success' }}">{{ appointment.appointment_type|title }}</span>
                                     </td>
                                     <td>
-                                        <span
-                                            class="badge bg-{{ 'warning' if appointment.status == 'pending' else 'success' if appointment.status == 'confirmed' else 'secondary' }}">
-                                            {{ appointment.status|title }}
-                                        </span>
+                                        <span class="badge hx-pill bg-{{ 'warning' if appointment.status == 'pending' else 'success' if appointment.status == 'confirmed' else 'secondary' }}">{{ appointment.status|title }}</span>
                                     </td>
-                                    <td>
+                                    <td class="text-end">
                                         <div class="btn-group btn-group-sm" role="group">
                                             {% if appointment.appointment_type == 'teleconsultation' %}
-                                            <a href="{{ url_for('chat.chat_index', user_id=appointment.patient.id) }}"
-                                                class="btn btn-outline-primary" title="Start Video Call">
+                                            <a href="{{ url_for('chat.chat_index', user_id=appointment.patient.id) }}" class="btn btn-outline-primary" title="Start Video Call">
                                                 <i class="bi bi-camera-video"></i>
                                             </a>
                                             {% endif %}
-                                            <a href="{{ url_for('dashboard.view_patient_profile', patient_id=appointment.patient.unique_patient_id) }}"
-                                                class="btn btn-outline-info" title="View Patient">
+                                            <a href="{{ url_for('dashboard.view_patient_profile', patient_id=appointment.patient.unique_patient_id) }}" class="btn btn-outline-info" title="View Patient">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="{{ url_for('appointments.view_appointment', appointment_id=appointment.id) }}"
-                                                class="btn btn-outline-secondary" title="View Appointment Details">
+                                            <a href="{{ url_for('appointments.view_appointment', appointment_id=appointment.id) }}" class="btn btn-outline-secondary" title="View Appointment Details">
                                                 <i class="bi bi-info-circle"></i>
                                             </a>
                                             {% if appointment.status != 'completed' %}
-                                            <form method="POST"
-                                                action="{{ url_for('appointments.complete_appointment', appointment_id=appointment.id) }}"
-                                                class="d-inline">
+                                            <form method="POST" action="{{ url_for('appointments.complete_appointment', appointment_id=appointment.id) }}" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <button type="submit" class="btn btn-outline-success"
-                                                    onclick="return confirm('Mark this appointment as completed?')">
+                                                <button type="submit" class="btn btn-outline-success" onclick="return confirm(hxInline('Mark this appointment as completed?'))">
                                                     <i class="bi bi-check-circle"></i>
                                                 </button>
                                             </form>
@@ -237,9 +222,9 @@
                         </table>
                     </div>
                     {% else %}
-                    <div class="text-center py-4">
+                    <div class="text-center py-5">
                         <i class="bi bi-calendar-x text-muted mb-3" style="font-size: 3rem;"></i>
-                        <p class="text-muted">No appointments scheduled for today</p>
+                        <p class="text-muted mb-0">No appointments scheduled for today</p>
                     </div>
                     {% endif %}
                 </div>
@@ -248,42 +233,30 @@
     </div>
 
 
-    <div class="row">
-        <div class="col-lg-8 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">
-                        <i class="bi bi-people text-info me-2"></i>
-                        Recent Patients
-                    </h5>
+    <div class="row g-4 mt-1">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2">
+                    <span class="hx-dot bg-info"></span>
+                    <h5 class="mb-0">Recent Patients</h5>
                 </div>
                 <div class="card-body">
                     {% if recent_patients %}
-                    <div class="row">
+                    <div class="row g-3">
                         {% for patient in recent_patients %}
-                        <div class="col-md-6 mb-3">
-                            <div class="card border">
+                        <div class="col-md-6">
+                            <div class="card hx-patient-card border-0 shadow-sm hover-lift h-100">
                                 <div class="card-body p-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-3">
-                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                                                style="width: 40px; height: 40px;">
-                                                {{ patient.name[0].upper() }}
-                                            </div>
-                                        </div>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="hx-avatar-soft">{{ patient.name[0].upper() }}</span>
                                         <div class="flex-grow-1">
                                             <h6 class="mb-1">{{ patient.name }}</h6>
                                             <p class="text-muted small mb-1">{{ patient.unique_patient_id }}</p>
-                                            <p class="text-muted small mb-0">Last visit: {{
-                                                patient.last_appointment.strftime('%b %d') if patient.last_appointment
-                                                else 'No visits' }}</p>
+                                            <p class="text-muted small mb-0">Last visit: {{ patient.last_appointment.strftime('%b %d') if patient.last_appointment else 'No visits' }}</p>
                                         </div>
-                                        <div>
-                                            <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient.unique_patient_id) }}"
-                                                class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        </div>
+                                        <a href="{{ url_for('dashboard.view_patient_profile', patient_id=patient.unique_patient_id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -291,9 +264,9 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <div class="text-center py-3">
+                    <div class="text-center py-4">
                         <i class="bi bi-person-plus text-muted mb-2" style="font-size: 2rem;"></i>
-                        <p class="text-muted">No recent patients</p>
+                        <p class="text-muted mb-0">No recent patients</p>
                     </div>
                     {% endif %}
                 </div>
@@ -302,48 +275,56 @@
 
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">
-                        <i class="bi bi-lightning text-warning me-2"></i>
-                        Quick Actions
-                    </h5>
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="hx-dot bg-warning"></span>
+                        <h5 class="mb-0">Quick Actions</h5>
+                    </div>
+                    <span class="badge bg-warning-soft text-warning">Fast access</span>
                 </div>
                 <div class="card-body">
-                    <div class="d-grid gap-2">
+                    <div class="d-grid gap-2 hx-quick-actions">
 
-                        <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-outline-success">
-                            <i class="bi bi-file-plus me-2"></i>Upload Report
+                        <a href="{{ url_for('uploads.upload_report') }}" class="btn btn-outline-success d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-file-plus me-2"></i>Upload Report</span>
+                            <i class="bi bi-arrow-right-short"></i>
                         </a>
 
 
-                        <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-outline-primary">
-                            <i class="bi bi-calendar-event me-2"></i>View Appointments
+                        <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-outline-primary d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-calendar-event me-2"></i>View Appointments</span>
+                            <i class="bi bi-arrow-right-short"></i>
                         </a>
 
 
-                        <a href="{{ url_for('chat.chat_index') }}" class="btn btn-outline-info">
-                            <i class="bi bi-chat-dots me-2"></i>Messages
+                        <a href="{{ url_for('chat.chat_index') }}" class="btn btn-outline-info d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-chat-dots me-2"></i>Messages</span>
+                            <i class="bi bi-arrow-right-short"></i>
                         </a>
 
 
-                        <a href="{{ url_for('payments.payment_history') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-graph-up me-2"></i>Earnings
+                        <a href="{{ url_for('payments.payment_history') }}" class="btn btn-outline-secondary d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-graph-up me-2"></i>Earnings</span>
+                            <i class="bi bi-arrow-right-short"></i>
                         </a>
 
 
-                        <a href="{{ url_for('uploads.doctor_uploads') }}" class="btn btn-outline-dark">
-                            <i class="bi bi-folder-symlink me-2"></i>My Uploads
+                        <a href="{{ url_for('uploads.doctor_uploads') }}" class="btn btn-outline-dark d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-folder-symlink me-2"></i>My Uploads</span>
+                            <i class="bi bi-arrow-right-short"></i>
                         </a>
 
 
-                        <a href="{{ url_for('dashboard.patient_lookup') }}" class="btn btn-outline-warning">
-                            <i class="bi bi-search me-2"></i>Search Patient
+                        <a href="{{ url_for('dashboard.patient_lookup') }}" class="btn btn-outline-warning d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-search me-2"></i>Search Patient</span>
+                            <i class="bi bi-arrow-right-short"></i>
                         </a>
 
 
-                        <a href="{{ url_for('dashboard.edit_profile') }}" class="btn btn-outline-success">
-                            <i class="bi bi-cash-stack me-2"></i>Stripe Onboarding
+                        <a href="{{ url_for('dashboard.edit_profile') }}" class="btn btn-outline-success d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-cash-stack me-2"></i>Stripe Onboarding</span>
+                            <i class="bi bi-arrow-right-short"></i>
                         </a>
                     </div>
                 </div>
@@ -353,5 +334,15 @@
         </div>
     </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
+
+<script>
+    function hxInline(text) {
+        const lang = window.hxCurrentLanguage === 'hi' ? 'hi' : 'en';
+        const map = window.hxTextTranslations?.[lang];
+        return map && map[text] ? map[text] : text;
+    }
+</script>
 
 {% endblock %}

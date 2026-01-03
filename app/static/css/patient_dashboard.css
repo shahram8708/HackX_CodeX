@@ -1,0 +1,155 @@
+/* Patient dashboard styling */
+
+:root {
+  --hx-border: #e5e7eb;
+  --hx-card-shadow: 0 12px 30px rgba(18, 38, 63, 0.12);
+  --hx-surface: #ffffff;
+  --hx-muted: #6b7280;
+}
+
+.patient-dashboard {
+  background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.12), transparent 28%),
+    radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.12), transparent 30%),
+    radial-gradient(circle at 50% 90%, rgba(236, 72, 153, 0.08), transparent 26%),
+    #f8fafc;
+  min-height: calc(100vh - 120px);
+}
+
+.hx-hero-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #2563eb, #0ea5e9);
+  color: #fff;
+  border-radius: 20px;
+}
+
+.hx-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.18), transparent 35%),
+    radial-gradient(circle at 85% 10%, rgba(255, 255, 255, 0.12), transparent 32%);
+  pointer-events: none;
+}
+
+.hx-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+}
+
+.hx-id-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.hx-metric-card {
+  border-radius: 16px;
+  border: 1px solid var(--hx-border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hx-metric-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.bg-primary-soft { background: #e0e7ff; }
+.bg-success-soft { background: #dcfce7; }
+.bg-info-soft { background: #e0f2fe; }
+.bg-warning-soft { background: #fef3c7; }
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hx-card-shadow);
+}
+
+.hx-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.hx-appointment-card {
+  background: linear-gradient(135deg, #f8fafc, #eef2ff);
+  border: 1px solid var(--hx-border);
+  border-radius: 14px;
+}
+
+.hx-date-badge {
+  min-width: 68px;
+  border-radius: 12px;
+  background: #1d4ed8;
+  color: #fff;
+  text-align: center;
+  padding: 10px 8px;
+}
+
+.hx-pill {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: 600;
+}
+
+.hx-quick-actions .btn {
+  border-radius: 12px;
+  padding: 12px 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.hx-quick-actions .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--hx-card-shadow);
+}
+
+.hx-list-item {
+  border: 1px solid var(--hx-border);
+  border-radius: 12px;
+  background: var(--hx-surface);
+}
+
+.hx-side-stack {
+  height: 100%;
+}
+
+.hx-side-stack > .card {
+  width: 100%;
+}
+
+.hx-subscription {
+  border-radius: 14px;
+}
+
+.hx-sub-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(14, 165, 233, 0.15);
+  color: #0284c7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+@media (max-width: 767px) {
+  .hx-hero-card .btn {
+    width: 100%;
+  }
+}

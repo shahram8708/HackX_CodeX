@@ -1,79 +1,339 @@
 {% extends "base/layout.html" %}
 {% block title %}Notification - HealneX{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5><i class="bi bi-bell"></i> Notification Details</h5>
-                    <small class="text-muted">
-                        {{ notification.created_at.strftime('%B %d, %Y at %I:%M %p') if notification.created_at else
-                        'N/A' }}
-                    </small>
+{% set ntype = notification.notification_type or 'update' %}
+<section class="notification-detail-page hx-i18n-admin py-5">
+    <div class="container">
+        <div class="d-flex align-items-center text-muted small mb-3 gap-2 nd-breadcrumb">
+            <i class="bi bi-bell"></i>
+            <span>Notifications</span>
+            <i class="bi bi-chevron-right"></i>
+            <span class="fw-semibold text-primary">Detail</span>
+        </div>
+
+        <div class="card border-0 shadow-lg nd-hero-card mb-4">
+            <div class="card-body d-flex flex-wrap align-items-center gap-3">
+                <div class="nd-icon-bubble">
+                    <i
+                        class="bi bi-{{ 'calendar-check' if notification.notification_type == 'appointment' else 'chat-text' if notification.notification_type == 'message' else 'exclamation-triangle' }}"></i>
                 </div>
-                <div class="card-body">
-                    <div class="d-flex align-items-start mb-3">
-                        <div class="me-3">
-                            <div
-                                class="avatar bg-{{ 'success' if notification.notification_type == 'appointment' else 'info' if notification.notification_type == 'message' else 'warning' }} rounded-circle p-2">
-                                <i
-                                    class="bi bi-{{ 'calendar-check' if notification.notification_type == 'appointment' else 'chat' if notification.notification_type == 'message' else 'exclamation-triangle' }} text-white"></i>
-                            </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                        <span class="badge nd-badge nd-badge-{{ ntype.replace('_', '-') }}">
+                            {{ notification.notification_type.replace('_', ' ').title() }}
+                        </span>
+                        <span class="badge nd-badge-status {{ 'read' if notification.is_read else 'unread' }}">
+                            <i class="bi bi-{{ 'check-circle' if notification.is_read else 'envelope-open' }} me-1"></i>
+                            {{ 'Read' if notification.is_read else 'Unread' }}
+                        </span>
+                    </div>
+                    <h3 class="mb-2 fw-semibold">{{ notification.title }}</h3>
+                    <div class="d-flex flex-wrap gap-3 text-muted small">
+                        <span><i class="bi bi-clock-history me-1"></i>{{ notification.created_at.strftime('%B %d, %Y at %I:%M %p') if notification.created_at else 'N/A' }}</span>
+                        <span><i class="bi bi-shield-lock me-1"></i>Secure notice</span>
+                    </div>
+                </div>
+                <div class="ms-auto">
+                    <a href="{{ url_for('notifications.notifications') }}" class="btn btn-outline-light btn-sm nd-btn-ghost">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
 
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">{{ notification.title }}</h6>
-                            <span
-                                class="badge bg-{{ 'success' if notification.notification_type == 'appointment' else 'info' if notification.notification_type == 'message' else 'warning' }}">
-                                {{ notification.notification_type.replace('_', ' ').title() }}
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm nd-card h-100">
+                    <div class="card-header border-0 bg-transparent pb-0">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="nd-pill-icon">
+                                <i class="bi bi-chat-dots"></i>
                             </span>
-
+                            <div>
+                                <p class="text-muted mb-0 small">Message</p>
+                                <h6 class="mb-0">What you need to know</h6>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="mb-4">
-                        <p>{{ notification.message }}</p>
-                    </div>
-
-                    {% if notification.type == 'appointment' and notification.appointment %}
-                    <div class="card bg-light">
-                        <div class="card-body">
-                            <h6>Appointment Details</h6>
-                            <p class="mb-1"><strong>Date:</strong> {{ notification.appointment.date.strftime('%B %d,
-                                %Y') if notification.appointment.date else 'N/A' }}</p>
-                            <p class="mb-1"><strong>Time:</strong> {{ notification.appointment.time or 'N/A' }}</p>
-                            <p class="mb-0"><strong>Type:</strong> {{
-                                notification.appointment.appointment_type.replace('_', ' ').title() if
-                                notification.appointment.appointment_type else 'N/A' }}</p>
+                    <div class="card-body pt-3">
+                        <div class="nd-message">
+                            <p class="mb-0">{{ notification.message }}</p>
                         </div>
                     </div>
-                    {% endif %}
+                </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-4">
-                        <div>
-                            {% if not notification.is_read %}
-                            <form method="POST"
-                                action="{{ url_for('notifications.mark_read', notification_id=notification.id) }}"
-                                class="d-inline">
-                                {{ csrf_token() }}
-                                <button type="submit" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-check"></i> Mark as Read
-                                </button>
-                            </form>
-                            {% else %}
-                            <span class="text-success"><i class="bi bi-check-circle"></i> Read</span>
-                            {% endif %}
+                {% if notification.type == 'appointment' and notification.appointment %}
+                <div class="card border-0 shadow-sm nd-card mt-4">
+                    <div class="card-header border-0 bg-transparent pb-0">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="nd-pill-icon nd-pill-icon-primary">
+                                <i class="bi bi-calendar3-event"></i>
+                            </span>
+                            <div>
+                                <p class="text-muted mb-0 small">Appointment Details</p>
+                                <h6 class="mb-0">Plan at a glance</h6>
+                            </div>
                         </div>
-                        <div>
-                            <a href="{{ url_for('notifications.notifications') }}" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Back to Notifications
-                            </a>
+                    </div>
+                    <div class="card-body pt-3">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="nd-stat h-100">
+                                    <p class="text-muted mb-1 small">Date</p>
+                                    <h6 class="mb-0">{{ notification.appointment.date.strftime('%B %d, %Y') if notification.appointment.date else 'N/A' }}</h6>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="nd-stat h-100">
+                                    <p class="text-muted mb-1 small">Time</p>
+                                    <h6 class="mb-0">{{ notification.appointment.time or 'N/A' }}</h6>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="nd-stat h-100">
+                                    <p class="text-muted mb-1 small">Type</p>
+                                    <h6 class="mb-0">{{ notification.appointment.appointment_type.replace('_', ' ').title() if notification.appointment.appointment_type else 'N/A' }}</h6>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm nd-card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="nd-pill-icon nd-pill-icon-muted"><i class="bi bi-info-circle"></i></span>
+                            <h6 class="mb-0">Summary</h6>
+                        </div>
+                        <div class="nd-meta">
+                            <div class="nd-meta-row">
+                                <span class="text-muted">Type</span>
+                                <span class="fw-semibold">{{ notification.notification_type.replace('_', ' ').title() }}</span>
+                            </div>
+                            <div class="nd-meta-row">
+                                <span class="text-muted">Status</span>
+                                <span class="fw-semibold text-{{ 'success' if notification.is_read else 'warning' }}">{{ 'Read' if notification.is_read else 'Awaiting review' }}</span>
+                            </div>
+                            <div class="nd-meta-row">
+                                <span class="text-muted">Created</span>
+                                <span class="fw-semibold">{{ notification.created_at.strftime('%b %d, %Y') if notification.created_at else 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm nd-card">
+                    <div class="card-body d-flex flex-column gap-2">
+                        {% if not notification.is_read %}
+                        <form method="POST" action="{{ url_for('notifications.mark_read', notification_id=notification.id) }}" class="d-grid">
+                            {{ csrf_token() }}
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-check2-circle me-2"></i>Mark as Read
+                            </button>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-success d-flex align-items-center gap-2 mb-0">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>This notification is marked as read.</span>
+                        </div>
+                        {% endif %}
+                        <a href="{{ url_for('notifications.notifications') }}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Notifications
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<style>
+    .notification-detail-page {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.06), rgba(16, 185, 129, 0.04));
+        position: relative;
+    }
+
+    .notification-detail-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.08), transparent 32%),
+            radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.08), transparent 30%);
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .notification-detail-page .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .nd-breadcrumb {
+        letter-spacing: 0.01em;
+    }
+
+    .nd-hero-card {
+        border-radius: 20px;
+        background: linear-gradient(135deg, #0f172a, #1d4ed8);
+        color: #e5edff;
+    }
+
+    .nd-icon-bubble {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.25);
+        font-size: 1.35rem;
+    }
+
+    .nd-hero-card .btn.nd-btn-ghost {
+        border-color: rgba(255, 255, 255, 0.45);
+        color: #e5edff;
+        backdrop-filter: blur(6px);
+    }
+
+    .nd-hero-card .btn.nd-btn-ghost:hover {
+        border-color: #fff;
+        color: #0f172a;
+        background: #fff;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+    }
+
+    .nd-card {
+        border-radius: 16px;
+        transition: transform 0.2s ease, box-shadow 0.25s ease;
+    }
+
+    .nd-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+    }
+
+    .nd-pill-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        background: #eef2ff;
+        color: #1d4ed8;
+        font-size: 1rem;
+    }
+
+    .nd-pill-icon-primary {
+        background: #dbeafe;
+        color: #0f172a;
+    }
+
+    .nd-pill-icon-muted {
+        background: #f8fafc;
+        color: #475569;
+    }
+
+    .nd-badge {
+        border-radius: 999px;
+        padding: 0.45rem 0.9rem;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+    }
+
+    .nd-badge-appointment {
+        background: rgba(16, 185, 129, 0.2);
+        color: #ecfdf3;
+        border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .nd-badge-message {
+        background: rgba(59, 130, 246, 0.2);
+        color: #e0edff;
+        border: 1px solid rgba(59, 130, 246, 0.35);
+    }
+
+    .nd-badge-warning {
+        background: rgba(251, 191, 36, 0.2);
+        color: #fff7ed;
+        border: 1px solid rgba(251, 191, 36, 0.35);
+    }
+
+    .nd-badge-status {
+        border-radius: 999px;
+        padding: 0.35rem 0.75rem;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.16);
+    }
+
+    .nd-badge-status.read {
+        background: #e8f5e9;
+        color: #166534;
+    }
+
+    .nd-badge-status.unread {
+        background: #fff7ed;
+        color: #9a3412;
+    }
+
+    .nd-message {
+        padding: 1.1rem 1.2rem;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+
+    .nd-stat {
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1rem 1rem;
+        background: #f9fafb;
+        transition: transform 0.2s ease, box-shadow 0.25s ease;
+    }
+
+    .nd-stat:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .nd-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .nd-meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 0;
+        border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .nd-meta-row:last-child {
+        border-bottom: none;
+    }
+
+    @media (max-width: 767.98px) {
+        .nd-hero-card {
+            text-align: left;
+        }
+
+        .nd-hero-card .ms-auto {
+            width: 100%;
+            text-align: left;
+        }
+
+        .nd-icon-bubble {
+            width: 54px;
+            height: 54px;
+        }
+    }
+</style>
 {% endblock %}

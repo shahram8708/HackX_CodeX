@@ -1,0 +1,168 @@
+/* Medical reports page styling */
+:root {
+    --hx-primary: #2563eb;
+    --hx-primary-soft: rgba(37, 99, 235, 0.12);
+    --hx-accent: #10b981;
+    --hx-surface: #ffffff;
+    --hx-border: rgba(15, 23, 42, 0.08);
+    --hx-muted: #6b7280;
+    --hx-radius: 16px;
+    --hx-shadow: 0 18px 46px rgba(15, 23, 42, 0.14);
+}
+
+.hx-hero {
+    background: radial-gradient(circle at 12% 12%, rgba(37, 99, 235, 0.12), transparent 26%),
+        radial-gradient(circle at 88% 0%, rgba(16, 185, 129, 0.12), transparent 24%),
+        linear-gradient(135deg, #f8fbff, #eef2ff);
+    border-radius: calc(var(--hx-radius) + 4px);
+    border: 1px solid var(--hx-border);
+}
+
+.hx-hero-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
+    color: #fff;
+    font-size: 1.6rem;
+    box-shadow: 0 16px 36px rgba(37, 99, 235, 0.25);
+}
+
+.hx-badge-soft-primary,
+.hx-badge-soft-neutral {
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--hx-border);
+}
+
+.hx-badge-soft-primary {
+    background: var(--hx-primary-soft);
+    color: #1d4ed8;
+}
+
+.hx-badge-soft-neutral {
+    background: rgba(15, 23, 42, 0.06);
+    color: #0f172a;
+}
+
+.hx-filter-card {
+    border-radius: var(--hx-radius);
+    border: 1px solid var(--hx-border);
+}
+
+.hx-pill {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+}
+
+.hx-input-group .input-group-text {
+    background: transparent;
+    border-right: none;
+    color: var(--hx-muted);
+}
+
+.hx-input-group .form-control {
+    border-left: none;
+}
+
+.hx-report-card {
+    border-radius: var(--hx-radius);
+    border: 1px solid var(--hx-border);
+    background: linear-gradient(145deg, #ffffff, #f9fbff);
+    box-shadow: var(--hx-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: visible; /* allow modals/tooltips spawned inside cards to render fully */
+}
+
+.hx-report-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.06), transparent 30%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.hx-report-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+}
+
+.hx-report-card:hover::after {
+    opacity: 1;
+}
+
+.hx-file-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(37, 99, 235, 0.1);
+    color: #1d4ed8;
+    display: grid;
+    place-items: center;
+    font-size: 1.4rem;
+}
+
+.hx-date-badge {
+    background: rgba(15, 23, 42, 0.05);
+    color: #0f172a;
+    border-radius: 999px;
+    padding: 6px 10px;
+    border: 1px solid var(--hx-border);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.hx-empty-state {
+    border-radius: var(--hx-radius);
+    border: 1px solid var(--hx-border);
+    background: linear-gradient(180deg, #f8fbff, #ffffff);
+}
+
+.hx-empty-icon {
+    width: 88px;
+    height: 88px;
+    border-radius: 24px;
+    background: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
+    display: grid;
+    place-items: center;
+    font-size: 2rem;
+    margin: 0 auto;
+    box-shadow: 0 14px 34px rgba(37, 99, 235, 0.2);
+}
+
+.btn.btn-primary,
+.btn.btn-success,
+.btn.btn-outline-secondary,
+.btn.btn-outline-primary,
+.btn.btn-outline-success,
+.btn.btn-outline-info,
+.btn.btn-outline-warning,
+.btn.btn-danger,
+.btn.btn-secondary {
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+    .hx-hero {
+        text-align: left;
+    }
+
+    .hx-hero-icon {
+        width: 54px;
+        height: 54px;
+    }
+}

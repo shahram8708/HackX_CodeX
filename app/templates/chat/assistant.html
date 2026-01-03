@@ -1,0 +1,144 @@
+{% extends 'base/layout.html' %}
+{% block title %}HealneX AI Assistant{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h1 class="h4 mb-1">AI Assistant</h1>
+                    <p class="text-muted mb-0">Chat with HealneX Copilot. I will reply in your language.</p>
+                </div>
+                <span class="badge bg-primary" id="assistant-language">Language: auto</span>
+            </div>
+
+            <div class="card shadow-sm mb-3" id="assistant-panel">
+                <div class="card-body" id="assistant-messages" style="min-height: 320px; max-height: 540px; overflow-y: auto;"></div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="mb-2 small text-muted" id="assistant-status">Ready</div>
+                    <div class="mb-3" id="assistant-tools" hidden>
+                        <span class="badge bg-info text-dark">Tool call used</span>
+                    </div>
+                    <textarea id="assistant-input" class="form-control mb-2" rows="3" maxlength="500" placeholder="Ask about appointments, reports, or notifications"></textarea>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="small text-muted">No sensitive data. Confirm when booking or cancelling.</div>
+                        <button id="assistant-send" class="btn btn-primary">
+                            <span class="spinner-border spinner-border-sm me-1 d-none" id="assistant-spinner" role="status"></span>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+(() => {
+    const messagesBox = document.getElementById('assistant-messages');
+    const input = document.getElementById('assistant-input');
+    const sendBtn = document.getElementById('assistant-send');
+    const spinner = document.getElementById('assistant-spinner');
+    const statusEl = document.getElementById('assistant-status');
+    const languageEl = document.getElementById('assistant-language');
+    const toolsBadge = document.getElementById('assistant-tools');
+    const sessionId = localStorage.getItem('hxAssistantSession') || `sess-${Date.now()}`;
+    localStorage.setItem('hxAssistantSession', sessionId);
+    let messages = [];
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    const setStatus = (text) => {
+        if (statusEl) statusEl.textContent = text;
+    };
+
+    const setSending = (isSending) => {
+        sendBtn.disabled = isSending;
+        spinner.classList.toggle('d-none', !isSending);
+    };
+
+    const renderMessages = (list) => {
+        messagesBox.innerHTML = '';
+        if (!list || !list.length) {
+            messagesBox.innerHTML = '<p class="text-muted">No messages yet. Ask me about appointments, reminders, or referrals.</p>';
+            return;
+        }
+        list.forEach((m) => {
+            const bubble = document.createElement('div');
+            bubble.className = m.role === 'assistant' ? 'mb-3 p-3 bg-light rounded' : 'mb-3 p-3 border rounded';
+            bubble.innerHTML = `<div class="fw-semibold mb-1">${m.role === 'assistant' ? 'Assistant' : 'You'}</div><div>${(m.content || '').replace(/</g, '&lt;')}</div>`;
+            messagesBox.appendChild(bubble);
+        });
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    };
+
+    const loadHistory = async () => {
+        try {
+            const res = await fetch('/ai-assistant/history');
+            if (!res.ok) return;
+            const data = await res.json();
+            messages = data || [];
+            renderMessages(messages);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const sendMessage = async () => {
+        const text = (input.value || '').trim();
+        if (!text) return;
+        messages.push({ role: 'user', content: text });
+        renderMessages(messages);
+        setSending(true);
+        setStatus('Thinking...');
+        toolsBadge.hidden = true;
+        try {
+            const res = await fetch('/ai-assistant/assistant', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
+                },
+                body: JSON.stringify({
+                    messages,
+                    session_id: sessionId,
+                    language: navigator.language || 'en'
+                })
+            });
+            const data = await res.json();
+            if (!res.ok || data.error) {
+                throw new Error(data.error || 'Request failed');
+            }
+            languageEl.textContent = `Language: ${data.language || 'auto'}`;
+            toolsBadge.hidden = !(data.tool_results && data.tool_results.length);
+            messages = data.messages || messages;
+            if (!messages.find(m => m.role === 'assistant' && m.content === data.reply)) {
+                messages.push({ role: 'assistant', content: data.reply });
+            }
+            renderMessages(messages);
+            setStatus('Ready');
+        } catch (err) {
+            console.error(err);
+            setStatus('Something went wrong.');
+        } finally {
+            setSending(false);
+            input.value = '';
+        }
+    };
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    loadHistory();
+})();
+</script>
+{% endblock %}

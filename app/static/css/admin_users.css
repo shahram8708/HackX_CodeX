@@ -1,0 +1,114 @@
+/* Admin users page styling */
+:root {
+  --hx-surface: #ffffff;
+  --hx-muted: #6b7280;
+  --hx-border: #e5e7eb;
+  --hx-shadow: 0 12px 30px rgba(18, 38, 63, 0.12);
+}
+
+.hx-admin-users {
+  background: radial-gradient(circle at 10% 15%, rgba(37, 99, 235, 0.08), transparent 28%),
+    radial-gradient(circle at 85% 0%, rgba(16, 185, 129, 0.1), transparent 30%),
+    radial-gradient(circle at 50% 90%, rgba(236, 72, 153, 0.08), transparent 26%),
+    #f8fafc;
+  min-height: calc(100vh - 120px);
+}
+
+.hx-hero-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #0f172a, #1d4ed8);
+  color: #fff;
+  border-radius: 20px;
+}
+
+.hx-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.16), transparent 35%),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.12), transparent 32%);
+  pointer-events: none;
+}
+
+.hx-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-weight: 600;
+}
+
+.hx-stat-card {
+  position: relative;
+  border-radius: 16px;
+  border: 1px solid var(--hx-border);
+  background: var(--hx-surface);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.hx-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hx-shadow);
+}
+
+.hx-stat-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+}
+
+.hx-stat-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.hx-filter-card .input-group-text {
+  border-radius: 10px 0 0 10px;
+}
+
+.hx-filter-card .form-control,
+.hx-filter-card .form-select {
+  border-radius: 10px;
+}
+
+.hx-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.hx-user-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.hx-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  color: #fff;
+  box-shadow: var(--hx-shadow);
+}
+
+@media (max-width: 767px) {
+  .hx-hero-card .btn {
+    width: 100%;
+  }
+}

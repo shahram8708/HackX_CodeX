@@ -1,0 +1,120 @@
+/* Book appointment page styling */
+.book-shell {
+  background: radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.08), transparent 32%),
+    radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.08), transparent 30%),
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 55%);
+}
+
+.breadcrumb-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+}
+
+.breadcrumb-card .breadcrumb-item + .breadcrumb-item::before {
+  color: #94a3b8;
+}
+
+.hero-card {
+  border-radius: 18px;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  pointer-events: none;
+}
+
+.filter-card {
+  border-radius: 16px;
+}
+
+.input-group-text {
+  border-right: 0;
+}
+
+.info-tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.icon-circle {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+.avatar-circle {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1.35rem;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+}
+
+.doctor-card {
+  border-radius: 18px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.doctor-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
+}
+
+.empty-state .empty-icon {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+  border-radius: 18px;
+  font-size: 1.8rem;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14);
+}
+
+.pagination-modern .page-link {
+  border-radius: 12px;
+  margin: 0 4px;
+}
+
+.bg-success-subtle {
+  background-color: #e8f7f1;
+}
+
+.bg-info-subtle {
+  background-color: #e6f6ff;
+}
+
+.bg-primary-subtle {
+  background-color: #e7efff;
+}
+
+@media (max-width: 767px) {
+  .hero-card::after {
+    inset: 8px;
+  }
+
+  .pagination-modern .page-link {
+    margin-top: 6px;
+  }
+}

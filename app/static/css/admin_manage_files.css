@@ -1,0 +1,77 @@
+/* Manage files page styling */
+:root {
+  --hx-surface: #ffffff;
+  --hx-muted: #6b7280;
+  --hx-border: #e5e7eb;
+  --hx-shadow: 0 12px 30px rgba(18, 38, 63, 0.12);
+}
+
+.hx-manage-files {
+  background: radial-gradient(circle at 10% 15%, rgba(37, 99, 235, 0.08), transparent 28%),
+    radial-gradient(circle at 85% 0%, rgba(16, 185, 129, 0.1), transparent 30%),
+    radial-gradient(circle at 50% 90%, rgba(236, 72, 153, 0.08), transparent 26%),
+    #f8fafc;
+  min-height: calc(100vh - 120px);
+}
+
+.hx-hero-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(115deg, #0f172a, #1d4ed8);
+  color: #fff;
+  border-radius: 20px;
+}
+
+.hx-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.16), transparent 35%),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.12), transparent 32%);
+  pointer-events: none;
+}
+
+.hx-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-weight: 600;
+}
+
+.hx-search-group .form-control {
+  border-radius: 0 12px 12px 0;
+}
+
+.hx-search-group .input-group-text {
+  border-radius: 12px 0 0 12px;
+}
+
+.hx-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.hx-files-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.hx-files-table td {
+  vertical-align: middle;
+}
+
+.card {
+  border-radius: 16px;
+}
+
+@media (max-width: 767px) {
+  .hx-hero-card .input-group,
+  .hx-hero-card .form-control {
+    width: 100%;
+  }
+}

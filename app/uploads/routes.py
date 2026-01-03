@@ -256,7 +256,11 @@ def view_reports():
 @login_required
 def analyze_report(file_id):
     import google.generativeai as genai
-    import fitz
+    try:
+        import pypdfium2 as pdfium
+    except ModuleNotFoundError:
+        flash("AI analysis requires pypdfium2. Please install it first.", "danger")
+        return redirect(url_for('uploads.view_reports'))
     from PIL import Image
     import io
 
@@ -276,13 +280,12 @@ def analyze_report(file_id):
     try:
         
         if filename.endswith(".pdf"):
-            doc = fitz.open(file_path)
-            if doc.page_count == 0:
+            pdf_doc = pdfium.PdfDocument(file_path)
+            if len(pdf_doc) == 0:
                 raise Exception("Empty PDF file.")
-            page = doc.load_page(0)
-            pix = page.get_pixmap(dpi=150)
-            image_bytes = pix.tobytes("png")
-            image = Image.open(io.BytesIO(image_bytes))
+            page = pdf_doc[0]
+            pil_image = page.render(scale=2).to_pil()
+            image = pil_image.convert("RGB")
         
         
         else:
@@ -382,9 +385,8 @@ This report may be part of a digital health assistant workflow. Make sure it's a
 """
 
     try:
-        # Configure Gemini API
-        genai.configure(api_key="AIzaSyC1dSEI8aENjszrP9IcqZYX561QV8ASHa0")
-        model = genai.GenerativeModel('gemini-2.5-flash-lite')  # Using pro model for better analysis
+        genai.configure(api_key="AIzaSyAhbxfOjOS3utgBQ1mQYlCIrp4sZOvBgs0")
+        model = genai.GenerativeModel('gemini-2.5-flash') 
 
         response = model.generate_content([prompt_text, image])
         result = response.text

@@ -1,75 +1,121 @@
 {% extends "base/layout.html" %}
 {% block title %}Quick Upload{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4><i class="bi bi-cloud-upload"></i> Quick Upload</h4>
-                    <p class="text-muted mb-0">Upload medical reports, prescriptions, or diagnostic files</p>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quick_upload.css') }}">
+
+<div class="container py-4 hx-i18n-admin">
+    <div class="row justify-content-center g-4">
+        <div class="col-12 col-lg-10">
+            <div class="card hx-hero border-0 shadow-sm mb-3">
+                <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3 gap-md-4">
+                    <div class="hx-hero-icon"><i class="bi bi-cloud-upload"></i></div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                            <span class="badge hx-badge-soft"><i class="bi bi-shield-lock me-1"></i>Secure upload</span>
+                            <span class="badge hx-badge-soft neutral"><i class="bi bi-lightning me-1"></i>Fast sync</span>
+                        </div>
+                        <h3 class="mb-1">Quick Upload</h3>
+                        <p class="text-muted mb-0">Upload medical reports, prescriptions, or diagnostic files with live progress.</p>
+                    </div>
+                    <div class="hx-hero-meta text-md-end">
+                        <div class="text-muted small">Next step</div>
+                        <div class="fw-bold">Attach and send</div>
+                    </div>
                 </div>
-                <div class="card-body">
+            </div>
+
+            <div class="card border-0 shadow-sm hx-card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="hx-pill"><i class="bi bi-collection"></i></span>
+                            <span class="fw-semibold">Upload details</span>
+                        </div>
+                        <small class="text-muted">Drag & drop supported</small>
+                    </div>
+
                     <form method="POST" enctype="multipart/form-data" id="uploadForm">
                         {{ form.csrf_token }}
-
                         {{ form.hidden_tag() }}
 
-                        <div class="mb-3">
-                            {{ form.report_type.label(class="form-label") }}
-                            {{ form.report_type(class="form-select", id="report_type") }}
-                        </div>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold small text-muted" for="report_type">Report type</label>
+                                {{ form.report_type(class="form-select", id="report_type") }}
+                            </div>
 
-                        <div class="mb-3">
-                            {{ form.description.label(class="form-label") }}
-                            {{ form.description(class="form-control", id="description", rows="3") }}
-                        </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small text-muted" for="description">Description (optional)</label>
+                                {{ form.description(class="form-control", id="description", rows="3", placeholder="Add a short note so patients know what this file is about", **{'data-i18n-key': 'Add a short note so patients know what this file is about', 'data-i18n-attr': 'placeholder'}) }}
+                            </div>
 
-                        <div class="mb-3">
-                            {{ form.file.label(class="form-label") }}
-                            {{ form.file(class="form-control", id="file") }}
-                        </div>
-
-
-                        <div id="uploadProgress" class="mb-3" style="display: none;">
-                            <label class="form-label">Upload Progress</label>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                    style="width: 0%"></div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small text-muted" for="file">File</label>
+                                <div id="uploadArea" class="upload-area">
+                                    <div class="upload-text">
+                                        <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                            <span class="hx-upload-badge"><i class="bi bi-cloud-arrow-up"></i></span>
+                                            <div class="text-start">
+                                                <div class="fw-semibold" data-i18n-key="Drop your file here">Drop your file here</div>
+                                                <small class="text-muted" data-i18n-key="or click to browse">or click to browse</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-muted small" data-i18n-key="PDF, images, or documents up to 10 MB">PDF, images, or documents up to 10 MB</div>
+                                    </div>
+                                    {{ form.file(class="form-control", id="file") }}
+                                </div>
+                                <div id="fileInfo" class="d-flex align-items-center gap-2 mt-2 file-info" style="display: none;">
+                                    <i class="bi bi-file-earmark-text text-primary"></i>
+                                    <div>
+                                        <div id="fileName" class="fw-semibold"></div>
+                                        <small id="fileSize" class="text-muted"></small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ url_for('uploads.doctor_uploads') }}" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Back to Files
+                        <div id="uploadProgress" class="mt-3" style="display: none;">
+                            <label class="form-label fw-semibold small text-muted">Upload Progress</label>
+                            <div class="progress hx-progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
+                            <a href="{{ url_for('uploads.doctor_uploads') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Files
                             </a>
                             <button type="submit" class="btn btn-primary" id="uploadBtn">
-                                <i class="bi bi-cloud-upload"></i> Upload File
+                                <i class="bi bi-cloud-upload me-2"></i><span class="btn-label">Upload File</span>
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
 
-
             {% if recent_uploads %}
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h6><i class="bi bi-clock-history"></i> Recent Uploads</h6>
-                </div>
-                <div class="card-body">
+            <div class="card border-0 shadow-sm hx-card mt-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="hx-pill"><i class="bi bi-clock-history"></i></span>
+                            <h6 class="mb-0">Recent Uploads</h6>
+                        </div>
+                        <small class="text-muted">Latest 5 files</small>
+                    </div>
                     <div class="list-group list-group-flush">
                         {% for upload in recent_uploads %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">{{ upload.filename }}</h6>
-                                <p class="mb-1 text-muted small">{{ upload.report_type.replace('_', ' ').title() }}</p>
-                                <small class="text-muted">{{ upload.upload_date.strftime('%b %d, %Y at %I:%M %p') if
-                                    upload.upload_date else 'N/A' }}</small>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="hx-file-chip"><i class="bi bi-file-earmark-text"></i></div>
+                                <div>
+                                    <h6 class="mb-1">{{ upload.filename }}</h6>
+                                    <p class="mb-1 text-muted small">{{ upload.report_type.replace('_', ' ').title() }}</p>
+                                    <small class="text-muted">{{ upload.upload_date.strftime('%b %d, %Y at %I:%M %p') if upload.upload_date else 'N/A' }}</small>
+                                </div>
                             </div>
-                            <div>
-                                <a href="{{ url_for('uploads.download_file', file_id=upload.id) }}"
-                                    class="btn btn-sm btn-outline-primary">
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{{ url_for('uploads.download_file', file_id=upload.id) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-download"></i>
                                 </a>
                             </div>
@@ -78,7 +124,7 @@
                     </div>
                     <div class="text-center mt-3">
                         <a href="{{ url_for('uploads.doctor_uploads') }}" class="btn btn-outline-primary btn-sm">
-                            View All Files <i class="bi bi-arrow-right"></i>
+                            View All Files <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -87,41 +133,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .upload-area {
-        border: 2px dashed #ddd;
-        border-radius: 8px;
-        padding: 40px;
-        text-align: center;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-
-    .upload-area:hover {
-        border-color: #007bff;
-        background-color: #f8f9fa;
-    }
-
-    .upload-area.dragover {
-        border-color: #007bff;
-        background-color: #e3f2fd;
-    }
-
-    .upload-area input[type="file"] {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        cursor: pointer;
-    }
-
-    .upload-text {
-        pointer-events: none;
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -133,7 +144,6 @@
         const uploadForm = document.getElementById('uploadForm');
         const uploadBtn = document.getElementById('uploadBtn');
         const uploadProgress = document.getElementById('uploadProgress');
-
 
         uploadArea.addEventListener('dragover', function (e) {
             e.preventDefault();
@@ -156,7 +166,6 @@
             }
         });
 
-
         fileInput.addEventListener('change', function (e) {
             if (e.target.files.length > 0) {
                 showFileInfo(e.target.files[0]);
@@ -166,7 +175,7 @@
         function showFileInfo(file) {
             fileName.textContent = file.name;
             fileSize.textContent = `(${formatFileSize(file.size)})`;
-            fileInfo.style.display = 'block';
+            fileInfo.style.display = 'flex';
         }
 
         function formatFileSize(bytes) {
@@ -177,14 +186,14 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-
         uploadForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const formData = new FormData(uploadForm);
 
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Uploading...';
+            uploadBtn.classList.add('disabled');
+            uploadBtn.innerHTML = '<span class="spinner-border spinner-border-sm align-middle me-2" role="status" aria-hidden="true"></span><span class="btn-label">'+hxInline('Uploading...')+'</span>';
             uploadProgress.style.display = 'block';
 
             const xhr = new XMLHttpRequest();
@@ -202,22 +211,22 @@
                 if (xhr.status === 200) {
                     const response = JSON.parse(xhr.responseText);
                     if (response.success) {
-                        showToast('File uploaded successfully!', 'success');
+                        showToast(hxInline('File uploaded successfully!'), 'success');
                         setTimeout(() => {
                             window.location.href = '{{ url_for("uploads.doctor_uploads") }}';
                         }, 1500);
                     } else {
-                        showToast(response.message || 'Upload failed', 'error');
+                        showToast(response.message || hxInline('Upload failed'), 'error');
                         resetForm();
                     }
                 } else {
-                    showToast('Upload failed. Please try again.', 'error');
+                    showToast(hxInline('Upload failed. Please try again.'), 'error');
                     resetForm();
                 }
             });
 
             xhr.addEventListener('error', function () {
-                showToast('Upload failed. Please check your connection.', 'error');
+                showToast(hxInline('Upload failed. Please check your connection.'), 'error');
                 resetForm();
             });
 
@@ -227,10 +236,18 @@
 
         function resetForm() {
             uploadBtn.disabled = false;
-            uploadBtn.innerHTML = '<i class="bi bi-cloud-upload"></i> Upload File';
+            uploadBtn.classList.remove('disabled');
+            uploadBtn.innerHTML = '<i class="bi bi-cloud-upload me-2"></i><span class="btn-label">'+hxInline('Upload File')+'</span>';
             uploadProgress.style.display = 'none';
             uploadProgress.querySelector('.progress-bar').style.width = '0%';
+            uploadProgress.querySelector('.progress-bar').textContent = '';
         }
     });
+
+    function hxInline(text) {
+        const lang = window.hxCurrentLanguage === 'hi' ? 'hi' : 'en';
+        const map = window.hxTextTranslations?.[lang];
+        return map && map[text] ? map[text] : text;
+    }
 </script>
 {% endblock %}

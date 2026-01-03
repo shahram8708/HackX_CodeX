@@ -3,116 +3,128 @@
 {% block title %}System Settings - HealneX Admin{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_system_settings.css') }}">
 
-    <div class="row">
+<div class="container-fluid hx-system-settings py-4">
+    <div class="row g-4 mb-2">
         <div class="col-12">
-            <div
-                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-                <div class="d-flex align-items-center mb-2 mb-md-0">
-                    <i class="bi bi-gear text-primary me-2" style="font-size: 2rem;"></i>
-                    <div>
-                        <h2 class="mb-0">System Settings</h2>
-                        <p class="text-muted small mb-0">Manage platform configuration and global settings</p>
+            <div class="card hx-hero-card shadow-lg border-0 overflow-hidden">
+                <div class="card-body p-4 p-lg-5 d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="hx-hero-icon bg-white text-primary"><i class="bi bi-gear"></i></div>
+                        <div>
+                            <h1 class="text-white fw-bold mb-1">System Settings</h1>
+                            <p class="text-white-50 mb-0">Manage platform configuration, security, and notifications.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="badge bg-white text-dark px-3 py-2 shadow-sm"><i class="bi bi-shield-lock text-primary me-1"></i>Secure controls</span>
+                        <span class="badge bg-white text-dark px-3 py-2 shadow-sm"><i class="bi bi-clock-history text-success me-1"></i>Live uptime</span>
                     </div>
                 </div>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb bg-transparent p-0 m-0">
-                        <li class="breadcrumb-item">
-                            <a href="{{ url_for('admin.admin_dashboard') }}" class="text-decoration-none text-primary">
-                                <i class="bi bi-house-door-fill me-1"></i>Admin
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item active text-muted" aria-current="page">System Settings</li>
-                    </ol>
-                </nav>
             </div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mb-4">
+        <div class="col-12 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="hx-dot bg-primary"></span>
+                <div>
+                    <p class="text-muted small mb-0">Admin</p>
+                    <h5 class="mb-0">System Settings</h5>
+                </div>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 m-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_dashboard') }}" class="text-decoration-none text-primary"><i class="bi bi-house-door-fill me-1"></i>Admin</a></li>
+                    <li class="breadcrumb-item active text-muted" aria-current="page">System Settings</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
+    <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-sliders me-2"></i> Platform Configuration</h5>
+            <div class="card border-0 shadow-sm hx-form-card">
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2">
+                    <span class="hx-dot bg-success"></span>
+                    <div>
+                        <p class="text-muted small mb-0">Configuration</p>
+                        <h5 class="mb-0"><i class="bi bi-sliders me-2"></i>Platform Settings</h5>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('admin.system_settings') }}">
+                    <form method="POST" action="{{ url_for('admin.system_settings') }}" class="row g-4">
                         {{ form.csrf_token }}
 
+                        <div class="col-md-6">
+                            <label for="site_name" class="form-label fw-semibold">Platform Name</label>
+                            <input type="text" id="site_name" name="site_name" class="form-control" value="{{ settings.site_name or 'HealneX' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="admin_email" class="form-label fw-semibold">Admin Email</label>
+                            <input type="email" id="admin_email" name="admin_email" class="form-control" value="{{ settings.admin_email or '' }}" required>
+                        </div>
 
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label for="site_name" class="form-label">Platform Name</label>
-                                <input type="text" id="site_name" name="site_name" class="form-control"
-                                    value="{{ settings.site_name or 'HealneX' }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="admin_email" class="form-label">Admin Email</label>
-                                <input type="email" id="admin_email" name="admin_email" class="form-control"
-                                    value="{{ settings.admin_email or '' }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="max_file_size" class="form-label">Max Upload Size (MB)</label>
-                                <input type="number" id="max_file_size" name="max_file_size" class="form-control"
-                                    value="{{ settings.max_file_size or 16 }}" min="1" max="100">
-                                <small class="form-text text-muted">Limit for uploaded files (e.g., reports,
-                                    prescriptions)</small>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="session_timeout" class="form-label">Session Timeout (minutes)</label>
-                                <input type="number" id="session_timeout" name="session_timeout" class="form-control"
-                                    value="{{ settings.session_timeout or 60 }}" min="15" max="480">
-                                <small class="form-text text-muted">Auto logout duration for inactive users</small>
+                        <div class="col-md-6">
+                            <label for="max_file_size" class="form-label fw-semibold">Max Upload Size (MB)</label>
+                            <input type="number" id="max_file_size" name="max_file_size" class="form-control" value="{{ settings.max_file_size or 16 }}" min="1" max="100">
+                            <small class="form-text text-muted">Limit for uploaded files (e.g., reports, prescriptions)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="session_timeout" class="form-label fw-semibold">Session Timeout (minutes)</label>
+                            <input type="number" id="session_timeout" name="session_timeout" class="form-control" value="{{ settings.session_timeout or 60 }}" min="15" max="480">
+                            <small class="form-text text-muted">Auto logout duration for inactive users</small>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch hx-switch">
+                                        <input class="form-check-input" type="checkbox" id="maintenance_mode" name="maintenance_mode" {% if settings.maintenance_mode %}checked{% endif %}>
+                                        <label class="form-check-label fw-semibold" for="maintenance_mode">Enable Maintenance Mode</label>
+                                        <small class="text-muted d-block">Only admins will have access when enabled</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch hx-switch">
+                                        <input class="form-check-input" type="checkbox" id="new_registrations" name="new_registrations" {% if settings.new_registrations %}checked{% endif %}>
+                                        <label class="form-check-label fw-semibold" for="new_registrations">Allow New Registrations</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-
-                        <div class="mb-4">
-                            <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" id="maintenance_mode"
-                                    name="maintenance_mode" {% if settings.maintenance_mode %}checked{% endif %}>
-                                <label class="form-check-label" for="maintenance_mode">Enable Maintenance Mode</label>
-                                <small class="text-muted d-block">Only admins will have access when enabled</small>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="new_registrations"
-                                    name="new_registrations" {% if settings.new_registrations %}checked{% endif %}>
-                                <label class="form-check-label" for="new_registrations">Allow New Registrations</label>
-                            </div>
+                        <div class="col-12">
+                            <hr class="text-muted">
                         </div>
 
-                        <hr>
-
-
-                        <h6 class="text-primary fw-bold mb-3"><i class="bi bi-envelope me-2"></i>Email Settings</h6>
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label for="smtp_server" class="form-label">SMTP Server</label>
-                                <input type="text" id="smtp_server" name="smtp_server" class="form-control"
-                                    value="{{ settings.smtp_server or 'localhost' }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="smtp_port" class="form-label">SMTP Port</label>
-                                <input type="number" id="smtp_port" name="smtp_port" class="form-control"
-                                    value="{{ settings.smtp_port or 587 }}">
-                            </div>
+                        <div class="col-12">
+                            <h6 class="text-primary fw-bold mb-3"><i class="bi bi-envelope me-2"></i>Email Settings</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="smtp_server" class="form-label fw-semibold">SMTP Server</label>
+                            <input type="text" id="smtp_server" name="smtp_server" class="form-control" value="{{ settings.smtp_server or 'localhost' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="smtp_port" class="form-label fw-semibold">SMTP Port</label>
+                            <input type="number" id="smtp_port" name="smtp_port" class="form-control" value="{{ settings.smtp_port or 587 }}">
                         </div>
 
-                        <div class="form-check form-switch mb-4">
-                            <input class="form-check-input" type="checkbox" id="email_notifications"
-                                name="email_notifications" {% if settings.email_notifications %}checked{% endif %}>
-                            <label class="form-check-label" for="email_notifications">Enable Email Notifications</label>
+                        <div class="col-12">
+                            <div class="form-check form-switch hx-switch mb-1">
+                                <input class="form-check-input" type="checkbox" id="email_notifications" name="email_notifications" {% if settings.email_notifications %}checked{% endif %}>
+                                <label class="form-check-label fw-semibold" for="email_notifications">Enable Email Notifications</label>
+                            </div>
+                            <small class="text-muted">Toggle outbound email alerts for users and admins.</small>
                         </div>
 
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="button" class="btn btn-secondary" onclick="history.back()">
+                        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2">
+                            <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
                                 <i class="bi bi-arrow-left me-1"></i> Cancel
                             </button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="saveSettingsBtn">
                                 <i class="bi bi-check-circle me-1"></i> Save Settings
                             </button>
                         </div>
@@ -121,14 +133,14 @@
             </div>
         </div>
 
-
         <div class="col-lg-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-light">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2">
+                    <span class="hx-dot bg-secondary"></span>
                     <h6 class="mb-0 text-secondary"><i class="bi bi-info-circle me-2"></i>System Info</h6>
                 </div>
                 <div class="card-body">
-                    <ul class="list-unstyled">
+                    <ul class="list-unstyled mb-0">
                         <li class="mb-3">
                             <small class="text-muted">Platform Version</small>
                             <div class="fw-bold">HealneX v1.0.0</div>
@@ -150,7 +162,7 @@
             </div>
         </div>
     </div>
-
 </div>
 
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 {% endblock %}

@@ -1,128 +1,119 @@
 {% extends "base/layout.html" %}
 {% block title %}Appointment Management - HealneX{% endblock %}
 {% block content %}
-<div class="container-fluid">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_manage_appointments.css') }}">
 
-    <div class="row mb-4">
+<div class="container-fluid hx-manage-appts hx-i18n-admin py-4">
+    <div class="row g-4 mb-1">
         <div class="col-12">
-            <h2 class="mb-1 d-flex align-items-center gap-2">
-                <i class="bi bi-calendar-event-fill text-success fs-3"></i>
-                Appointment Management
-            </h2>
-            <p class="text-muted">Monitor and manage all platform appointments</p>
+            <div class="card hx-hero-card shadow-lg border-0">
+                <div class="card-body p-4 p-lg-5 d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="hx-hero-pill"><i class="bi bi-calendar-event-fill me-2"></i>Appointment Management</span>
+                            <span class="badge bg-light text-dark fw-semibold">Operations</span>
+                        </div>
+                        <h1 class="text-white fw-bold mb-2">Stay ahead of every booking.</h1>
+                        <p class="text-white-50 mb-0">Monitor statuses, types, and fees across all appointments in one clean view.</p>
+                    </div>
+                    <div class="d-flex flex-column align-items-lg-end align-items-start gap-2">
+                        <span class="badge bg-white text-dark px-3 py-2">Total: {{ total_appointments }}</span>
+                        <span class="badge bg-white text-dark px-3 py-2">Pending: {{ pending_appointments }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 
     <div class="row g-3 mb-4">
-
         <div class="col-md-3 col-sm-6">
-            <div class="card shadow-sm bg-info text-white rounded-3 hover-shadow transition text-center h-100">
-                <div class="card-body">
-                    <i class="bi bi-list-task fs-2 mb-2 d-block"></i>
+            <div class="card hx-stat-card shadow-sm h-100">
+                <div class="hx-stat-accent bg-info"></div>
+                <div class="card-body text-center">
+                    <div class="hx-stat-icon bg-info-subtle text-info mb-2"><i class="bi bi-list-task"></i></div>
                     <h3 class="fw-bold mb-1">{{ total_appointments }}</h3>
-                    <p class="mb-0 opacity-75 small">Total Appointments</p>
+                    <p class="text-muted mb-0 small">Total Appointments</p>
                 </div>
             </div>
         </div>
-
-
         <div class="col-md-3 col-sm-6">
-            <div class="card shadow-sm bg-warning text-white rounded-3 hover-shadow transition text-center h-100">
-                <div class="card-body">
-                    <i class="bi bi-hourglass-split fs-2 mb-2 d-block"></i>
+            <div class="card hx-stat-card shadow-sm h-100">
+                <div class="hx-stat-accent bg-warning"></div>
+                <div class="card-body text-center">
+                    <div class="hx-stat-icon bg-warning-subtle text-warning mb-2"><i class="bi bi-hourglass-split"></i></div>
                     <h3 class="fw-bold mb-1">{{ pending_appointments }}</h3>
-                    <p class="mb-0 opacity-75 small">Pending</p>
+                    <p class="text-muted mb-0 small">Pending</p>
                 </div>
             </div>
         </div>
-
-
         <div class="col-md-3 col-sm-6">
-            <div class="card shadow-sm bg-success text-white rounded-3 hover-shadow transition text-center h-100">
-                <div class="card-body">
-                    <i class="bi bi-check-circle-fill fs-2 mb-2 d-block"></i>
+            <div class="card hx-stat-card shadow-sm h-100">
+                <div class="hx-stat-accent bg-success"></div>
+                <div class="card-body text-center">
+                    <div class="hx-stat-icon bg-success-subtle text-success mb-2"><i class="bi bi-check-circle-fill"></i></div>
                     <h3 class="fw-bold mb-1">{{ completed_appointments }}</h3>
-                    <p class="mb-0 opacity-75 small">Completed</p>
+                    <p class="text-muted mb-0 small">Completed</p>
                 </div>
             </div>
         </div>
-
-
         <div class="col-md-3 col-sm-6">
-            <div class="card shadow-sm bg-danger text-white rounded-3 hover-shadow transition text-center h-100">
-                <div class="card-body">
-                    <i class="bi bi-x-circle-fill fs-2 mb-2 d-block"></i>
+            <div class="card hx-stat-card shadow-sm h-100">
+                <div class="hx-stat-accent bg-danger"></div>
+                <div class="card-body text-center">
+                    <div class="hx-stat-icon bg-danger-subtle text-danger mb-2"><i class="bi bi-x-circle-fill"></i></div>
                     <h3 class="fw-bold mb-1">{{ cancelled_appointments }}</h3>
-                    <p class="mb-0 opacity-75 small">Cancelled</p>
+                    <p class="text-muted mb-0 small">Cancelled</p>
                 </div>
             </div>
         </div>
     </div>
 
-
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-3">
+            <div class="card border-0 shadow-sm rounded-3 hx-filter-card">
+                <div class="card-header bg-white border-0 d-flex align-items-center gap-2 flex-wrap">
+                    <i class="bi bi-funnel text-primary"></i>
+                    <h5 class="mb-0">Smart Filters</h5>
+                    <span class="badge bg-light text-muted">Search & refine</span>
+                </div>
                 <div class="card-body">
                     <form method="GET" class="row g-3 align-items-end">
-
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Search</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light">
-                                    <i class="bi bi-search text-muted"></i>
-                                </span>
-                                <input type="text" name="search" value="{{ request.args.get('search', '') }}"
-                                    class="form-control" placeholder="Patient or doctor name">
+                                <span class="input-group-text bg-light"><i class="bi bi-search text-muted"></i></span>
+                                <input type="text" name="search" value="{{ request.args.get('search', '') }}" class="form-control" placeholder="Patient or doctor name">
                             </div>
                         </div>
-
-
                         <div class="col-md-2">
                             <label class="form-label fw-semibold">Status</label>
                             <select class="form-select" name="status">
                                 <option value="">All</option>
-                                <option value="pending" {{ 'selected' if request.args.get('status')=='pending' }}>
-                                    Pending</option>
-                                <option value="confirmed" {{ 'selected' if request.args.get('status')=='confirmed' }}>
-                                    Confirmed</option>
-                                <option value="completed" {{ 'selected' if request.args.get('status')=='completed' }}>
-                                    Completed</option>
-                                <option value="cancelled" {{ 'selected' if request.args.get('status')=='cancelled' }}>
-                                    Cancelled</option>
+                                <option value="pending" {{ 'selected' if request.args.get('status')=='pending' }}>Pending</option>
+                                <option value="confirmed" {{ 'selected' if request.args.get('status')=='confirmed' }}>Confirmed</option>
+                                <option value="completed" {{ 'selected' if request.args.get('status')=='completed' }}>Completed</option>
+                                <option value="cancelled" {{ 'selected' if request.args.get('status')=='cancelled' }}>Cancelled</option>
                             </select>
                         </div>
-
-
                         <div class="col-md-2">
                             <label class="form-label fw-semibold">Type</label>
                             <select class="form-select" name="type">
                                 <option value="">All</option>
-                                <option value="in_person" {{ 'selected' if request.args.get('type')=='in_person' }}>
-                                    In-Person</option>
-                                <option value="teleconsultation" {{ 'selected' if
-                                    request.args.get('type')=='teleconsultation' }}>Teleconsultation</option>
+                                <option value="in_person" {{ 'selected' if request.args.get('type')=='in_person' }}>In-Person</option>
+                                <option value="teleconsultation" {{ 'selected' if request.args.get('type')=='teleconsultation' }}>Teleconsultation</option>
                             </select>
                         </div>
-
-
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Date Range</label>
                             <select class="form-select" name="date_range">
                                 <option value="">All Time</option>
-                                <option value="today" {{ 'selected' if request.args.get('date_range')=='today' }}>Today
-                                </option>
-                                <option value="week" {{ 'selected' if request.args.get('date_range')=='week' }}>This
-                                    Week</option>
-                                <option value="month" {{ 'selected' if request.args.get('date_range')=='month' }}>This
-                                    Month</option>
+                                <option value="today" {{ 'selected' if request.args.get('date_range')=='today' }}>Today</option>
+                                <option value="week" {{ 'selected' if request.args.get('date_range')=='week' }}>This Week</option>
+                                <option value="month" {{ 'selected' if request.args.get('date_range')=='month' }}>This Month</option>
                             </select>
                         </div>
-
-
                         <div class="col-md-2 d-grid">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary shadow-sm">
                                 <i class="bi bi-funnel-fill me-1"></i> Apply Filter
                             </button>
                         </div>
@@ -132,18 +123,22 @@
         </div>
     </div>
 
-
     <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-calendar-week me-2 text-success"></i>Appointments Overview
-                    </h5>
+                <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="hx-dot bg-success"></span>
+                        <h5 class="mb-0">Appointments Overview</h5>
+                        <span class="badge bg-success-subtle text-success">Live list</span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-success" onclick="location.reload()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                    </button>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <table class="table table-hover align-middle mb-0 hx-appt-table">
                             <thead class="table-light text-muted">
                                 <tr>
                                     <th>Date & Time</th>
@@ -160,14 +155,12 @@
                                 <tr>
                                     <td>
                                         <strong>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</strong><br>
-                                        <small class="text-muted">{{ appointment.appointment_time.strftime('%I:%M %p')
-                                            }}</small>
+                                        <small class="text-muted">{{ appointment.appointment_time.strftime('%I:%M %p') }}</small>
                                     </td>
                                     <td>
                                         <div>
                                             <strong>{{ appointment.patient.name }}</strong><br>
-                                            <small class="text-muted">ID: {{ appointment.patient.unique_patient_id
-                                                }}</small>
+                                            <small class="text-muted">ID: {{ appointment.patient.unique_patient_id }}</small>
                                         </div>
                                     </td>
                                     <td>
@@ -177,20 +170,13 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span
-                                            class="badge rounded-pill 
-                                        {{ 'bg-info' if appointment.appointment_type == 'teleconsultation' else 'bg-success' }}">
-                                            <i
-                                                class="bi {{ 'bi-camera-video' if appointment.appointment_type == 'teleconsultation' else 'bi-person-video' }} me-1"></i>
+                                        <span class="badge rounded-pill {{ 'bg-info' if appointment.appointment_type == 'teleconsultation' else 'bg-success' }}">
+                                            <i class="bi {{ 'bi-camera-video' if appointment.appointment_type == 'teleconsultation' else 'bi-person-video' }} me-1"></i>
                                             {{ appointment.appointment_type|title }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge rounded-pill 
-                                        {{ 'bg-warning' if appointment.status == 'pending' else 
-                                           'bg-primary' if appointment.status == 'confirmed' else 
-                                           'bg-success' if appointment.status == 'completed' else 
-                                           'bg-danger' }}">
+                                        <span class="badge rounded-pill {{ 'bg-warning' if appointment.status == 'pending' else 'bg-primary' if appointment.status == 'confirmed' else 'bg-success' if appointment.status == 'completed' else 'bg-danger' }}">
                                             {{ appointment.status|title }}
                                         </span>
                                     </td>
@@ -199,11 +185,9 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <button type="button" class="btn btn-outline-info"
-                                                onclick="viewAppointment({{ appointment.id }})" title="View Details">
+                                            <button type="button" class="btn btn-outline-info" onclick="viewAppointment({{ appointment.id }})" title="View Details">
                                                 <i class="bi bi-eye"></i>
                                             </button>
-
                                             {#
                                             <button class="btn btn-outline-danger" title="Cancel Appointment">
                                                 <i class="bi bi-x-circle"></i>
@@ -222,6 +206,7 @@
     </div>
 
 </div>
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 <script>
     function viewAppointment(id) {
         window.location.href = `/appointments/appointment/${id}`;

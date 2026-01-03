@@ -1,79 +1,287 @@
 {% extends "base/layout.html" %}
 {% block title %}My Referrals - Patient{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <div
-                        class="avatar-xl bg-success rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                        <i class="bi bi-people fs-1 text-white"></i>
-                    </div>
-                    <h4>{{ total_referrals }}</h4>
-                    <p class="text-muted">Total Referrals</p>
-                    <a href="{{ url_for('referrals.share_referral_code') }}" class="btn btn-primary">
-                        <i class="bi bi-share"></i> Share My Code
-                    </a>
-                </div>
-            </div>
+<style>
+    .referrals-page {
+        background: radial-gradient(circle at 12% 20%, rgba(37, 99, 235, 0.08), transparent 32%),
+            radial-gradient(circle at 88% 10%, rgba(16, 185, 129, 0.08), transparent 28%),
+            linear-gradient(180deg, #f8fafc 0%, #f0f4ff 40%, #f9fafb 100%);
+        padding: 24px 0 32px;
+    }
 
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h6><i class="bi bi-trophy"></i> Rewards</h6>
+    .referrals-hero {
+        background: linear-gradient(135deg, #2563eb, #10b981);
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(37, 99, 235, 0.18);
+        overflow: hidden;
+        color: #fff;
+        position: relative;
+        isolation: isolate;
+    }
+
+    .referrals-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.18), transparent 38%),
+            radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.2), transparent 36%);
+        opacity: 0.8;
+        pointer-events: none;
+    }
+
+    .referrals-hero .badge {
+        background: rgba(255, 255, 255, 0.16);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+    }
+
+    .referral-stat {
+        border-radius: 16px;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        background: #fff;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .referral-stat:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 44px rgba(37, 99, 235, 0.2);
+    }
+
+    .referral-stat .icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: rgba(37, 99, 235, 0.12);
+        color: #2563eb;
+    }
+
+    .rewards-card {
+        border-radius: 16px;
+        background: #0f172a;
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.45);
+    }
+
+    .rewards-card .progress {
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .rewards-card .progress-bar {
+        background: linear-gradient(135deg, #22d3ee, #a855f7, #f59e0b);
+    }
+
+    .table-card {
+        border-radius: 16px;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.14);
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .table thead {
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        color: #fff;
+    }
+
+    .table th {
+        border: none;
+        letter-spacing: 0.01em;
+        font-weight: 600;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .hover-row:hover {
+        background: rgba(37, 99, 235, 0.05);
+        transition: background 0.2s ease;
+    }
+
+    .empty-state {
+        border: 1px dashed rgba(37, 99, 235, 0.25);
+        border-radius: 18px;
+        background: rgba(37, 99, 235, 0.04);
+    }
+
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+        color: #e2e8f0;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+    }
+
+    .soft-badge {
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-weight: 600;
+        border: 1px solid rgba(37, 99, 235, 0.12);
+        background: rgba(37, 99, 235, 0.08);
+        color: #1d4ed8;
+    }
+
+    @media (max-width: 767px) {
+        .referrals-hero {
+            text-align: center;
+        }
+
+        .referrals-hero .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="referrals-page hx-i18n-admin">
+    <div class="container">
+        <div class="referrals-hero p-4 p-md-5 mb-4 position-relative overflow-hidden">
+            <div class="row align-items-center position-relative" style="z-index: 1;">
+                <div class="col-md-8 d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="pill"><i class="bi bi-stars"></i> Referral Journey</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <div class="display-6 fw-bold mb-0">My Referrals</div>
+                        <div class="d-flex align-items-center gap-2 soft-badge">
+                            <i class="bi bi-people"></i>
+                            <span>{{ total_referrals }} total</span>
+                        </div>
+                    </div>
+                    <p class="mb-0 text-white-50">Invite friends and family to HealneX. Track their status, earn
+                        points, and unlock rewards effortlessly.</p>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <a href="{{ url_for('referrals.share_referral_code') }}" class="btn btn-light btn-lg shadow-sm">
+                            <i class="bi bi-share me-1"></i>
+                            Share My Code
+                        </a>
+                        <span class="badge">Earn rewards for every successful referral</span>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <p><strong>Points Earned:</strong> {{ total_points }}</p>
-                    <p><strong>Rewards Unlocked:</strong> {{ rewards_count }}</p>
-                    {% set next_reward = 100 - (total_points % 100) %}
-                    <p class="mb-1 text-success">
-                        🎉 You've used {{ next_reward }} points for reward(s).
-                    </p>
+                <div class="col-md-4 text-md-end mt-4 mt-md-0">
+                        <div class="d-inline-flex flex-column align-items-start align-items-md-end gap-2">
+                        <div class="h1 fw-semibold mb-0">{{ total_points }} pts</div>
+                        <div class="small text-white-50">Lifetime referral points</div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-trophy-fill"></i>
+                            <span class="fw-semibold">{{ rewards_count }} rewards unlocked</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="bi bi-list"></i> Referral History</h5>
+        <div class="row g-3 g-lg-4">
+            <div class="col-lg-4 d-flex flex-column gap-3">
+                <div class="referral-stat p-3 p-md-4 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon"><i class="bi bi-people"></i></div>
+                            <div>
+                                <div class="fw-semibold text-muted small">Total Referrals</div>
+                                <div class="h3 fw-bold mb-0">{{ total_referrals }}</div>
+                            </div>
+                        </div>
+                        <span class="badge bg-success text-white">Live</span>
+                    </div>
+                    <p class="text-muted mb-3">Every new connection brings you closer to your next reward.</p>
+                    <a href="{{ url_for('referrals.share_referral_code') }}" class="btn btn-primary w-100">
+                        <i class="bi bi-telegram"></i>
+                        Share Referral Code
+                    </a>
                 </div>
-                <div class="card-body">
-                    {% if referrals %}
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Referred User</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for referral in referrals %}
-                                <tr>
-                                    <td>{{ referral.referred_user.name if referral.referred_user else 'Pending' }}</td>
-                                    <td>
-                                        <span
-                                            class="badge bg-{{ 'success' if referral.status == 'completed' else 'warning' }}">
-                                            {{ referral.status.title() }}
-                                        </span>
-                                    </td>
-                                    <td>{{ referral.date_referred.strftime('%b %d, %Y') }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+
+                <div class="rewards-card p-3 p-md-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-3 bg-white bg-opacity-10 p-2 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-gift-fill text-warning fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">Rewards Progress</div>
+                                <div class="small text-white-50">Keep earning to unlock more perks</div>
+                            </div>
+                        </div>
+                        <span class="badge bg-light text-dark">{{ rewards_count }} unlocked</span>
                     </div>
-                    {% else %}
-                    <div class="text-center text-muted py-4">
-                        <i class="bi bi-people fs-1"></i>
-                        <p>No referrals yet. Start sharing your code!</p>
-                        <a href="{{ url_for('referrals.share_referral_code') }}" class="btn btn-primary">
-                            <i class="bi bi-share"></i> Share Referral Code
-                        </a>
+                    <p class="mb-1">Points Earned: <strong>{{ total_points }}</strong></p>
+                    {% set next_reward = 100 - (total_points % 100) %}
+                    {% set cycle_progress = (total_points % 100) %}
+                    <p class="text-info mb-2">Next reward in {{ next_reward }} pts</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" role="progressbar" style="width: {{ cycle_progress if cycle_progress else 100 }}%" aria-valuenow="{{ cycle_progress if cycle_progress else 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    {% endif %}
+                    <div class="d-flex align-items-center gap-2 small text-white-50">
+                        <i class="bi bi-lightning-charge"></i>
+                        <span>Consistent referrals keep the rewards flowing.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="table-card">
+                    <div class="d-flex align-items-center justify-content-between px-3 px-md-4 py-3 border-bottom">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-light text-primary border border-primary"><i class="bi bi-clock-history"></i></span>
+                            <div>
+                                <div class="fw-semibold">Referral History</div>
+                                <div class="text-muted small">See how your invitations are progressing</div>
+                            </div>
+                        </div>
+                        <div class="d-none d-md-flex align-items-center gap-2 text-muted small">
+                            <i class="bi bi-shield-check"></i>
+                            <span>Secure tracking</span>
+                        </div>
+                    </div>
+                    <div class="p-3 p-md-4">
+                        {% if referrals %}
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Referred User</th>
+                                        <th scope="col" class="text-center">Status</th>
+                                        <th scope="col" class="text-end">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for referral in referrals %}
+                                    <tr class="hover-row">
+                                        <td class="fw-semibold">{{ referral.referred_user.name if referral.referred_user else 'Pending' }}</td>
+                                        <td class="text-center">
+                                            <span class="badge px-3 py-2 {{ 'bg-success text-white' if referral.status == 'completed' else 'bg-warning text-dark' }}">
+                                                <i class="bi {{ 'bi-check-circle' if referral.status == 'completed' else 'bi-hourglass-split' }} me-1"></i>
+                                                {{ referral.status.title() }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end text-muted">{{ referral.date_referred.strftime('%b %d, %Y') }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="empty-state text-center text-muted py-5 px-3">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm mb-3" style="width: 72px; height: 72px;">
+                                <i class="bi bi-people fs-2 text-primary"></i>
+                            </div>
+                            <p class="mb-2">No referrals yet. Share your code to get started!</p>
+                            <a href="{{ url_for('referrals.share_referral_code') }}" class="btn btn-primary">
+                                <i class="bi bi-send"></i>
+                                Share Referral Code
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

@@ -3,61 +3,78 @@
 {% block title %}Verify OTP - HealneX{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-shield-check display-4 text-success"></i>
-                        <h2 class="fw-bold">Verify Your Identity</h2>
-                        <p class="text-muted">
-                            We've sent a 6-digit code to your email address.
-                            Please enter it below to complete your login.
-                        </p>
-                    </div>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/verify_otp.css') }}">
 
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
+<section class="otp-hero hx-i18n-admin py-5">
+    <div class="container position-relative">
+        <div class="otp-decor otp-decor-1"></div>
+        <div class="otp-decor otp-decor-2"></div>
 
-                        <div class="mb-3">
-                            {{ form.otp.label(class="form-label") }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-key"></i></span>
-                                {{ form.otp(class="form-control text-center", style="letter-spacing: 0.5em;",
-                                maxlength="6", placeholder="000000") }}
+        <div class="row justify-content-center g-4">
+            <div class="col-xl-8 col-xxl-7">
+                <div class="otp-card shadow-lg">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-circle">
+                                    <i class="bi bi-shield-lock"></i>
+                                </div>
+                                <div>
+                                    <div class="text-uppercase small text-muted fw-semibold">Two-step verification</div>
+                                    <h3 class="mb-0">Verify your identity</h3>
+                                </div>
                             </div>
-                            {% if form.otp.errors %}
-                            <div class="text-danger small">
-                                {% for error in form.otp.errors %}
-                                <div>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
+                            <div class="chip-soft"><i class="bi bi-envelope-check me-1"></i>Code sent securely</div>
                         </div>
 
-                        <div class="d-grid mb-3">
-                            {{ form.submit(class="btn btn-success btn-lg") }}
+                        <p class="text-muted mb-4">We emailed a 6-digit code to your inbox. Enter it below to finish signing in.</p>
+
+                        <form method="POST" class="otp-form">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                {{ form.otp.label(class="form-label fw-semibold") }}
+                                <div class="input-group input-elevated">
+                                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                    {{ form.otp(class="form-control text-center", style="letter-spacing: 0.5em;", maxlength="6", placeholder="000000") }}
+                                </div>
+                                {% if form.otp.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.otp.errors %}
+                                    <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                {{ form.submit(class="btn btn-success btn-lg submit-btn shadow-sm") }}
+                            </div>
+                        </form>
+
+                        <div class="support-block d-flex flex-column flex-md-row align-items-md-center gap-3 justify-content-between">
+                            <div class="d-flex align-items-center gap-2 text-muted small">
+                                <i class="bi bi-clock-history text-primary"></i>
+                                <span>Code expires in a few minutes</span>
+                            </div>
+                            <a href="{{ url_for('auth.resend_otp') }}" class="btn btn-outline-secondary btn-hover">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Resend Code
+                            </a>
                         </div>
-                    </form>
 
-                    <div class="text-center">
-                        <p class="text-muted">Didn't receive the code?</p>
-                        <a href="{{ url_for('auth.resend_otp') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-clockwise me-2"></i>Resend Code
-                        </a>
-                    </div>
+                        <div class="divider my-4"><span>Need to switch?</span></div>
 
-                    <hr>
-
-                    <div class="text-center">
-                        <a href="{{ url_for('auth.login') }}" class="text-decoration-none">
-                            <i class="bi bi-arrow-left me-2"></i>Back to Login
-                        </a>
+                        <div class="text-center">
+                            <a href="{{ url_for('auth.login') }}" class="link-primary fw-semibold">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Login
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<script src="{{ url_for('static', filename='js/button_spinner.js') }}"></script>
 {% endblock %}

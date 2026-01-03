@@ -1,4 +1,3 @@
-fitz
 Flask
 Flask_Login
 flask_mail
@@ -6,6 +5,7 @@ Flask_Migrate
 flask_sqlalchemy
 flask_wtf
 google-genai
+google-generativeai
 MarkupSafe
 Pillow
 python-dotenv
