@@ -2,7 +2,7 @@
 
 > Unified digital healthcare that connects patients, doctors, and administrators with teleconsultations, health records, payments, and engagement tools in one place.
 
-> **Live deployment:** https://healnex.onrender.com *(Render free tier – email/OTP delivery is enabled but can fail because of memory limits; the feature works as expected on local deployments.)*
+> **Live deployment:** https://healnexind.onrender.com *(Render free tier – email/OTP delivery is enabled but can fail because of memory limits; the feature works as expected on local deployments.)*
 
 ## Project Title & Tagline
 - **Project:** HealneX
@@ -128,7 +128,7 @@ Additional optional flags include `FLASK_CONFIG` (switch between development/pro
 
 
 ## Demo / Video
-- Live site: [HealneX on Render](https://healnex.onrender.com) *(email/OTP sending is active but may intermittently fail on Render's free tier because of memory constraints; it works locally.)*
+- Live site: [HealneX on Render](https://healnexind.onrender.com) *(email/OTP sending is active but may intermittently fail on Render's free tier because of memory constraints; it works locally.)*
 - Android app: [HealneX APK](app/static/app/healnex.apk) *(sideload on Android to test the companion experience)*
 - Pitch & prototype walkthrough: [Hackathon Demo (Google Drive)](https://drive.google.com/file/d/1nly66_IAA88od7tlyZUbigGLEtKWlizv/view?usp=sharing)
 
@@ -186,7 +186,7 @@ Use GPU builds of `torch`/`tensorflow` when available for faster AI analysis.
 - **AI Analysis:** The LLaVA model is large; expect significant download time and RAM usage. Consider mocking `analyze_report` in CI or disabling the feature when resources are limited.
 - **Static Assets:** Upload directories are under `app/static/uploads/` and are subject to subscription-based quotas.
 - **Logging:** Stripe, email, and AI operations log to Flask's app logger for debugging.
-- **Render deployment:** The hosted demo at [healnex.onrender.com](https://healnex.onrender.com) runs on Render's free tier; email/OTP delivery is active but may fail intermittently because limited memory causes the mail worker to be recycled. Local and higher-tier deployments send OTP emails normally.
+- **Render deployment:** The hosted demo at [healnex.onrender.com](https://healnexind.onrender.com) runs on Render's free tier; email/OTP delivery is active but may fail intermittently because limited memory causes the mail worker to be recycled. Local and higher-tier deployments send OTP emails normally.
 
 ## Future Scope / Roadmap
 1. Implement role-based analytics dashboards with PowerBI/Tableau connectors.
@@ -197,8 +197,8 @@ Use GPU builds of `torch`/`tensorflow` when available for faster AI analysis.
 | Name | Role | Contribution |
 | --- | --- | --- |
 | Shah Ram | Backend Lead & Platform Architect | Flask services, database schema, payments, admin analytics |
-| Umang Rane | Full Stack & AI Engineer | Frontend design, AI report analysis, telehealth UX, deployment pipelines |
-| Krish Patel | AI Engineer | Design, AI report analysis, deployment pipelines |
+| Nisarg | Full Stack & AI Engineer | Frontend design, AI report analysis, telehealth UX, deployment pipelines |
+| Milan & Mahir | AI Engineer | Design, AI report analysis, deployment pipelines |
 
 ## License & Acknowledgments
 - **License:** Hackathon submission. License to be finalized; treat as all rights reserved unless stated otherwise.
