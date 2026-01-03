@@ -385,7 +385,7 @@ This report may be part of a digital health assistant workflow. Make sure it's a
 """
 
     try:
-        genai.configure(api_key="AIzaSyAhbxfOjOS3utgBQ1mQYlCIrp4sZOvBgs0")
+        genai.configure(api_key="")
         model = genai.GenerativeModel('gemini-2.5-flash') 
 
         response = model.generate_content([prompt_text, image])

@@ -7,7 +7,7 @@ import google.generativeai as genai
 
 class GeminiClient:
     def __init__(self, model_name: str = "gemini-2.5-flash") -> None:
-        api_key = "AIzaSyAhbxfOjOS3utgBQ1mQYlCIrp4sZOvBgs0"
+        api_key = ""
         if not api_key:
             raise RuntimeError("GEMINI_API_KEY is required to call Gemini")
         genai.configure(api_key=api_key)
